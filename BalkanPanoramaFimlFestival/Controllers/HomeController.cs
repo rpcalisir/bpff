@@ -39,29 +39,33 @@ namespace BalkanPanoramaFimlFestival.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SignUp(string? firstName, string? lastName, string? email, string? messageContent)
+        public async Task<IActionResult> SignUp(string? firstName, string? lastName, string? email, string? message)
         {
-            if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName) || string.IsNullOrEmpty(email))
+            if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName) || string.IsNullOrEmpty(email) || string.IsNullOrEmpty(message))
             {
-                // Handle invalid input
-                return BadRequest("All fields are required.");
+                TempData["Message"] = "All fields are required.";
+                return RedirectToAction("Index");
+                //// Handle invalid input
+                //return BadRequest("All fields are required.");
             }
 
-            // Create a new ContactForm instance
-            var contactForm = new ContactForm
+            try
             {
-                FirstName = firstName,
-                LastName = lastName,
-                Email = email,
-                Message = messageContent ?? "No message provided."
-            };
+                // Create a new ContactForm instance
+                var contactForm = new ContactForm
+                {
+                    FirstName = firstName,
+                    LastName = lastName,
+                    Email = email,
+                    Message = message ?? "No message provided."
+                };
 
-            // Save the form data to the database
-            _context.ContactForms.Add(contactForm);
-            await _context.SaveChangesAsync();
+                // Save the form data to the database
+                _context.ContactForms.Add(contactForm);
+                await _context.SaveChangesAsync();
 
-            // Generate the PDF content for the user
-            string htmlContent = $@"
+                // Generate the PDF content for the user
+                string htmlContent = $@"
                 <html>
                 <head>
                     <meta charset='UTF-8'>
@@ -78,20 +82,28 @@ namespace BalkanPanoramaFimlFestival.Controllers
                 </body>
                 </html>";
 
-            byte[] pdfBytes = GeneratePdf(htmlContent);
+                byte[] pdfBytes = GeneratePdf(htmlContent);
 
-            // Save the PDF to a file
-            var uploads = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
-            if (!Directory.Exists(uploads))
-            {
-                Directory.CreateDirectory(uploads);
+                // Save the PDF to a file
+                var uploads = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+                if (!Directory.Exists(uploads))
+                {
+                    Directory.CreateDirectory(uploads);
+                }
+
+                var filePath = Path.Combine(uploads, $"{firstName}_{lastName}.pdf");
+                System.IO.File.WriteAllBytes(filePath, pdfBytes);
+
+                // Send the email with the PDF attached
+                await SendEmail(firstName, lastName, email, filePath, message);
+
+                TempData["Message"] = "Your form has been submitted successfully.";
             }
-
-            var filePath = Path.Combine(uploads, $"{firstName}_{lastName}.pdf");
-            System.IO.File.WriteAllBytes(filePath, pdfBytes);
-
-            // Send the email with the PDF attached
-            await SendEmail(firstName, lastName, email, filePath, messageContent);
+            catch (Exception ex)
+            {
+                // Log or handle the exception
+                TempData["Message"] = $"An error occurred: {ex.Message}";
+            }
 
             return RedirectToAction("Index");
         }

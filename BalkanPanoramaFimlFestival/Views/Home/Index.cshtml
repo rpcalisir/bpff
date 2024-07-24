@@ -37,3 +37,14 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var message = '@TempData["Message"]';
+            if (message) {
+                alert(message); // Use a better alert/notification library if desired
+            }
+        });
+    </script>
+}
