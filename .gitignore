@@ -9,8 +9,6 @@
 *.user
 *.userosscache
 *.sln.docstates
-
-# User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
 # Mono auto generated files
@@ -31,6 +29,7 @@ bld/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
+out/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
@@ -297,10 +296,6 @@ node_modules/
 # Visual Studio 6 auto-generated project file (contains which files were open etc.)
 *.vbp
 
-# Visual Studio 6 workspace and project file (working project files containing files to include in project)
-*.dsw
-*.dsp
-
 # Visual Studio 6 technical files
 *.ncb
 *.aps
@@ -396,3 +391,24 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# Rider
+.idea/
+
+# Test Results
+TestResults/
+
+# Backup files
+*.bak
+
+# Logs
+*.log
+
+# System files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
