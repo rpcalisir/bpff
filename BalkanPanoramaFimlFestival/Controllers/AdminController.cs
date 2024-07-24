@@ -41,4 +41,10 @@ public class AdminController : Controller
         }
         return RedirectToAction(nameof(AdminPanel));
     }
+
+    // Action to display the Index view (optional)
+    public IActionResult Index()
+    {
+        return View();
+    }
 }
