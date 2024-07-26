@@ -1,0 +1,14 @@
+﻿@{
+    ViewData["Title"] = "Registration Successful";
+    var message = TempData["Message"] as string;
+}
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <script>
+        window.onload = function () {
+            alert('@message');
+            window.location.href = '@Url.Action("Login", "Account")';
+        };
+    </script>
+}

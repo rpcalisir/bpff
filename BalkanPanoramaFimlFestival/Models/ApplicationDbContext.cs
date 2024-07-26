@@ -1,18 +1,22 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using BalkanPanoramaFimlFestival.Models.Account;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace BalkanPanoramaFimlFestival.Models
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        : IdentityDbContext<RegisteredUser>(options)
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
-        {
-        }
-
         public DbSet<ContactForm> ContactForms { get; set; }
+        public new DbSet<RegisteredUser> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ContactForm>().ToTable("contactforms");
+            modelBuilder.Entity<RegisteredUser>(entity =>
+            {
+                entity.ToTable("users");
+            });
             base.OnModelCreating(modelBuilder);
         }
     }

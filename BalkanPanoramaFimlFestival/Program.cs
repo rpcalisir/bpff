@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using WkHtmlToPdfDotNet.Contracts;
 using WkHtmlToPdfDotNet;
-using BalkanPanoramaFimlFestival.Models; // Add the appropriate namespace
+using BalkanPanoramaFimlFestival.Models;
+using BalkanPanoramaFimlFestival.Models.Account;
+using Microsoft.AspNetCore.Identity; // Add the appropriate namespace
 
 namespace BalkanPanoramaFimlFestival
 {
@@ -15,12 +17,39 @@ namespace BalkanPanoramaFimlFestival
             builder.Services.AddControllersWithViews();
 
             // Add DbContext with MySQL
+            //var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+            //builder.Services.AddDbContext<ApplicationDbContext>(options =>
+            //    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+            options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
+                new MySqlServerVersion(ServerVersion.AutoDetect(connectionString))));
+
 
             // Register the WkHtmlToPdfDotNet converter
             builder.Services.AddSingleton<IConverter>(new SynchronizedConverter(new PdfTools()));
+
+            //builder.Services.AddIdentity<RegisteredUser, IdentityRole>()
+            //.AddEntityFrameworkStores<ApplicationDbContext>()
+            //.AddDefaultTokenProviders();
+
+            // Configure Identity
+            //builder.Services.AddIdentity<RegisteredUser, IdentityRole>(options =>
+            //{
+            //    options.Password.RequiredLength = 6;
+            //    options.Password.RequireNonAlphanumeric = false;
+            //    options.Password.RequireDigit = true;
+            //    options.Password.RequireUppercase = false;
+            //    options.Password.RequireLowercase = false;
+            //})
+            //.AddEntityFrameworkStores<ApplicationDbContext>()
+            //.AddDefaultTokenProviders();
+
+            // Configure Identity
+            builder.Services.AddIdentity<RegisteredUser, IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
 
             var app = builder.Build();
 
@@ -44,7 +73,7 @@ namespace BalkanPanoramaFimlFestival
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=Account}/{action=Register}/{id?}");
 
             app.Run();
         }
