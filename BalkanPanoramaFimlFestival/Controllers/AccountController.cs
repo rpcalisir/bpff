@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Identity;
 using BalkanPanoramaFimlFestival.ViewModels.Account;
 using BalkanPanoramaFimlFestival.Models.Account;
 using BalkanPanoramaFimlFestival.Models;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using System.Text.Encodings.Web;
 
 namespace BalkanPanoramaFimlFestival.Controllers
 {
@@ -10,12 +12,14 @@ namespace BalkanPanoramaFimlFestival.Controllers
     {
         private readonly UserManager<RegisteredUser> _userManager;
         private readonly SignInManager<RegisteredUser> _signInManager;
+        private readonly IEmailSender _emailSender;
 
         // Primary Constructor
-        public AccountController(UserManager<RegisteredUser> userManager, SignInManager<RegisteredUser> signInManager)
+        public AccountController(UserManager<RegisteredUser> userManager, SignInManager<RegisteredUser> signInManager, IEmailSender emailSender)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _emailSender = emailSender;
         }
 
         [HttpGet]
@@ -45,13 +49,22 @@ namespace BalkanPanoramaFimlFestival.Controllers
 
                 if (result.Succeeded)
                 {
-                    TempData["Message"] = "Registration successful!";
-                    return RedirectToAction("Register");
-                }
+                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code }, protocol: Request.Scheme);
 
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                    if (callbackUrl != null)
+                    {
+                        await _emailSender.SendEmailAsync(model.Email, "Confirm your email",
+                            $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+
+                        TempData["Message"] = "A verification email has been sent, check your email please!";
+                        return RedirectToAction("Register");
+                    }
+                    else
+                    {
+                        // Handle the case where the URL generation fails
+                        ModelState.AddModelError(string.Empty, "Error generating confirmation link.");
+                    }
                 }
             }
 
@@ -59,10 +72,59 @@ namespace BalkanPanoramaFimlFestival.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> ConfirmEmail(string userId, string code)
+        {
+            if (userId == null || code == null)
+            {
+                return RedirectToAction(nameof(Login));
+            }
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return RedirectToAction(nameof(Login));
+            }
+
+            var result = await _userManager.ConfirmEmailAsync(user, code);
+            if (result.Succeeded)
+            {
+                TempData["ConfirmationMessage"] = "Confirmation Successful";
+            }
+            else
+            {
+                TempData["ConfirmationMessage"] = "Confirmation Failed";
+            }
+
+            return RedirectToAction(nameof(Login));
+        }
+
+        [HttpGet]
         public IActionResult Login()
         {
             return View();
         }
+
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
+        //{
+        //if (ModelState.IsValid)
+        //{
+        //    var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, isPersistent: false, lockoutOnFailure: false);
+
+        //    if (result.Succeeded)
+        //    {
+        //        TempData["Message"] = "Login successful!";
+        //        return RedirectToLocal(returnUrl);
+        //    }
+        //    else
+        //    {
+        //        ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+        //    }
+        //}
+        //return View(model);
+        //}
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -74,7 +136,19 @@ namespace BalkanPanoramaFimlFestival.Controllers
 
                 if (result.Succeeded)
                 {
-                    TempData["Message"] = "Login successful!";
+                    var user = await _userManager.FindByEmailAsync(model.Email);
+
+                    if (user != null && !await _userManager.IsEmailConfirmedAsync(user))
+                    {
+                        // Sign out the user because their email is not confirmed
+                        await _signInManager.SignOutAsync();
+
+                        // Add model error to notify the user
+                        ModelState.AddModelError(string.Empty, "Your email address is not confirmed. Please check your email for the confirmation link.");
+                        return View(model);
+                    }
+
+                    // Redirect to the return URL if provided, or default to Index page
                     return RedirectToLocal(returnUrl);
                 }
                 else
@@ -82,8 +156,12 @@ namespace BalkanPanoramaFimlFestival.Controllers
                     ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                 }
             }
+
             return View(model);
         }
+
+
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]

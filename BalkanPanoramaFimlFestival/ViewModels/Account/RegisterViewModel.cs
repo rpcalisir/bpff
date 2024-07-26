@@ -14,8 +14,8 @@ namespace BalkanPanoramaFimlFestival.ViewModels.Account
         public required string LastName { get; set; }
 
         [Required]
-        [EmailAddress]
         [Display(Name = "Email")]
+        [EmailAddress(ErrorMessage = "Invalid email address.")]
         public required string Email { get; set; }
 
         [Required]

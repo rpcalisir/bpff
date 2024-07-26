@@ -2,9 +2,10 @@
 
 @{
     ViewData["Title"] = "Login";
+    var confirmationMessage = TempData["ConfirmationMessage"] as string;
 }
 
-<h1>Login</h1>
+<h1>@ViewData["Title"]</h1>
 
 <form asp-action="Login" method="post">
     <div class="form-group">
@@ -19,3 +20,29 @@
     </div>
     <button type="submit" class="btn btn-primary">Login</button>
 </form>
+
+<!-- Display Model State Errors -->
+@if (ViewData.ModelState.Values.Any(v => v.Errors.Any()))
+{
+    <div class="alert alert-danger mt-3">
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <p>@error.ErrorMessage</p>
+        }
+    </div>
+}
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    @if (!string.IsNullOrEmpty(confirmationMessage))
+    {
+        <script>
+            window.onload = function () {
+                alert('@confirmationMessage');
+            };
+        </script>
+    }
+}

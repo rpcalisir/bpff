@@ -3,7 +3,10 @@ using WkHtmlToPdfDotNet.Contracts;
 using WkHtmlToPdfDotNet;
 using BalkanPanoramaFimlFestival.Models;
 using BalkanPanoramaFimlFestival.Models.Account;
-using Microsoft.AspNetCore.Identity; // Add the appropriate namespace
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using System.Net.Mail;
+using System.Net; // Add the appropriate namespace
 
 namespace BalkanPanoramaFimlFestival
 {
@@ -30,6 +33,19 @@ namespace BalkanPanoramaFimlFestival
             // Register the WkHtmlToPdfDotNet converter
             builder.Services.AddSingleton<IConverter>(new SynchronizedConverter(new PdfTools()));
 
+            // Configure FluentEmail with SMTP
+            builder.Services
+                .AddFluentEmail("bearzalk@gmail.com")
+                .AddSmtpSender(new SmtpClient("smtp.gmail.com")
+                {
+                    Port = 587,
+                    Credentials = new NetworkCredential("bearzalk@gmail.com", "hhml qmtd ymjo ndyg"),
+                    EnableSsl = true,
+                });
+
+            // Register the IEmailSender service
+            builder.Services.AddTransient<IEmailSender, EmailSender>();
+
             //builder.Services.AddIdentity<RegisteredUser, IdentityRole>()
             //.AddEntityFrameworkStores<ApplicationDbContext>()
             //.AddDefaultTokenProviders();
@@ -47,9 +63,13 @@ namespace BalkanPanoramaFimlFestival
             //.AddDefaultTokenProviders();
 
             // Configure Identity
-            builder.Services.AddIdentity<RegisteredUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
+            builder.Services.AddIdentity<RegisteredUser, IdentityRole>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = true; // Requires email confirmation
+            })
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders();
+
 
             var app = builder.Build();
 
