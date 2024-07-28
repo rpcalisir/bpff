@@ -38,6 +38,12 @@
     </div>
 </div>
 
+<div class="button-container">
+    <form asp-controller="Account" asp-action="Logout" method="post">
+        <button type="submit" class="btn btn-primary">Logout</button>
+    </form>
+</div>
+
 @section Scripts {
     <script>
         document.addEventListener("DOMContentLoaded", function() {

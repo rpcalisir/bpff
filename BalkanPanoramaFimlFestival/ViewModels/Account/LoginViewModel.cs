@@ -11,5 +11,9 @@ namespace BalkanPanoramaFimlFestival.ViewModels.Account
         [Required]
         [DataType(DataType.Password)]
         public required string Password { get; set; }
+
+        [Display(Name = "Remember me?")]
+        public bool RememberMe { get; set; }
+
     }
 }

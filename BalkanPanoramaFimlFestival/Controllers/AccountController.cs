@@ -5,6 +5,7 @@ using BalkanPanoramaFimlFestival.Models.Account;
 using BalkanPanoramaFimlFestival.Models;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using System.Text.Encodings.Web;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BalkanPanoramaFimlFestival.Controllers
 {
@@ -66,6 +67,11 @@ namespace BalkanPanoramaFimlFestival.Controllers
                         await _emailSender.SendEmailAsync(model.Email, "Confirm your email",
                             $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
+                        // Store user data in cookies
+                        Response.Cookies.Append("UserEmail", model.Email, new CookieOptions { Expires = DateTimeOffset.UtcNow.AddDays(30) });
+                        Response.Cookies.Append("UserPassword", model.Password, new CookieOptions { Expires = DateTimeOffset.UtcNow.AddDays(30) });
+
+
                         TempData["Message"] = "Registration is successfull. \n A verification email has been sent, check your email please!";
                         return RedirectToAction("Register");
                     }
@@ -112,6 +118,7 @@ namespace BalkanPanoramaFimlFestival.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult Login()
         {
             return View();
@@ -140,6 +147,7 @@ namespace BalkanPanoramaFimlFestival.Controllers
 
 
         [HttpPost]
+        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
         {
@@ -161,6 +169,26 @@ namespace BalkanPanoramaFimlFestival.Controllers
                         return View(model);
                     }
 
+                    // Save the user information in cookies if RememberMe is true
+                    if (model.RememberMe)
+                    {
+                        Response.Cookies.Append("UserEmail", model.Email, new CookieOptions
+                        {
+                            Expires = DateTimeOffset.UtcNow.AddDays(30),
+                            IsEssential = true,
+                            HttpOnly = true,
+                            Secure = true
+                        });
+
+                        Response.Cookies.Append("UserPassword", model.Password, new CookieOptions
+                        {
+                            Expires = DateTimeOffset.UtcNow.AddDays(30),
+                            IsEssential = true,
+                            HttpOnly = true,
+                            Secure = true
+                        });
+                    }
+
                     // Redirect to the return URL if provided, or default to Index page
                     return RedirectToLocal(returnUrl);
                 }
@@ -170,19 +198,31 @@ namespace BalkanPanoramaFimlFestival.Controllers
                 }
             }
 
+            // Check if cookies are present and log the user in automatically
+            if (Request.Cookies.ContainsKey("UserEmail") && Request.Cookies.ContainsKey("UserPassword"))
+            {
+                var email = Request.Cookies["UserEmail"];
+                var password = Request.Cookies["UserPassword"];
+
+                if (!string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(password))
+                {
+                    var result = await _signInManager.PasswordSignInAsync(email, password, model.RememberMe, lockoutOnFailure: false);
+                    if (result.Succeeded)
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
+                }
+            }
+
             return View(model);
         }
-
-
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
-            TempData["Message"] = "Logout successful!";
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Register", "Account");
         }
 
         private IActionResult RedirectToLocal(string? returnUrl)

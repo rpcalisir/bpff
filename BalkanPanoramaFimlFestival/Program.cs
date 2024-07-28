@@ -6,7 +6,8 @@ using BalkanPanoramaFimlFestival.Models.Account;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using System.Net.Mail;
-using System.Net; // Add the appropriate namespace
+using System.Net;
+using Microsoft.AspNetCore.Authentication.Cookies; // Add the appropriate namespace
 
 namespace BalkanPanoramaFimlFestival
 {
@@ -51,24 +52,35 @@ namespace BalkanPanoramaFimlFestival
             //.AddDefaultTokenProviders();
 
             // Configure Identity
+            builder.Services.AddIdentity<RegisteredUser, IdentityRole>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = false;
+                options.Password.RequireDigit = true;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireNonAlphanumeric = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequiredLength = 6;
+                options.Password.RequiredUniqueChars = 1;
+            })
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
+
+            //// Configure Identity
             //builder.Services.AddIdentity<RegisteredUser, IdentityRole>(options =>
             //{
-            //    options.Password.RequiredLength = 6;
-            //    options.Password.RequireNonAlphanumeric = false;
-            //    options.Password.RequireDigit = true;
-            //    options.Password.RequireUppercase = false;
-            //    options.Password.RequireLowercase = false;
+            //    options.SignIn.RequireConfirmedAccount = true; // Requires email confirmation
             //})
             //.AddEntityFrameworkStores<ApplicationDbContext>()
             //.AddDefaultTokenProviders();
 
-            // Configure Identity
-            builder.Services.AddIdentity<RegisteredUser, IdentityRole>(options =>
-            {
-                options.SignIn.RequireConfirmedAccount = true; // Requires email confirmation
-            })
-            .AddEntityFrameworkStores<ApplicationDbContext>()
-            .AddDefaultTokenProviders();
+            // Configure cookie authentication
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = "/Account/Login";
+                    options.ExpireTimeSpan = TimeSpan.FromDays(30); // Set the cookie to expire in 30 days
+                    options.SlidingExpiration = true;
+                });
 
 
             var app = builder.Build();
@@ -82,7 +94,33 @@ namespace BalkanPanoramaFimlFestival
 
             app.UseRouting();
 
+            // Ensure authentication and authorization middleware is used
+            app.UseAuthentication();
             app.UseAuthorization();
+
+            // Custom middleware to check if user is authenticated and redirect accordingly
+            app.Use(async (context, next) =>
+            {
+                var path = context.Request.Path;
+
+                if (!path.StartsWithSegments("/Account") &&
+                    context.User.Identity != null &&
+                    context.User.Identity.IsAuthenticated &&
+                    !path.StartsWithSegments("/Home"))
+                {
+                    context.Response.Redirect("/Home/Index");
+                }
+                else if (path.StartsWithSegments("/Home") &&
+                         (context.User.Identity == null ||
+                         !context.User.Identity.IsAuthenticated))
+                {
+                    context.Response.Redirect("/Account/Register");
+                }
+                else
+                {
+                    await next.Invoke();
+                }
+            });
 
             // Add the custom route for the Admin panel
             app.MapControllerRoute(
