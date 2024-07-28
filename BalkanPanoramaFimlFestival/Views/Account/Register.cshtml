@@ -3,21 +3,31 @@
 @{
     ViewData["Title"] = "Register";
     var message = TempData["Message"] as string;
+
+    var encodedMessage = message != null ? System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(message) : null;
 }
 
 <h2>@ViewData["Title"]</h2>
 
-@if (!string.IsNullOrEmpty(message))
+@* @if (message != null)
 {
-    <script>
-        window.onload = function () {
-            alert('@message');
-            window.location.href = '@Url.Action("Login", "Account")';
-        };
+    <script type="text/javascript">
+        $(document).ready(function () {
+            alert('@TempData["Message"]'.replace(/\\n/g, '\n'));
+            window.location.href = '@Url.Action("Register", "Account")';
+        });
     </script>
-}
+} *@
 
-<form asp-action="Register">
+<!-- Add a container for the login button -->
+<div class="button-container">
+    <button type="button" class="btn btn-secondary" onclick="location.href='@Url.Action("Login", "Account")'">Login</button>
+</div>
+
+<form asp-action="Register" method="post">
+
+    <div asp-validation-summary="All" class="text-danger"></div> <!-- This line displays all validation errors -->
+
     <div class="form-group">
         <label asp-for="FirstName" class="control-label"></label>
         <input asp-for="FirstName" class="form-control" />
@@ -61,5 +71,16 @@
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
+
+        @if (encodedMessage != null)
+        {
+            <script type="text/javascript">
+                $(document).ready(function () {
+                    var message = '@encodedMessage'.replace(/\\n/g, '\n');
+                    alert(message);
+                    window.location.href = '@Url.Action("Register", "Account")';
+                });
+            </script>
+        }
     }
 }

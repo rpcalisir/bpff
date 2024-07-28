@@ -30,8 +30,17 @@ namespace BalkanPanoramaFimlFestival.Controllers
 
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
+            // Check if email already exists
+            var existingUser = await _userManager.FindByEmailAsync(model.Email);
+            if (existingUser != null)
+            {
+                ModelState.AddModelError(string.Empty, "Email already registered.");
+                return View(model);
+            }
+
             if (ModelState.IsValid)
             {
                 var user = new RegisteredUser
@@ -57,7 +66,7 @@ namespace BalkanPanoramaFimlFestival.Controllers
                         await _emailSender.SendEmailAsync(model.Email, "Confirm your email",
                             $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
-                        TempData["Message"] = "A verification email has been sent, check your email please!";
+                        TempData["Message"] = "Registration is successfull. \n A verification email has been sent, check your email please!";
                         return RedirectToAction("Register");
                     }
                     else
@@ -65,6 +74,10 @@ namespace BalkanPanoramaFimlFestival.Controllers
                         // Handle the case where the URL generation fails
                         ModelState.AddModelError(string.Empty, "Error generating confirmation link.");
                     }
+                }
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
 
