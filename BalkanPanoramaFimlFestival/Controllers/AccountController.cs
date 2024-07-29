@@ -6,6 +6,8 @@ using BalkanPanoramaFimlFestival.Models;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Http;
 
 namespace BalkanPanoramaFimlFestival.Controllers
 {
@@ -14,13 +16,17 @@ namespace BalkanPanoramaFimlFestival.Controllers
         private readonly UserManager<RegisteredUser> _userManager;
         private readonly SignInManager<RegisteredUser> _signInManager;
         private readonly IEmailSender _emailSender;
+        private readonly ApplicationSettings _appSettings;
 
         // Primary Constructor
-        public AccountController(UserManager<RegisteredUser> userManager, SignInManager<RegisteredUser> signInManager, IEmailSender emailSender)
+        public AccountController(UserManager<RegisteredUser> userManager, 
+            SignInManager<RegisteredUser> signInManager, IEmailSender emailSender,
+            IOptions<ApplicationSettings> appSettings)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
+            _appSettings = appSettings.Value;
         }
 
         [HttpGet]
@@ -60,7 +66,7 @@ namespace BalkanPanoramaFimlFestival.Controllers
                 if (result.Succeeded)
                 {
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code }, protocol: Request.Scheme);
+                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code }, protocol: Request.Scheme, host: _appSettings.AppUrl);
 
                     if (callbackUrl != null)
                     {

@@ -82,6 +82,8 @@ namespace BalkanPanoramaFimlFestival
                     options.SlidingExpiration = true;
                 });
 
+            // Register the AppUrl configuration
+            builder.Services.Configure<ApplicationSettings>(builder.Configuration.GetSection("ApplicationSettings"));
 
             var app = builder.Build();
 
