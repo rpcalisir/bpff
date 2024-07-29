@@ -7,6 +7,9 @@
 
 <h1>@ViewData["Title"]</h1>
 
+<!-- Makes it possible to show the related error messages for form validation -->
+<div asp-validation-summary="All" class="text-danger"></div>
+
 <form asp-action="Login" method="post">
     <div class="form-group">
         <label asp-for="Email" class="control-label"></label>
