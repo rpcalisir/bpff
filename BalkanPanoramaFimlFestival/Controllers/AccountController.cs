@@ -159,6 +159,22 @@ namespace BalkanPanoramaFimlFestival.Controllers
         {
             ViewData["ReturnUrl"] = returnUrl;
 
+            // Check if cookies are present and log the user in automatically
+            if (Request.Cookies.ContainsKey("UserEmail") && Request.Cookies.ContainsKey("UserPassword"))
+            {
+                var email = Request.Cookies["UserEmail"];
+                var password = Request.Cookies["UserPassword"];
+
+                if (!string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(password))
+                {
+                    var result = await _signInManager.PasswordSignInAsync(email, password, model.RememberMe, lockoutOnFailure: false);
+                    if (result.Succeeded)
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
+                }
+            }
+
             if (ModelState.IsValid)
             {
                 var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, isPersistent: false, lockoutOnFailure: false);
@@ -203,22 +219,6 @@ namespace BalkanPanoramaFimlFestival.Controllers
                 else
                 {
                     ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                }
-            }
-
-            // Check if cookies are present and log the user in automatically
-            if (Request.Cookies.ContainsKey("UserEmail") && Request.Cookies.ContainsKey("UserPassword"))
-            {
-                var email = Request.Cookies["UserEmail"];
-                var password = Request.Cookies["UserPassword"];
-
-                if (!string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(password))
-                {
-                    var result = await _signInManager.PasswordSignInAsync(email, password, model.RememberMe, lockoutOnFailure: false);
-                    if (result.Succeeded)
-                    {
-                        return RedirectToAction("Index", "Home");
-                    }
                 }
             }
 

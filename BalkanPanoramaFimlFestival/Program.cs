@@ -78,8 +78,13 @@ namespace BalkanPanoramaFimlFestival
                 .AddCookie(options =>
                 {
                     options.LoginPath = "/Account/Login";
-                    options.ExpireTimeSpan = TimeSpan.FromDays(30); // Set the cookie to expire in 30 days
+                    options.LogoutPath = "/Account/Logout";
+                    options.AccessDeniedPath = "/Account/AccessDenied";
+                    options.ExpireTimeSpan = TimeSpan.FromDays(30);
                     options.SlidingExpiration = true;
+                    options.Cookie.Name = "AspNetCore.Cookies"; // Ensure this matches the cookie name used in your app
+                    options.Cookie.HttpOnly = true;
+                    options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Adjust based on your environment
                 });
 
             // Register the AppUrl configuration
@@ -100,29 +105,35 @@ namespace BalkanPanoramaFimlFestival
             app.UseAuthentication();
             app.UseAuthorization();
 
-            // Custom middleware to check if user is authenticated and redirect accordingly
+            // Custom middleware to handle redirection based on authentication status
             app.Use(async (context, next) =>
             {
                 var path = context.Request.Path;
 
-                if (!path.StartsWithSegments("/Account") &&
-                    context.User.Identity != null &&
-                    context.User.Identity.IsAuthenticated &&
-                    !path.StartsWithSegments("/Home"))
+                // Check if the user identity is not null
+                if (context.User.Identity != null && context.User.Identity.IsAuthenticated)
                 {
-                    context.Response.Redirect("/Home/Index");
-                }
-                else if (path.StartsWithSegments("/Home") &&
-                         (context.User.Identity == null ||
-                         !context.User.Identity.IsAuthenticated))
-                {
-                    context.Response.Redirect("/Account/Register");
+                    if (!path.StartsWithSegments("/Home"))
+                    {
+                        context.Response.Redirect("/Home/Index");
+                        return;
+                    }
                 }
                 else
                 {
-                    await next.Invoke();
+                    if (path.StartsWithSegments("/Home"))
+                    {
+                        context.Response.Redirect("/Account/Register");
+                        return;
+                    }
                 }
+
+                await next();
             });
+
+
+
+
 
             // Add the custom route for the Admin panel
             app.MapControllerRoute(
