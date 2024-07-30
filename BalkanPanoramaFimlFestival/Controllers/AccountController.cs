@@ -35,79 +35,128 @@ namespace BalkanPanoramaFimlFestival.Controllers
             return View();
         }
 
-
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            // Check if email already exists
-            var existingUser = await _userManager.FindByEmailAsync(model.Email);
-            if (existingUser != null)
+            //In case of register form data is not valid
+            if (!ModelState.IsValid)
             {
-                ModelState.AddModelError(string.Empty, "Email already registered.");
-                return View(model);
+                return View();
             }
 
-            if (ModelState.IsValid)
+            //// Check if email already exists
+            //var existingUser = await _userManager.FindByEmailAsync(model.Email);
+            //if (existingUser != null)
+            //{
+            //    ModelState.AddModelError(string.Empty, "Kullanıcı daha önce kayıt olmuştur.");
+            //    return RedirectToAction(nameof(Register));
+            //    //return View();
+            //}
+
+            var user = new RegisteredUser
             {
-                var user = new RegisteredUser
-                {
-                    UserName = model.Email,
-                    Email = model.Email,
-                    FirstName = model.FirstName,
-                    LastName = model.LastName,
-                    PhoneNumber = model.PhoneNumber,
-                    Country = model.Country,
-                    CreatedAt = DateTime.UtcNow
-                };
+                UserName = model.Email,
+                Email = model.Email,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                PhoneNumber = model.PhoneNumber,
+                Country = model.Country,
+                CreatedAt = DateTime.UtcNow
+            };
 
-                var result = await _userManager.CreateAsync(user, model.Password);
+            var identityResult = await _userManager.CreateAsync(user, model.ConfirmPassword);
 
-                try
-                {
-                    if (result.Succeeded)
-                    {
-                        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                        var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code }, protocol: Request.Scheme, host: _appSettings.AppUrl);
+            if (identityResult.Succeeded)
+            {   
+                TempData["SuccessMessage"] = "Üyelik işlemi başarı ile gerçekleşmiştir";
 
-                        if (callbackUrl != null)
-                        {
-                            await _emailSender.SendEmailAsync(model.Email, "Confirm your email",
-                                $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-
-                            TempData["Message"] = "Registration is successfull. \n A verification email has been sent, check your email please!";
-                            return RedirectToAction("Register");
-                        }
-                        else
-                        {
-                            // Handle the case where the URL generation fails
-                            ModelState.AddModelError(string.Empty, "Error generating confirmation link.");
-                        }
-                    }
-                    else
-                    {
-                        // Handle the case where the URL generation fails
-                        ModelState.AddModelError(string.Empty, "User could not be created.");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError(string.Empty, ex.Message);
-                    TempData["Message"] = ex.Message;
-                }
-
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
+                //Return current page, with calling Register(Get) method, passing TempData into it,
+                //so message can be passed and empty form can be seen.
+                return RedirectToAction(nameof(Register));
             }
-            else
+             
+            //General Errors
+            foreach (IdentityError error in identityResult.Errors)
             {
-                TempData["Message"] = "Form data is not valid!";
+                //If AddModelError's first parameter is being given empty, it means it's used for a general error.
+                ModelState.AddModelError(string.Empty, error.Description);
             }
-
-            return View(model);
+            return View();
         }
+
+
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Register(RegisterViewModel model)
+        //{
+        //    // Check if email already exists
+        //    var existingUser = await _userManager.FindByEmailAsync(model.Email);
+        //    if (existingUser != null)
+        //    {
+        //        ModelState.AddModelError(string.Empty, "Email already registered.");
+        //        return View(model);
+        //    }
+
+        //    if (ModelState.IsValid)
+        //    {
+        //        var user = new RegisteredUser
+        //        {
+        //            UserName = model.Email,
+        //            Email = model.Email,
+        //            FirstName = model.FirstName,
+        //            LastName = model.LastName,
+        //            PhoneNumber = model.PhoneNumber,
+        //            Country = model.Country,
+        //            CreatedAt = DateTime.UtcNow
+        //        };
+
+        //        var result = await _userManager.CreateAsync(user, model.Password);
+
+        //        try
+        //        {
+        //            if (result.Succeeded)
+        //            {
+        //                var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        //                var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code }, protocol: Request.Scheme, host: _appSettings.AppUrl);
+
+        //                if (callbackUrl != null)
+        //                {
+        //                    await _emailSender.SendEmailAsync(model.Email, "Confirm your email",
+        //                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+
+        //                    TempData["Message"] = "Registration is successfull. \n A verification email has been sent, check your email please!";
+        //                    return RedirectToAction("Register");
+        //                }
+        //                else
+        //                {
+        //                    // Handle the case where the URL generation fails
+        //                    ModelState.AddModelError(string.Empty, "Error generating confirmation link.");
+        //                }
+        //            }
+        //            else
+        //            {
+        //                // Handle the case where the URL generation fails
+        //                ModelState.AddModelError(string.Empty, "User could not be created.");
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            ModelState.AddModelError(string.Empty, ex.Message);
+        //            TempData["Message"] = ex.Message;
+        //        }
+
+        //        foreach (var error in result.Errors)
+        //        {
+        //            ModelState.AddModelError(string.Empty, error.Description);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        TempData["Message"] = "Form data is not valid!";
+        //    }
+
+        //    return View(model);
+        //}
 
         [HttpGet]
         public async Task<IActionResult> ConfirmEmail(string userId, string code)
@@ -208,7 +257,6 @@ namespace BalkanPanoramaFimlFestival.Controllers
                 return RedirectToAction(nameof(HomeController.Index), "Home");
             }
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
