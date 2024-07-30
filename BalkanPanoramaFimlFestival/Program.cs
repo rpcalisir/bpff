@@ -78,8 +78,8 @@ namespace BalkanPanoramaFimlFestival
                 .AddCookie(options =>
                 {
                     options.LoginPath = "/Account/Login";
-                    options.LogoutPath = "/Account/Logout";
-                    options.AccessDeniedPath = "/Account/AccessDenied";
+                    //options.LogoutPath = "/Account/Logout";
+                    //options.AccessDeniedPath = "/Account/AccessDenied";
                     options.ExpireTimeSpan = TimeSpan.FromDays(30);
                     options.SlidingExpiration = true;
                     options.Cookie.Name = "AspNetCore.Cookies"; // Ensure this matches the cookie name used in your app
@@ -109,6 +109,14 @@ namespace BalkanPanoramaFimlFestival
             app.Use(async (context, next) =>
             {
                 var path = context.Request.Path;
+
+                // Check if the request is for the Logout action, 
+                // thus, Logout method in AccountController can be executed.
+                if (path.StartsWithSegments("/Account/Logout"))
+                {
+                    await next.Invoke();
+                    return;
+                }
 
                 // Check if the user identity is not null
                 if (context.User.Identity != null && context.User.Identity.IsAuthenticated)
