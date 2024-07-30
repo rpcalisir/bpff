@@ -38,20 +38,19 @@ namespace BalkanPanoramaFimlFestival.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            //In case of register form data is not valid
+            //In case of register form data is not valid, return the view without deleting the form data
             if (!ModelState.IsValid)
             {
                 return View();
             }
 
-            //// Check if email already exists
-            //var existingUser = await _userManager.FindByEmailAsync(model.Email);
-            //if (existingUser != null)
-            //{
-            //    ModelState.AddModelError(string.Empty, "Kullanıcı daha önce kayıt olmuştur.");
-            //    return RedirectToAction(nameof(Register));
-            //    //return View();
-            //}
+            // Check if email already exists
+            var existingUser = await _userManager.FindByEmailAsync(model.Email);
+            if (existingUser != null)
+            {
+                ModelState.AddModelError(string.Empty, "Kullanıcı daha önce kayıt olmuştur.");
+                return View();
+            }
 
             var user = new RegisteredUser
             {
@@ -64,18 +63,21 @@ namespace BalkanPanoramaFimlFestival.Controllers
                 CreatedAt = DateTime.UtcNow
             };
 
+            // CreateAsync method creates a user and saves into the db table,
+            // in case there is an existing user, it returns error message inside of return object
             var identityResult = await _userManager.CreateAsync(user, model.ConfirmPassword);
 
             if (identityResult.Succeeded)
             {   
-                TempData["SuccessMessage"] = "Üyelik işlemi başarı ile gerçekleşmiştir";
+                TempData["SuccessMessage"] = "Üyelik işlemi başarı ile gerçekleşmiştir. Giriş için mail adresinizi onaylayınız.";
 
                 //Return current page, with calling Register(Get) method, passing TempData into it,
                 //so message can be passed and empty form can be seen.
                 return RedirectToAction(nameof(Register));
             }
              
-            //General Errors
+            // This is to display general Errors on Register Page.
+            // It stores errors that comes from CreateAsync method return, into the ModelState.
             foreach (IdentityError error in identityResult.Errors)
             {
                 //If AddModelError's first parameter is being given empty, it means it's used for a general error.
