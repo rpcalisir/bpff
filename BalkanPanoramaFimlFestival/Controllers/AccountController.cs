@@ -63,29 +63,47 @@ namespace BalkanPanoramaFimlFestival.Controllers
 
                 var result = await _userManager.CreateAsync(user, model.Password);
 
-                if (result.Succeeded)
+                try
                 {
-                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code }, protocol: Request.Scheme, host: _appSettings.AppUrl);
-
-                    if (callbackUrl != null)
+                    if (result.Succeeded)
                     {
-                        await _emailSender.SendEmailAsync(model.Email, "Confirm your email",
-                            $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                        var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code }, protocol: Request.Scheme, host: _appSettings.AppUrl);
 
-                        TempData["Message"] = "Registration is successfull. \n A verification email has been sent, check your email please!";
-                        return RedirectToAction("Register");
+                        if (callbackUrl != null)
+                        {
+                            await _emailSender.SendEmailAsync(model.Email, "Confirm your email",
+                                $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+
+                            TempData["Message"] = "Registration is successfull. \n A verification email has been sent, check your email please!";
+                            return RedirectToAction("Register");
+                        }
+                        else
+                        {
+                            // Handle the case where the URL generation fails
+                            ModelState.AddModelError(string.Empty, "Error generating confirmation link.");
+                        }
                     }
                     else
                     {
                         // Handle the case where the URL generation fails
-                        ModelState.AddModelError(string.Empty, "Error generating confirmation link.");
+                        ModelState.AddModelError(string.Empty, "User could not be created.");
                     }
                 }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                    TempData["Message"] = ex.Message;
+                }
+
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
+            }
+            else
+            {
+                TempData["Message"] = "Form data is not valid!";
             }
 
             return View(model);
@@ -124,27 +142,6 @@ namespace BalkanPanoramaFimlFestival.Controllers
         {
             return View();
         }
-
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
-        //{
-        //if (ModelState.IsValid)
-        //{
-        //    var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, isPersistent: false, lockoutOnFailure: false);
-
-        //    if (result.Succeeded)
-        //    {
-        //        TempData["Message"] = "Login successful!";
-        //        return RedirectToLocal(returnUrl);
-        //    }
-        //    else
-        //    {
-        //        ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-        //    }
-        //}
-        //return View(model);
-        //}
 
         [HttpPost]
         [AllowAnonymous]
