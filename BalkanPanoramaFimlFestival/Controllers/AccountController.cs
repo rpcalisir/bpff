@@ -73,11 +73,6 @@ namespace BalkanPanoramaFimlFestival.Controllers
                         await _emailSender.SendEmailAsync(model.Email, "Confirm your email",
                             $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
-                        // Store user data in cookies
-                        Response.Cookies.Append("UserEmail", model.Email, new CookieOptions { Expires = DateTimeOffset.UtcNow.AddDays(30) });
-                        Response.Cookies.Append("UserPassword", model.Password, new CookieOptions { Expires = DateTimeOffset.UtcNow.AddDays(30) });
-
-
                         TempData["Message"] = "Registration is successfull. \n A verification email has been sent, check your email please!";
                         return RedirectToAction("Register");
                     }
@@ -151,48 +146,27 @@ namespace BalkanPanoramaFimlFestival.Controllers
         //return View(model);
         //}
 
-
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
         {
-            ViewData["ReturnUrl"] = returnUrl;
-
-            // Check if cookies are present and log the user in automatically
-            if (Request.Cookies.ContainsKey("UserEmail") && Request.Cookies.ContainsKey("UserPassword"))
-            {
-                var email = Request.Cookies["UserEmail"];
-                var password = Request.Cookies["UserPassword"];
-
-                if (!string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(password))
-                {
-                    var result = await _signInManager.PasswordSignInAsync(email, password, model.RememberMe, lockoutOnFailure: false);
-                    if (result.Succeeded)
-                    {
-                        return RedirectToAction("Index", "Home");
-                    }
-                }
-            }
-
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, isPersistent: false, lockoutOnFailure: false);
+                var user = await _userManager.FindByEmailAsync(model.Email);
+
+                if (user != null && !await _userManager.IsEmailConfirmedAsync(user))
+                {
+                    // User exists but email is not confirmed, sign out the user if signed in
+                    await _signInManager.SignOutAsync();
+                    ModelState.AddModelError(string.Empty, "Your email address is not confirmed. Please check your email for the confirmation link.");
+                    return View(model);
+                }
+
+                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, isPersistent: model.RememberMe, lockoutOnFailure: false);
 
                 if (result.Succeeded)
                 {
-                    var user = await _userManager.FindByEmailAsync(model.Email);
-
-                    if (user != null && !await _userManager.IsEmailConfirmedAsync(user))
-                    {
-                        // Sign out the user because their email is not confirmed
-                        await _signInManager.SignOutAsync();
-
-                        // Add model error to notify the user
-                        ModelState.AddModelError(string.Empty, "Your email address is not confirmed. Please check your email for the confirmation link.");
-                        return View(model);
-                    }
-
                     // Save the user information in cookies if RememberMe is true
                     if (model.RememberMe)
                     {
@@ -222,8 +196,22 @@ namespace BalkanPanoramaFimlFestival.Controllers
                 }
             }
 
+            // If we got this far, something failed, redisplay the form
             return View(model);
         }
+
+        private IActionResult RedirectToLocal(string? returnUrl)
+        {
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+            else
+            {
+                return RedirectToAction(nameof(HomeController.Index), "Home");
+            }
+        }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -232,18 +220,5 @@ namespace BalkanPanoramaFimlFestival.Controllers
             await _signInManager.SignOutAsync();
             return RedirectToAction("Register", "Account");
         }
-
-        private IActionResult RedirectToLocal(string? returnUrl)
-        {
-            if (Url.IsLocalUrl(returnUrl))
-            {
-                return Redirect(returnUrl);
-            }
-            else
-            {
-                return RedirectToAction("Index", "Home");
-            }
-        }
-
     }
 }
