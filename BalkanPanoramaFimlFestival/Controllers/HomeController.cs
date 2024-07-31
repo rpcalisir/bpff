@@ -28,6 +28,7 @@ namespace BalkanPanoramaFimlFestival.Controllers
             _appSettings = appSettings.Value;
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
             return View();
@@ -38,7 +39,6 @@ namespace BalkanPanoramaFimlFestival.Controllers
         {
             return View();
         }
-
 
         [HttpGet]
         public IActionResult SignUp()
