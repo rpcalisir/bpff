@@ -143,12 +143,18 @@ namespace BalkanPanoramaFimlFestival
 
 
 
+            //// Add the custom route for the Admin panel OLD
+            //app.MapControllerRoute(
+
+            //    name: "admin",
+            //    pattern: "admin/{action=AdminPanel}/{id?}",
+            //    defaults: new { controller = "admin" });
+
             // Add the custom route for the Admin panel
             app.MapControllerRoute(
-                
-                name: "admin",
-                pattern: "admin/{action=AdminPanel}/{id?}",
-                defaults: new { controller = "admin" });
+
+                name: "areas",
+                pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
             app.MapControllerRoute(
                 name: "default",
