@@ -27,7 +27,11 @@ So basically adding the scripts other than here will cause the scripts not worki
         <div asp-validation-summary=ModelOnly class="alert alert-danger" role="alert">
         </div>
 
-        <form asp-asp-controller ="Home" asp-action="SignIn" method="post">
+        @* Context can access to app's whole requests and responses, so it can access to return url either.
+        Givin returnUrl as a parameter here, means giving it as a parameter to SignIn action on HomeController.
+        So when user clicks on competition application button while signed out state,
+        there will be a return url, after signing in, the user will be directed to this returnUrl. *@
+        <form asp-asp-controller ="Home" asp-action="SignIn" asp-route-returnurl="@Context.Request.Query["returnUrl"]" method="post">
             <div class="mb-3">
                 <label for="Email" class="form-label" asp-for="Email"></label>
                 <input value="bearzalk@gmail.com" class="form-control" asp-for="Email">
