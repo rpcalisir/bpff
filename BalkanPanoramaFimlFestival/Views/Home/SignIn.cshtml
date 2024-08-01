@@ -4,20 +4,39 @@
     ViewData["Title"] = "SignIn";
 }
 
+@* Codes inside of this body, will be injected into RenderSectionAsync inside of _Layout.cshtml
+Writing the script codes here makes it possible to run the scripts after initiating libraries like Jquery, Bootstrap vs.
+If scripts are put inside any other place on the cshtml, other than section Scripts here;
+They will be executed on the RenderBody on _Layout, which means for example if you want to run a script related to JQuery,
+this way you would be running the script without adding the Jquery library first, which causes the issue.
+So basically adding the scripts other than here will cause the scripts not working properly.
+*@
+@section Scripts
+{
+    @* Makes it possible to run the scripts inside of _ValidationScriptsPartial, so libraries can be installed related to those scripts. *@
+    @* With adding this script here, validation on Registration form is being done on the client side anymore,
+     without sending a request to the server.*@
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}
+
 <div class="row">
     <div class="col-md-4 offset-md-4">
         <h2>GİRİŞ YAP</h2>
 
+        @* General errors related to application *@
+        <div asp-validation-summary=ModelOnly class="alert alert-danger" role="alert">
+        </div>
+
         <form asp-asp-controller ="Home" asp-action="SignIn" method="post">
             <div class="mb-3">
                 <label for="Email" class="form-label" asp-for="Email"></label>
-                <input class="form-control" asp-for="Email">
+                <input value="bearzalk@gmail.com" class="form-control" asp-for="Email">
                 <div id="emailHelp" class="form-text"></div>
                 <span class="text-danger" asp-validation-for="Email"></span>
             </div>
             <div class="mb-3">
                 <label for="Password" class="form-label" asp-for="Password"></label>
-                <input type="password" class="form-control" asp-for="Password">
+                <input value="123456aR*" type="password" class="form-control" asp-for="Password">
                 <span class="text-danger" asp-validation-for="Password"></span>
             </div>
             <div class="mb-3 form-check">

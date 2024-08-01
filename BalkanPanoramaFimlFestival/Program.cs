@@ -8,7 +8,8 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using System.Net.Mail;
 using System.Net;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using BalkanPanoramaFimlFestival.Extensions; // Add the appropriate namespace
+using BalkanPanoramaFimlFestival.Extensions;
+using Microsoft.Extensions.Options; // Add the appropriate namespace
 
 namespace BalkanPanoramaFimlFestival
 {
@@ -31,6 +32,26 @@ namespace BalkanPanoramaFimlFestival
 
             // Use extension method for AddIdentity
             builder.Services.AddIdentityWithExtension();
+
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                // To prevent users to go "film contest application" page without siging in,
+                // we define a login path here to redirect them to signin page.
+                // So, if User is not Authorized, direct them to login page.
+                options.LoginPath = new PathString("/Home/SignIn");
+
+                options.Cookie = new CookieBuilder
+                {
+                    Name = "bpffRegisteredUserCookie",
+                    HttpOnly = true,
+                    SameSite = SameSiteMode.Strict,
+                    SecurePolicy = CookieSecurePolicy.Always,
+                };
+
+                options.ExpireTimeSpan = TimeSpan.FromDays(60);
+                options.SlidingExpiration = true; // If true, whenever user enters the website, timespan of cookie is refreshed.
+            });
+
 
             var app = builder.Build();
 

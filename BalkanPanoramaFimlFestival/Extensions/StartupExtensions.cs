@@ -6,7 +6,7 @@ using BalkanPanoramaFimlFestival.Localization;
 
 namespace BalkanPanoramaFimlFestival.Extensions
 {
-    public static class ProgramExtensions
+    public static class StartupExtensions
     {
         public static void AddIdentityWithExtension(this IServiceCollection services)
         {
@@ -19,6 +19,10 @@ namespace BalkanPanoramaFimlFestival.Extensions
                 //options.Password.RequiredLength = 6;
                 options.Password.RequiredUniqueChars = 1;
                 //options.SignIn.RequireConfirmedAccount = true;
+
+                //Lockout
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(3);
+                options.Lockout.MaxFailedAccessAttempts = 3;
             })
             .AddUserValidator<UserValidator>() // Use custom validator
             .AddErrorDescriber<IdentityErrorDescriberLocalization>() 

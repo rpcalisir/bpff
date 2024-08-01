@@ -28,8 +28,9 @@
                     </ul>
                 </div>
 
-                <a class="btn btn-outline-success mx-1" asp-controller="Home" asp-action="SignIn">Giriş</a>
-                <a class="btn btn-outline-success" asp-controller="Home" asp-action="SignUp">Üye Ol</a>
+                @* Signed In User Partial View *@
+                <partial name="PartialViews/_NavBarSignedInUser.cshtml"/>
+
             </div>
         </nav>
     </header>
