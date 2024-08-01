@@ -30,7 +30,7 @@ namespace BalkanPanoramaFimlFestival
             // Register the AppUrl configuration
             builder.Services.Configure<ApplicationSettings>(builder.Configuration.GetSection("ApplicationSettings"));
 
-            // Use extension method for AddIdentity
+            // Use extension method for AddIdentity and Configure
             builder.Services.AddIdentityWithExtension();
 
             builder.Services.ConfigureApplicationCookie(options =>

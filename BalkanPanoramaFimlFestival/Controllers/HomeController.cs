@@ -61,7 +61,7 @@ namespace BalkanPanoramaFimlFestival.Controllers
 
             // If lockoutOnFailure is true, system will be locked after three unsuccessful login attempts.
             // RememberMe is being handled here with isPersistent
-            var signInResult = await _signInManager.PasswordSignInAsync(foundUser, model.Password, model.RememberMe, true); 
+            var signInResult = await _signInManager.PasswordSignInAsync(foundUser, model.Password, model.RememberMe, true);
 
             if (signInResult.Succeeded)
             {
@@ -75,9 +75,9 @@ namespace BalkanPanoramaFimlFestival.Controllers
                 return View();
             }
 
-            ModelState.AddModelErrorList(new List<string>() { 
+            ModelState.AddModelErrorList(new List<string>() {
                 "Email onaylanmadı veya şifre yanlış! ",
-                $"(Başarısız giriş sayısı:{await _userManager.GetAccessFailedCountAsync(foundUser)})(MAX:3)" 
+                $"(Başarısız giriş sayısı:{await _userManager.GetAccessFailedCountAsync(foundUser)})(MAX:3)"
             });
 
             return View();
@@ -136,5 +136,47 @@ namespace BalkanPanoramaFimlFestival.Controllers
 
             return View();
         }
+
+        public IActionResult ForgetPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ForgetPassword(ForgetPasswordViewModel model)
+        {
+            var hasUser = await _userManager.FindByEmailAsync(model.Email);
+
+            if (hasUser == null)
+            {
+                ModelState.AddModelError(String.Empty, "Bu email adresine sahip kullanıcı yoktur");
+
+                // Returns a request to Http Get method ForgetPassword,
+                // so it returns ForgetPassword.cshtml with empty form.
+                // Requests are stateless, thus the data cannot be transfered between requests.
+                // If Redirect was used here, error in ModelState would be lost,
+                // because data cannot be transfered via ModelState.
+                // If Redirect was used here, TempData can be used to move error data.
+                return View();
+            }
+
+            // Generate reset token and link
+            string passwordResetToken = await _userManager.GeneratePasswordResetTokenAsync(hasUser);
+            var passwordResetLink = Url.Action("ResetPassword", "Home", 
+                new { userId = hasUser.Id, Token= passwordResetToken } );
+
+            // Email Service
+
+            // If these lines are used, after this message is appeared on the screen and
+            // user reloads the screen, the user will keep seeing this message, which is not a desired behavior.
+            // Basically, this message will stay on the screen even after page reload.
+            //ViewBag.SuccessMessage = "Şifre yenileme linki mail adresine gönderildi";
+            //return View();
+
+            TempData["SuccessMessage"] = "Şifre yenileme linki mail adresine gönderildi";
+            return RedirectToAction(nameof(ForgetPassword));
+        }
+
+
     }
 }

@@ -10,6 +10,12 @@ namespace BalkanPanoramaFimlFestival.Extensions
     {
         public static void AddIdentityWithExtension(this IServiceCollection services)
         {
+            // ResetPassword token lifespan configuration
+            services.Configure<DataProtectionTokenProviderOptions>(options =>
+            {
+                options.TokenLifespan = TimeSpan.FromHours(2);
+            });
+
             services.AddIdentity<RegisteredUser, IdentityRole>(options =>
             {
                 options.User.RequireUniqueEmail = true;
@@ -25,7 +31,8 @@ namespace BalkanPanoramaFimlFestival.Extensions
                 options.Lockout.MaxFailedAccessAttempts = 3;
             })
             .AddUserValidator<UserValidator>() // Use custom validator
-            .AddErrorDescriber<IdentityErrorDescriberLocalization>() 
+            .AddErrorDescriber<IdentityErrorDescriberLocalization>()
+            .AddDefaultTokenProviders()
             .AddEntityFrameworkStores<ApplicationDbContext>();
         }
     }
