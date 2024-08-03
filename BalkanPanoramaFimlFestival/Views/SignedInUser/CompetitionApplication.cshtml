@@ -1,0 +1,59 @@
+﻿@model CompetitionApplicationUserViewModel
+
+@{
+    ViewData["Title"] = "CompetitionApplication";
+}
+
+@section Scripts
+{
+    @await Html.PartialAsync("PartialScripts/_ValidationScriptsPartial")
+}
+
+<h1 class="text-center">YARIŞMA BAŞVURUSU</h1>
+
+<div class="container">
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-info" role="alert">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    @* General errors related to application (comes from ModelState) *@
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+    <form asp-controller="SignedInUser" asp-action="CompetitionApplication" method="post">
+        @* Display validation errors for the specific field *@
+        <div class="text-danger mb-3">
+            <span asp-validation-for="CompetitionCategory"></span>
+        </div>
+
+        <b2 class="col-md-10 offset-md-1"><strong>YARIŞMA KATEGORİSİNİ SEÇİNİZ</strong></b2>
+
+        <div class="row mb-3">
+            <div class="col-md-10 offset-md-1">
+                <div class="form-check form-check-inline">
+                    <input type="radio" asp-for="CompetitionCategory" value="Option1" class="form-check-input" id="option1" />
+                    <label class="form-check-label" for="option1">SARI ŞEMSİYE ULUSAL UZUN METRAJ FİLM YARIŞMASI</label>
+                </div>
+
+                <div class="form-check form-check-inline mx-3">
+                    <input type="radio" asp-for="CompetitionCategory" value="Option2" class="form-check-input" id="option2" />
+                    <label class="form-check-label" for="option2">SARI ŞEMSİYE ULUSAL KISA METRAJ FİLM YARIŞMASI</label>
+                </div>
+
+                <div class="form-check form-check-inline">
+                    <input type="radio" asp-for="CompetitionCategory" value="Option3" class="form-check-input" id="option3" />
+                    <label class="form-check-label" for="option3">DARIO MORENO</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-10 offset-md-1 text-start">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+    </form>
+</div>

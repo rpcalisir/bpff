@@ -1,9 +1,13 @@
 ﻿using BalkanPanoramaFilmFestival.Extensions;
+using BalkanPanoramaFilmFestival.Models;
 using BalkanPanoramaFilmFestival.Models.Account;
+using BalkanPanoramaFilmFestival.Models.CompetitionApplication;
 using BalkanPanoramaFilmFestival.ViewModels.Account;
+using BalkanPanoramaFilmFestival.ViewModels.CompetitionApplication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BalkanPanoramaFilmFestival.Controllers
 {
@@ -13,18 +17,60 @@ namespace BalkanPanoramaFilmFestival.Controllers
     {
         private readonly SignInManager<RegisteredUser> _signInManager;
         private readonly UserManager<RegisteredUser> _userManager;
+        private readonly ApplicationDbContext _context;
 
-        public SignedInUserController(SignInManager<RegisteredUser> signInManager, 
-            UserManager<RegisteredUser> userManager)
+        public SignedInUserController(SignInManager<RegisteredUser> signInManager,
+            UserManager<RegisteredUser> userManager,
+            ApplicationDbContext context)
         {
             _signInManager = signInManager;
             _userManager = userManager;
+            _context = context;
+        }
+
+        public IActionResult CompetitionApplication()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CompetitionApplication(CompetitionApplicationUserViewModel model)
+        {
+            if (!model.CompetitionCategory.Any())
+            {
+                ModelState.AddModelError(string.Empty, "At least one competition category must be selected.");
+            }
+
+            //In case of signup form data is not valid, return the view without deleting the form data
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+
+            var user = new CompetitionApplicationUser
+            {
+                CompetitionCategory = model.CompetitionCategoryDescription,
+            };
+
+            // Save the form data to the database
+            _context.CompetitionApplications.Add(user);
+            var result = await _context.SaveChangesAsync();
+
+            if (result > 0)
+            {
+                TempData["SuccessMessage"] = "Your application has been submitted successfully.";
+                return RedirectToAction(nameof(CompetitionApplication)); // Redirect to prevent resubmission on refresh
+            }
+
+            ModelState.AddModelError(string.Empty, "An error occurred while processing your application");
+
+            return View(model);
         }
 
         // In case a user wants to go to this page, 
         // it will be directed to LoginPath page
         // which is configured on ConfigureApplicationCookie in Program.cs
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Profile()
         {
             if (User.Identity?.Name == null)
             {
