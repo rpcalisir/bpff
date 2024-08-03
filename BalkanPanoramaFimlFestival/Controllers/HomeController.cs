@@ -54,6 +54,12 @@ namespace BalkanPanoramaFilmFestival.Controllers
         [HttpPost]
         public async Task<IActionResult> SignIn(SignInViewModel model, string? returnUrl = null)
         {
+            //In case of signin form data is not valid, return the view without deleting the form data
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+
             returnUrl = returnUrl ?? Url.Action("Index", "Home");
 
             var foundUser = await _userManager.FindByEmailAsync(model.Email);
@@ -97,7 +103,7 @@ namespace BalkanPanoramaFilmFestival.Controllers
         [HttpPost]
         public async Task<IActionResult> SignUp(SignUpViewModel model)
         {
-            //In case of register form data is not valid, return the view without deleting the form data
+            //In case of signup form data is not valid, return the view without deleting the form data
             if (!ModelState.IsValid)
             {
                 return View();
