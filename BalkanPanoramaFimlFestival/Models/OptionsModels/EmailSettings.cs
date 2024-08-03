@@ -1,4 +1,4 @@
-﻿namespace BalkanPanoramaFimlFestival.Models.OptionsModels
+﻿namespace BalkanPanoramaFilmFestival.Models.OptionsModels
 {
     public class EmailSettings
     {

@@ -1,4 +1,4 @@
-﻿namespace BalkanPanoramaFimlFestival.Models
+﻿namespace BalkanPanoramaFilmFestival.Models
 {
     public class ContactForm
     {

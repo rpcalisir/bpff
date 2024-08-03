@@ -1,19 +1,19 @@
 using Microsoft.EntityFrameworkCore;
 using WkHtmlToPdfDotNet.Contracts;
 using WkHtmlToPdfDotNet;
-using BalkanPanoramaFimlFestival.Models;
-using BalkanPanoramaFimlFestival.Models.Account;
+using BalkanPanoramaFilmFestival.Models;
+using BalkanPanoramaFilmFestival.Models.Account;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using System.Net.Mail;
 using System.Net;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using BalkanPanoramaFimlFestival.Extensions;
+using BalkanPanoramaFilmFestival.Extensions;
 using Microsoft.Extensions.Options;
-using BalkanPanoramaFimlFestival.Models.OptionsModels;
-using BalkanPanoramaFimlFestival.Services; // Add the appropriate namespace
+using BalkanPanoramaFilmFestival.Models.OptionsModels;
+using BalkanPanoramaFilmFestival.Services; // Add the appropriate namespace
 
-namespace BalkanPanoramaFimlFestival
+namespace BalkanPanoramaFilmFestival
 {
     public class Program
     {

@@ -1,7 +1,7 @@
-﻿using BalkanPanoramaFimlFestival.Models.Account;
+﻿using BalkanPanoramaFilmFestival.Models.Account;
 using Microsoft.AspNetCore.Identity;
 
-namespace BalkanPanoramaFimlFestival.CustomValidations
+namespace BalkanPanoramaFilmFestival.CustomValidations
 {
     public class UserValidator : IUserValidator<RegisteredUser>
     {

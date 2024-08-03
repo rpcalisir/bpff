@@ -1,4 +1,4 @@
-﻿using BalkanPanoramaFimlFestival.Models;
+﻿using BalkanPanoramaFilmFestival.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Net.Mail;
@@ -6,14 +6,14 @@ using System.Net;
 using System;
 using WkHtmlToPdfDotNet.Contracts;
 using WkHtmlToPdfDotNet;
-using BalkanPanoramaFimlFestival.Models.Account;
-using BalkanPanoramaFimlFestival.ViewModels.Account;
+using BalkanPanoramaFilmFestival.Models.Account;
+using BalkanPanoramaFilmFestival.ViewModels.Account;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
-using BalkanPanoramaFimlFestival.Extensions;
-using BalkanPanoramaFimlFestival.Services;
+using BalkanPanoramaFilmFestival.Extensions;
+using BalkanPanoramaFilmFestival.Services;
 
-namespace BalkanPanoramaFimlFestival.Controllers
+namespace BalkanPanoramaFilmFestival.Controllers
 {
     public class HomeController : Controller
     {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace BalkanPanoramaFimlFestival.Models.Account
+namespace BalkanPanoramaFilmFestival.Models.Account
 {
     public class RegisteredUser : IdentityUser
     {

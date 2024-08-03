@@ -1,4 +1,4 @@
-﻿namespace BalkanPanoramaFimlFestival.Models.Account
+﻿namespace BalkanPanoramaFilmFestival.Models.Account
 {
     public class ApplicationSettings
     {

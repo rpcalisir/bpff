@@ -1,8 +1,8 @@
-﻿using BalkanPanoramaFimlFestival.Models.Account;
+﻿using BalkanPanoramaFilmFestival.Models.Account;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace BalkanPanoramaFimlFestival.Models
+namespace BalkanPanoramaFilmFestival.Models
 {
     public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : IdentityDbContext<RegisteredUser>(options)

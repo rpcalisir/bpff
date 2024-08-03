@@ -1,10 +1,10 @@
-﻿using BalkanPanoramaFimlFestival.Models.Account;
-using BalkanPanoramaFimlFestival.Models;
+﻿using BalkanPanoramaFilmFestival.Models.Account;
+using BalkanPanoramaFilmFestival.Models;
 using Microsoft.AspNetCore.Identity;
-using BalkanPanoramaFimlFestival.CustomValidations;
-using BalkanPanoramaFimlFestival.Localization;
+using BalkanPanoramaFilmFestival.CustomValidations;
+using BalkanPanoramaFilmFestival.Localization;
 
-namespace BalkanPanoramaFimlFestival.Extensions
+namespace BalkanPanoramaFilmFestival.Extensions
 {
     public static class StartupExtensions
     {

@@ -1,4 +1,4 @@
-﻿namespace BalkanPanoramaFimlFestival.Areas.Admin.Models
+﻿namespace BalkanPanoramaFilmFestival.Areas.Admin.Models
 {
     public class UserViewModel
     {

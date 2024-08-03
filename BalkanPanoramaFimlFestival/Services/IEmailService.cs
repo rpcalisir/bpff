@@ -1,4 +1,4 @@
-﻿namespace BalkanPanoramaFimlFestival.Services
+﻿namespace BalkanPanoramaFilmFestival.Services
 {
     public interface IEmailService
     {

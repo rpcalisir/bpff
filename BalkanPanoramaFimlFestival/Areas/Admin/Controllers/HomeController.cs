@@ -1,10 +1,10 @@
-﻿using BalkanPanoramaFimlFestival.Areas.Admin.Models;
-using BalkanPanoramaFimlFestival.Models.Account;
+﻿using BalkanPanoramaFilmFestival.Areas.Admin.Models;
+using BalkanPanoramaFilmFestival.Models.Account;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace BalkanPanoramaFimlFestival.Areas.Admin.Controllers
+namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
 {
     [Area("Admin")] //Specifies that when admin is in the url, it should look for this HomeController
     public class HomeController : Controller

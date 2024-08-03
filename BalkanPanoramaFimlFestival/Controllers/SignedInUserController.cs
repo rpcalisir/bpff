@@ -1,9 +1,9 @@
-﻿using BalkanPanoramaFimlFestival.Models.Account;
+﻿using BalkanPanoramaFilmFestival.Models.Account;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BalkanPanoramaFimlFestival.Controllers
+namespace BalkanPanoramaFilmFestival.Controllers
 {
     // Only SignedIn User can use this Controller and its methods
     [Authorize]

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace BalkanPanoramaFimlFestival.Extensions
+namespace BalkanPanoramaFilmFestival.Extensions
 {
     public static class ModelStateExtensions
     {

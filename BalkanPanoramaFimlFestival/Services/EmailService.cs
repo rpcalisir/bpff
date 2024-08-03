@@ -1,10 +1,10 @@
 ﻿
-using BalkanPanoramaFimlFestival.Models.OptionsModels;
+using BalkanPanoramaFilmFestival.Models.OptionsModels;
 using Microsoft.Extensions.Options;
 using System.Net;
 using System.Net.Mail;
 
-namespace BalkanPanoramaFimlFestival.Services
+namespace BalkanPanoramaFilmFestival.Services
 {
     public class EmailService : IEmailService
     {

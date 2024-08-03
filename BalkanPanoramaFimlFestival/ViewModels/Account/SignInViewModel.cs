@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BalkanPanoramaFimlFestival.ViewModels.Account
+namespace BalkanPanoramaFilmFestival.ViewModels.Account
 {
     public class SignInViewModel
     {
