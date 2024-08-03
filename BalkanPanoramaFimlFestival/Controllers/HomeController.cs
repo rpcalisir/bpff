@@ -11,6 +11,7 @@ using BalkanPanoramaFimlFestival.ViewModels.Account;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using BalkanPanoramaFimlFestival.Extensions;
+using BalkanPanoramaFimlFestival.Services;
 
 namespace BalkanPanoramaFimlFestival.Controllers
 {
@@ -25,13 +26,17 @@ namespace BalkanPanoramaFimlFestival.Controllers
         // Used for url redirection for development and release
         private readonly ApplicationSettings _appSettings;
 
+        private readonly IEmailService _emailService;
+
         public HomeController(UserManager<RegisteredUser> userManager,
             SignInManager<RegisteredUser> signInManager,
-            IOptions<ApplicationSettings> appSettings)
+            IOptions<ApplicationSettings> appSettings,
+            IEmailService emailService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _appSettings = appSettings.Value;
+            _emailService = emailService;
         }
 
         [HttpGet]
@@ -90,7 +95,7 @@ namespace BalkanPanoramaFimlFestival.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SignUp(RegisterViewModel model)
+        public async Task<IActionResult> SignUp(SignUpViewModel model)
         {
             //In case of register form data is not valid, return the view without deleting the form data
             if (!ModelState.IsValid)
@@ -162,10 +167,12 @@ namespace BalkanPanoramaFimlFestival.Controllers
 
             // Generate reset token and link
             string passwordResetToken = await _userManager.GeneratePasswordResetTokenAsync(hasUser);
-            var passwordResetLink = Url.Action("ResetPassword", "Home", 
-                new { userId = hasUser.Id, Token= passwordResetToken } );
+            var passwordResetLink = Url.Action("ResetPassword", "Home",
+                new { userId = hasUser.Id, Token = passwordResetToken },
+                HttpContext.Request.Scheme); // Adds host at the beginning of the url
 
             // Email Service
+            await _emailService.SendResetPasswordMail(passwordResetLink!, hasUser.Email!);
 
             // If these lines are used, after this message is appeared on the screen and
             // user reloads the screen, the user will keep seeing this message, which is not a desired behavior.
@@ -177,6 +184,47 @@ namespace BalkanPanoramaFimlFestival.Controllers
             return RedirectToAction(nameof(ForgetPassword));
         }
 
+        public IActionResult ResetPassword(string userId, string token)
+        {
+            TempData["userId"] = userId;
+            TempData["token"] = token;
+
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            // TempData can be read only for once, if the page is refreshed then it is lost.
+            var userId = TempData["userId"];
+            var token = TempData["token"];
+
+            if (userId == null || token == null)
+            {
+                throw new Exception("Bir hata meydana geldi");
+            }
+
+
+            var hasUser = await _userManager.FindByIdAsync(userId.ToString()!);
+
+            if (hasUser == null)
+            {
+                ModelState.AddModelError(string.Empty, "Kullanıcı bulunamadı");
+                return View();
+            }
+
+            var result = await _userManager.ResetPasswordAsync(hasUser, token.ToString()!, model.Password);
+            if (result.Succeeded)
+            {
+                TempData["SuccessMessage"] = "Şifre başarıyla yenilenmiştir";
+            }
+            else
+            {
+                ModelState.AddModelErrorList(result.Errors.Select(d => d.Description).ToList());
+            }
+
+            return View();
+        }
 
     }
 }

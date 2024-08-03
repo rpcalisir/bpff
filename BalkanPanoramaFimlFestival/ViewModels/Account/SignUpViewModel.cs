@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BalkanPanoramaFimlFestival.ViewModels.Account
 {
-    public class RegisterViewModel
+    public class SignUpViewModel
     {
         [Required(ErrorMessage ="İsim alanı boş bırakılamaz")]
         [Display(Name = "Kullanıcı Adı")]

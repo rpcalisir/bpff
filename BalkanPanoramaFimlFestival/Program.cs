@@ -9,7 +9,9 @@ using System.Net.Mail;
 using System.Net;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using BalkanPanoramaFimlFestival.Extensions;
-using Microsoft.Extensions.Options; // Add the appropriate namespace
+using Microsoft.Extensions.Options;
+using BalkanPanoramaFimlFestival.Models.OptionsModels;
+using BalkanPanoramaFimlFestival.Services; // Add the appropriate namespace
 
 namespace BalkanPanoramaFimlFestival
 {
@@ -30,8 +32,19 @@ namespace BalkanPanoramaFimlFestival
             // Register the AppUrl configuration
             builder.Services.Configure<ApplicationSettings>(builder.Configuration.GetSection("ApplicationSettings"));
 
+            // If IEmailService exists in any class, give an instance of EmailService to there.
+            // Scoped means, after request returns the response, EmailService instance will be deleted from memory,
+            // each EmailService instance will be created with each request.
+            builder.Services.AddScoped<IEmailService, EmailService>();
+
+
             // Use extension method for AddIdentity and Configure
             builder.Services.AddIdentityWithExtension();
+
+            // If IOptions<EmailSettings> is seen in any class's constructor,
+            // a new instance of EmailSettings will be created and it's properties will be filled
+            // with data that comes from "EmailSettings" on appsettings.json
+            builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 
             builder.Services.ConfigureApplicationCookie(options =>
             {

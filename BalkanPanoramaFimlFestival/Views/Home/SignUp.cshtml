@@ -1,4 +1,4 @@
-﻿@model RegisterViewModel
+﻿@model SignUpViewModel
 
 @{
     ViewData["Title"] = "SignUp";
@@ -16,11 +16,11 @@ So basically adding the scripts other than here will cause the scripts not worki
     @* Makes it possible to run the scripts inside of _ValidationScriptsPartial, so libraries can be installed related to those scripts. *@
     @* With adding this script here, validation on Registration form is being done on the client side anymore, 
      without sending a request to the server.*@
-    @await Html.PartialAsync("_ValidationScriptsPartial")
+    @await Html.PartialAsync("PartialScripts/_ValidationScriptsPartial")
 }
 
 <div class="row">
-    <div class="col-md-8 offset-md-3">
+    <div class="col-md-6 offset-md-3">
         <h2>KAYIT OL</h2>
 
         @if (TempData["SuccessMessage"] != null)
@@ -87,7 +87,7 @@ So basically adding the scripts other than here will cause the scripts not worki
 
             <div class="row mb-3">
                 <div class="col-md-8 offset-md-4">
-                    <button type="submit" class="btn btn-primary">Register</button>
+                    <button type="submit" class="btn btn-primary">Kayıt Ol</button>
                 </div>
             </div>
 

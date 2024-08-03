@@ -16,6 +16,15 @@ namespace BalkanPanoramaFimlFestival.Extensions
                 options.TokenLifespan = TimeSpan.FromHours(2);
             });
 
+            // If user data is changed in another browser,
+            // security stamp automatically signs out and redirects user to signin page
+            // on the browser which cookies stored with old information.
+            // SecurityStamp is not called by itself, it is called explicitly like here.
+            services.Configure<SecurityStampValidatorOptions>(options =>
+            {
+                options.ValidationInterval = TimeSpan.FromMinutes(30);
+            });
+
             services.AddIdentity<RegisteredUser, IdentityRole>(options =>
             {
                 options.User.RequireUniqueEmail = true;

@@ -16,7 +16,7 @@ So basically adding the scripts other than here will cause the scripts not worki
     @* Makes it possible to run the scripts inside of _ValidationScriptsPartial, so libraries can be installed related to those scripts. *@
     @* With adding this script here, validation on Registration form is being done on the client side anymore,
      without sending a request to the server.*@
-    @await Html.PartialAsync("_ValidationScriptsPartial")
+    @await Html.PartialAsync("PartialScripts/_ValidationScriptsPartial")
 }
 
 <div class="row">
