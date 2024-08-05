@@ -1,8 +1,11 @@
 ﻿using BalkanPanoramaFilmFestival.Areas.Admin.Models;
+using BalkanPanoramaFilmFestival.Models;
 using BalkanPanoramaFilmFestival.Models.Account;
+using BalkanPanoramaFilmFestival.Models.CompetitionApplication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
 {
@@ -10,10 +13,13 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
     public class HomeController : Controller
     {
         private readonly UserManager<RegisteredUser> _userManager;
+        private readonly ApplicationDbContext _context;
 
-        public HomeController(UserManager<RegisteredUser> userManager)
+        public HomeController(UserManager<RegisteredUser> userManager, 
+            ApplicationDbContext context)
         {
             _userManager = userManager;
+            _context = context;
         }
 
         public IActionResult Index()
@@ -37,5 +43,23 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
             return View(adminUserViewModelList);
         }
 
+        public async Task<IActionResult> CompetitionApplications()
+        {
+            var applicationsList = await _context.CompetitionApplications.ToListAsync();
+
+            var competitionApplicationUserViewModelList = applicationsList.Select(x => new CompetitionApplicationUserViewModel()
+            {
+                Id =x.Id,
+                CompetitionCategory = x.CompetitionCategory,
+                ProductionYear = x.ProductionYear,
+                Applicant = x.Applicant,
+                ApplicantMail = x.ApplicantMail,
+                ApplicantCountry = x.ApplicantCountry,
+                MovieName = x.MovieName,
+                DirectorName = x.DirectorName
+            }).ToList();
+
+            return View(competitionApplicationUserViewModelList);
+        }
     }
 }

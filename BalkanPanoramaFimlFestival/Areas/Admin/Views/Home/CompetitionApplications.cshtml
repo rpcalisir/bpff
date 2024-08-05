@@ -1,0 +1,36 @@
+﻿@model List<CompetitionApplicationUserViewModel>
+
+@{
+    ViewData["Title"] = "CompetitionApplications";
+}
+
+<h1>Competition Applications</h1>
+
+<table class="table table-success table-striped">
+    <thead>
+        <tr>
+            <th>Kategori</th>
+            <th>Yapım Yılı</th>
+            <th>Başvuru Sahibi</th>
+            <th>Email</th>
+            <th>Ülke</th>
+            <th>Film Adı</th>
+            <th>Yönetmen</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.CompetitionCategory</td>
+                <td>@item.ProductionYear</td>
+                <td>@item.Applicant</td>
+                <td>@item.ApplicantMail</td>
+                <td>@item.ApplicantCountry</td>
+                <td>@item.MovieName</td>
+                <td>@item.DirectorName</td>
+            </tr>
+        }
+    </tbody>
+</table>

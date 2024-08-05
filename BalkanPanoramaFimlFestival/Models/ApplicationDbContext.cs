@@ -2,6 +2,7 @@
 using BalkanPanoramaFilmFestival.Models.CompetitionApplication;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using BalkanPanoramaFilmFestival.Areas.Admin.Models;
 
 namespace BalkanPanoramaFilmFestival.Models
 {
@@ -22,5 +23,6 @@ namespace BalkanPanoramaFilmFestival.Models
             //});
             base.OnModelCreating(modelBuilder);
         }
+        public DbSet<BalkanPanoramaFilmFestival.Areas.Admin.Models.CompetitionApplicationUserViewModel> CompetitionApplicationUserViewModel { get; set; } = default!;
     }
 }

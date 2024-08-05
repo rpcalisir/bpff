@@ -46,11 +46,15 @@ namespace BalkanPanoramaFilmFestival.Controllers
             {
                 return View();
             }
+            var signedInUser = await _userManager.FindByNameAsync(User.Identity!.Name!);
 
             var user = new CompetitionApplicationUser
             {
                 CompetitionCategory = model.CompetitionCategoryDescription,
                 ProductionYear = model.ProductionYear,
+                Applicant = signedInUser!.FirstName + " " + signedInUser!.LastName,
+                ApplicantMail = signedInUser!.Email,
+                ApplicantCountry = signedInUser!.Country,
                 MovieName = model.MovieName,
                 DirectorName = model.DirectorName
             };
