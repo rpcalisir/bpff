@@ -20,5 +20,8 @@ namespace BalkanPanoramaFilmFestival.ViewModels.CompetitionApplication
                 };
             }
         }
+        public required string ProductionYear { get; set; }
+        public required string MovieName { get; set; }
+        public required string DirectorName { get; set; }
     }
 }

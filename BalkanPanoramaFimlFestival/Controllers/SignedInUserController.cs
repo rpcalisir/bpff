@@ -50,6 +50,9 @@ namespace BalkanPanoramaFilmFestival.Controllers
             var user = new CompetitionApplicationUser
             {
                 CompetitionCategory = model.CompetitionCategoryDescription,
+                ProductionYear = model.ProductionYear,
+                MovieName = model.MovieName,
+                DirectorName = model.DirectorName
             };
 
             // Save the form data to the database
