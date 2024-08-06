@@ -22,7 +22,7 @@ So basically adding the scripts other than here will cause the scripts not worki
 
 <div class="row">
     <div class="col-md-6 offset-md-3">
-        <h2>KAYIT OL</h2>
+        <h2>SIGN UP</h2>
 
         @if (TempData["SuccessMessage"] != null)
         {
@@ -60,7 +60,9 @@ So basically adding the scripts other than here will cause the scripts not worki
             <div class="row mb-3">
                 <label for="PhoneNumber" class="col-md-4 col-form-label" asp-for="PhoneNumber"></label>
                 <div class="col-md-8">
-                    <input asp-for="PhoneNumber" class="form-control">
+                    <div class="input-group">
+                        <input asp-for="PhoneNumber" class="form-control">
+                    </div>
                     <span class="text-danger" asp-validation-for="PhoneNumber"></span>
                 </div>
             </div>
@@ -71,7 +73,6 @@ So basically adding the scripts other than here will cause the scripts not worki
                     <span class="text-danger" asp-validation-for="Country"></span>
                 </div>
             </div>
-
             <div class="row mb-3">
                 <label for="Password" class="col-md-4 col-form-label" asp-for="Password"></label>
                 <div class="col-md-8">
@@ -84,8 +85,6 @@ So basically adding the scripts other than here will cause the scripts not worki
                     <span class="text-danger" asp-validation-for="Password"></span>
                 </div>
             </div>
-
-
             <div class="row mb-3">
                 <label for="ConfirmPassword" class="col-md-4 col-form-label" asp-for="ConfirmPassword"></label>
                 <div class="col-md-8">
@@ -96,7 +95,7 @@ So basically adding the scripts other than here will cause the scripts not worki
 
             <div class="row mb-3">
                 <div class="col-md-8 offset-md-4">
-                    <button type="submit" class="btn btn-primary">Kayıt Ol</button>
+                    <button type="submit" class="btn btn-primary">Sign Up</button>
                 </div>
             </div>
 
@@ -105,3 +104,13 @@ So basically adding the scripts other than here will cause the scripts not worki
 </div>
 
 
+@* Phone Number Script *@
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var input = document.querySelector("#phone");
+        window.intlTelInput(input, {
+            initialCountry: "tr", // Set your default country here
+            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js" // for formatting
+        });
+    });
+</script>

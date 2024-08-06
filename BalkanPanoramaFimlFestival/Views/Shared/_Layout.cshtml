@@ -11,6 +11,10 @@
     @* Show Password Button Icon Font Awesome include *@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" 
     integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    @* Phone Number library *@
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css">
+
 </head>
 <body>
     <header>
@@ -49,6 +53,9 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @* Phone Number library *@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
 
     @* In any View Page that is using this Layout, if a script wants to be used, RenderSectionAsync specifies where to put the script into. *@
     @await RenderSectionAsync("Scripts", required: false)

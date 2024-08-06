@@ -5,37 +5,37 @@ namespace BalkanPanoramaFilmFestival.ViewModels.Account
 {
     public class SignUpViewModel
     {
-        [Required(ErrorMessage ="İsim alanı boş bırakılamaz")]
-        [Display(Name = "Kullanıcı Adı")]
+        [Required(ErrorMessage ="First Name cannot be empty!")]
+        [Display(Name = "Name")]
         public required string FirstName { get; set; }
 
-        [Required(ErrorMessage = "Soyadı alanı boş bırakılamaz")]
-        [Display(Name = "Soyadı")]
+        [Required(ErrorMessage = "Last Name cannot be empty!")]
+        [Display(Name = "Lastname")]
         public required string LastName { get; set; }
 
-        [Required(ErrorMessage = "Email alanı boş bırakılamaz")]
+        [Required(ErrorMessage = "Email cannot be empty!")]
         [Display(Name = "Email")]
-        [EmailAddress(ErrorMessage = "Email formatı yanlıştır.")]
+        [EmailAddress(ErrorMessage = "Email format is wrong!")]
         public required string Email { get; set; }
 
-        [Required(ErrorMessage = "Telefon alanı boş bırakılamaz")]
+        [Required(ErrorMessage = "Phone Number cannot be empty!")]
         [Phone]
-        [Display(Name = "Telefon Numarası")]
+        [Display(Name = "Phone Number")]
         public required string PhoneNumber { get; set; }
 
-        [Required(ErrorMessage = "Ülke alanı boş bırakılamaz")]
-        [Display(Name = "Ülke")]
+        [Required(ErrorMessage = "Country cannot be empty!")]
+        [Display(Name = "Country")]
         public required string Country { get; set; }
 
-        [Required(ErrorMessage = "Şifre alanı boş bırakılamaz")]
+        [Required(ErrorMessage = "Password cannot be empty!")]
         [DataType(DataType.Password)]
-        [Display(Name = "Şifre")]
+        [Display(Name = "Password")]
         public required string Password { get; set; }
 
-        [Required(ErrorMessage = "Şifre alanı boş bırakılamaz")]
+        [Required(ErrorMessage = "Password Confirm cannot be empty!")]
         [DataType(DataType.Password)]
-        [Display(Name = "Şifre Tekrar")]
-        [Compare(nameof(Password), ErrorMessage = "Şifre aynı değil")]
+        [Display(Name = "Password Confirm")]
+        [Compare(nameof(Password), ErrorMessage = "Passwords does not match!")]
         public required string ConfirmPassword { get; set; }
     }
 }
