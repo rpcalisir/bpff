@@ -4,17 +4,17 @@ namespace BalkanPanoramaFilmFestival.ViewModels.Account
 {
     public class SignInViewModel
     {
-        [Required(ErrorMessage = "Email alanı boş bırakılamaz")]
+        [Required(ErrorMessage = "Email cannot be empty!")]
         [Display(Name = "Email")]
-        [EmailAddress(ErrorMessage = "Email formatı yanlıştır.")]
+        [EmailAddress(ErrorMessage = "Email format is wrong!")]
         public required string Email { get; set; }
 
-        [Required(ErrorMessage = "Şifre alanı boş bırakılamaz")]
+        [Required(ErrorMessage = "Password cannot be empty!")]
         [DataType(DataType.Password)]
-        [Display(Name = "Şifre")]
+        [Display(Name = "Password")]
         public required string Password { get; set; }
         
-        [Display(Name = "Beni Hatırla?")]
+        [Display(Name = "Remember me?")]
         public bool RememberMe { get; set; }
 
     }

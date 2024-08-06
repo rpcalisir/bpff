@@ -17,6 +17,7 @@ So basically adding the scripts other than here will cause the scripts not worki
     @* With adding this script here, validation on Registration form is being done on the client side anymore, 
      without sending a request to the server.*@
     @await Html.PartialAsync("PartialScripts/_ValidationScriptsPartial")
+    @await Html.PartialAsync("PartialScripts/_ShowPasswordScriptsPartial")
 }
 
 <div class="row">
@@ -70,13 +71,21 @@ So basically adding the scripts other than here will cause the scripts not worki
                     <span class="text-danger" asp-validation-for="Country"></span>
                 </div>
             </div>
+
             <div class="row mb-3">
                 <label for="Password" class="col-md-4 col-form-label" asp-for="Password"></label>
                 <div class="col-md-8">
-                    <input asp-for="Password" class="form-control">
+                    <div class="input-group">
+                        <input asp-for="Password" class="form-control">
+                        <button type="button" id="togglePassword" class="btn btn-outline-secondary">
+                            <i class="fas fa-eye"></i> <!-- Eye icon -->
+                        </button>
+                    </div>
                     <span class="text-danger" asp-validation-for="Password"></span>
                 </div>
             </div>
+
+
             <div class="row mb-3">
                 <label for="ConfirmPassword" class="col-md-4 col-form-label" asp-for="ConfirmPassword"></label>
                 <div class="col-md-8">
