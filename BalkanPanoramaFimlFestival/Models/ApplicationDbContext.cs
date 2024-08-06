@@ -2,13 +2,17 @@
 using BalkanPanoramaFilmFestival.Models.CompetitionApplication;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using BalkanPanoramaFilmFestival.Areas.Admin.ViewModels;
 using BalkanPanoramaFilmFestival.Areas.Admin.Models;
 
 namespace BalkanPanoramaFilmFestival.Models
 {
-    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-        : IdentityDbContext<RegisteredUser>(options)
+    public class ApplicationDbContext : IdentityDbContext<RegisteredUser, RegisteredUserRole, string>
     {
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        {
+        }
+
         public DbSet<CompetitionApplicationUser> CompetitionApplications { get; set; }
         //public new DbSet<RegisteredUser> Users { get; set; }
 
@@ -21,8 +25,13 @@ namespace BalkanPanoramaFilmFestival.Models
             //{
             //    entity.ToTable("users");
             //});
+
+            modelBuilder.Entity<RegisteredUser>(entity =>
+            {
+                entity.ToTable("AspNetUsers"); // Table name in your database
+                entity.Property(e => e.Id).HasColumnName("Id"); // Column names should match
+            });
             base.OnModelCreating(modelBuilder);
         }
-        public DbSet<BalkanPanoramaFilmFestival.Areas.Admin.Models.CompetitionApplicationUserViewModel> CompetitionApplicationUserViewModel { get; set; } = default!;
     }
 }

@@ -3,6 +3,7 @@ using BalkanPanoramaFilmFestival.Models;
 using Microsoft.AspNetCore.Identity;
 using BalkanPanoramaFilmFestival.CustomValidations;
 using BalkanPanoramaFilmFestival.Localization;
+using BalkanPanoramaFilmFestival.Areas.Admin.Models;
 
 namespace BalkanPanoramaFilmFestival.Extensions
 {
@@ -25,7 +26,7 @@ namespace BalkanPanoramaFilmFestival.Extensions
                 options.ValidationInterval = TimeSpan.FromMinutes(30);
             });
 
-            services.AddIdentity<RegisteredUser, IdentityRole>(options =>
+            services.AddIdentity<RegisteredUser, RegisteredUserRole>(options =>
             {
                 options.User.RequireUniqueEmail = true;
                 options.Password.RequireDigit = false;
@@ -42,7 +43,7 @@ namespace BalkanPanoramaFilmFestival.Extensions
             .AddUserValidator<UserValidator>() // Use custom validator
             .AddErrorDescriber<IdentityErrorDescriberLocalization>()
             .AddDefaultTokenProviders()
-            .AddEntityFrameworkStores<ApplicationDbContext>();
+            .AddEntityFrameworkStores<ApplicationDbContext>();  
         }
     }
 }

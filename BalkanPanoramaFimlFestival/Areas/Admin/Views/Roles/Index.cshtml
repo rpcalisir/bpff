@@ -1,0 +1,61 @@
+﻿@model List<RoleViewModel>
+@{
+    ViewData["Title"] = "Index";
+}
+<h1>ADMIN ROLES INDEX</h1>
+
+
+
+<div class="row">
+    <div class="col-md-6 offset-md-2">
+        <h1>ROLES LIST</h1>
+    </div>
+    <div class="col-md-2">
+        <a class="btn btn-primary" asp-area="Admin" asp-controller="Roles" asp-action="CreateRole">Add Role</a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-info" role="alert">
+                @TempData["SuccessMessage"]
+            </div>
+        }
+
+        <table class="table table-success table-striped">
+            <thead>
+                <tr>
+                    <th>Role Name</th>
+                    <th></th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.RoleName</td>
+                        <td class="actions-cell">
+                            <a class="btn btn-dark btn-sm" asp-area="Admin" asp-controller="Roles" asp-action="UpdateRole" asp-route-id="@item.Id">Update Role</a>
+                            <a class="btn btn-dark btn-sm my-1" asp-area="Admin" asp-controller="Roles" asp-action="DeleteRole" asp-route-id="@item.Id">Delete Role</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<style>
+    .actions-cell {
+        text-align: right;
+    }
+
+        .actions-cell a {
+            margin-left: 0.5rem; /* Add margin between buttons */
+        }
+</style>

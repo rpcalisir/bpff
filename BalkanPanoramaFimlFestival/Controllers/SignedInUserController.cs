@@ -52,7 +52,7 @@ namespace BalkanPanoramaFilmFestival.Controllers
             {
                 CompetitionCategory = model.CompetitionCategoryDescription,
                 ProductionYear = model.ProductionYear,
-                Applicant = signedInUser!.FirstName + " " + signedInUser!.LastName,
+                Applicant = $"{signedInUser!.FirstName} {signedInUser!.LastName}",
                 ApplicantMail = signedInUser!.Email,
                 ApplicantCountry = signedInUser!.Country,
                 MovieName = model.MovieName,

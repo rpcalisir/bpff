@@ -1,11 +1,9 @@
-﻿using BalkanPanoramaFilmFestival.Areas.Admin.Models;
+﻿using BalkanPanoramaFilmFestival.Areas.Admin.ViewModels;
 using BalkanPanoramaFilmFestival.Models;
 using BalkanPanoramaFilmFestival.Models.Account;
-using BalkanPanoramaFilmFestival.Models.CompetitionApplication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 
 namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
 {

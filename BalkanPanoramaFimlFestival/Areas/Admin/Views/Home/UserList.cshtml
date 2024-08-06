@@ -3,15 +3,17 @@
     ViewData["Title"] = "UserList";
 }
 
-<h1>UserList</h1>
+<h1>Users List</h1>
 
 <table class="table table-success table-striped">
     <thead>
         <tr>
-            <th>İsim</th>
-            <th>Soyisim</th>
+            <th>Name</th>
+            <th>Surname</th>
             <th>Email</th>
-            <th>Telefon Numarası</th>
+            <th>Phone Number</th>
+            <th>Roles</th>
+            <th>Role Operations</th>
         </tr>
     </thead>
 
@@ -23,6 +25,12 @@
                 <td>@item.LastName</td>
                 <td>@item.Email</td>
                 <td>@item.PhoneNumber</td>
+                <td>
+                    <user-role-names user-id="@item.Id"></user-role-names>
+                </td>
+                <td>
+                    <a asp-controller="Roles" asp-action="AssignRoleToUser" asp-route-userId="@item.Id">Assign Role</a>
+                </td>
             </tr>
         }
     </tbody>

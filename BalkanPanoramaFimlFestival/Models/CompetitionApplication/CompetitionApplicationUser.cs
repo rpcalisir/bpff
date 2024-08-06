@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-
+﻿
 namespace BalkanPanoramaFilmFestival.Models.CompetitionApplication
 {
     public class CompetitionApplicationUser
