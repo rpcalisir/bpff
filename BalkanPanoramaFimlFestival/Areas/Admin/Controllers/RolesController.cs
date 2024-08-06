@@ -167,6 +167,15 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
                 }
             }
 
+            if (!requestList.Any(r => r.Exist))
+            {
+                ModelState.AddModelError(string.Empty, "Please select at least one role.");
+                // Return the view with the existing data and user ID
+                ViewBag.userId = userId;
+                return View(requestList);
+            }
+
+
             return RedirectToAction(nameof(HomeController.UserList), "Home");
         }
 

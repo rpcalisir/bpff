@@ -3,6 +3,12 @@
     ViewData["Title"] = "AssignRoleToUser";
 }
 
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
 <div class="row">
     <div class="col-md-6 offset-md-3">
         <h2>Assign Role To User</h2>
@@ -44,8 +50,4 @@
 </div>
 
 
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}
+
