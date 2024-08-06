@@ -1,12 +1,14 @@
 ﻿using BalkanPanoramaFilmFestival.Areas.Admin.ViewModels;
 using BalkanPanoramaFilmFestival.Models;
 using BalkanPanoramaFilmFestival.Models.Account;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
 {
+    [Authorize(Roles = "admin")] // Only the users with admin role can access to admin panel
     [Area("Admin")] //Specifies that when admin is in the url, it should look for this HomeController
     public class HomeController : Controller
     {

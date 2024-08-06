@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using BalkanPanoramaFilmFestival.Models.Enums
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -30,17 +31,20 @@
                         <li class="nav-item">
                             <a class="nav-link text-light" asp-area="Admin" asp-controller="Home" asp-action="CompetitionApplications">Yarışma Başvuruları</a>
                         </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Dropdown
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" asp-area="Admin" asp-controller="Roles" asp-action="Index" >Tüm Roller</a></li>
-                                <li><a class="dropdown-item" href="#">Another action</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="#">Something else here</a></li>
-                            </ul>
-                        </li>
+
+                        @* Only the users with role type of developer can see the "Role Types"" button  *@
+                        @if (User.HasClaim(c => c.Value == RoleTypes.developer.ToString()))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Role Management
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" asp-area="Admin" asp-controller="Roles" asp-action="Index">Role Types</a></li>
+                                </ul>
+                            </li>
+                        }
+ 
                     </ul>
                 </div>
             </div>

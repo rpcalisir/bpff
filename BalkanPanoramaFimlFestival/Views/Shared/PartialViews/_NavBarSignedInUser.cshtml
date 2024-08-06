@@ -1,4 +1,6 @@
-﻿@* If there is User Information stored in the cookies, show the user button on the right side. *@
+﻿@using System.Security.Claims
+@using BalkanPanoramaFilmFestival.Models.Enums
+@* If there is User Information stored in the cookies, show the user button on the right side. *@
 @if (User.Identity!.IsAuthenticated)
 {
     <ul class="navbar-nav me-0">
@@ -7,9 +9,17 @@
                 @User.Identity.Name
             </a>
             <ul class="dropdown-menu">
-                <li><a class="dropdown-item" asp-controller="SignedInUser" asp-action="Profile">Profil</a></li>
-                <li><a class="dropdown-item" asp-controller="SignedInUser" asp-action="PasswordChange">Şifre Değiştir</a></li>
-                <li><a class="dropdown-item" asp-controller="SignedInUser" asp-action="LogOut">Çıkış Yap</a></li>
+                <li><a class="dropdown-item" asp-controller="SignedInUser" asp-action="Profile">Profile</a></li>
+                <li><a class="dropdown-item" asp-controller="SignedInUser" asp-action="PasswordChange">Change Password</a></li>
+
+                @* Only the users with role type of developer and admin can see the Admin Panel button  *@
+                @if (User.HasClaim(c => c.Value == RoleTypes.developer.ToString()) 
+                || User.HasClaim(c => c.Value == RoleTypes.admin.ToString()))
+                {
+                    <li><a class="dropdown-item" asp-area="admin" asp-controller="Home" asp-action="Index">Admin Panel</a></li>
+                }
+
+                <li><a class="dropdown-item" asp-controller="SignedInUser" asp-action="LogOut">Sign Out</a></li>
             </ul>
         </li>
     </ul>

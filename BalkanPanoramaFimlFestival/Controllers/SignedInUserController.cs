@@ -157,5 +157,12 @@ namespace BalkanPanoramaFilmFestival.Controllers
 
             return RedirectToAction("Index", "Home");
         }
+
+        public IActionResult AccessDenied(string returnUrl)
+        {
+            ViewBag.message = "You are not authorized to access this page. Contact the administrator for authorization.";
+
+            return View();
+        }
     }
 }

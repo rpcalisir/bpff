@@ -53,6 +53,11 @@ namespace BalkanPanoramaFilmFestival
                 // So, if User is not Authorized, direct them to login page.
                 options.LoginPath = new PathString("/Home/SignIn");
 
+                // Makes it possible to run this action and remove the cookies after sign out
+                options.LogoutPath = new PathString("/SignedInUser/LogOut");
+
+                options.AccessDeniedPath = new PathString("/SignedInUser/AccessDenied");
+
                 options.Cookie = new CookieBuilder
                 {
                     Name = "bpffRegisteredUserCookie",

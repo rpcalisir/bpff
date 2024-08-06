@@ -1,14 +1,15 @@
 ﻿using BalkanPanoramaFilmFestival.Areas.Admin.Models;
-using BalkanPanoramaFilmFestival.Areas.Admin.ViewModels;
 using BalkanPanoramaFilmFestival.Areas.Admin.ViewModels.Role;
 using BalkanPanoramaFilmFestival.Extensions;
 using BalkanPanoramaFilmFestival.Models.Account;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
 {
+    [Authorize(Roles = "admin")] // Only the users with admin role can access to admin panel
     [Area("Admin")]
     public class RolesController : Controller
     {
@@ -22,6 +23,7 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
             _userManager = userManager;
         }
 
+        [Authorize(Roles = "developer")]
         public async Task<IActionResult> Index()
         {
             var roles = await _roleManager.Roles.Select(role => new RoleViewModel()
@@ -33,11 +35,13 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
             return View(roles);
         }
 
+        [Authorize(Roles = "developer")]
         public IActionResult CreateRole()
         {
             return View();
         }
 
+        [Authorize(Roles = "developer")]
         [HttpPost]
         public async Task<IActionResult> CreateRole(CreateRoleViewModel model)
         {
@@ -53,6 +57,7 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
             return RedirectToAction(nameof(RolesController.Index));
         }
 
+        [Authorize(Roles = "developer")]
         public async Task<IActionResult> UpdateRole(string id)
         {
             var roleToUpdate = await _roleManager.FindByIdAsync(id);
@@ -65,6 +70,7 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
             return View(new UpdateRoleViewModel() { Id = roleToUpdate.Id, RoleName = roleToUpdate!.Name! });
         }
 
+        [Authorize(Roles = "developer")]
         [HttpPost]
         public async Task<IActionResult> UpdateRole(UpdateRoleViewModel model)
         {
@@ -83,6 +89,7 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
             return View();
         }
 
+        [Authorize(Roles = "developer")]
         public async Task<IActionResult> DeleteRole(string id)
         {
             var roleToDelete = await _roleManager.FindByIdAsync(id);
@@ -104,6 +111,7 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
             return RedirectToAction(nameof(RolesController.Index));
         }
 
+        [Authorize(Roles = "developer")]
         public async Task<IActionResult> AssignRoleToUser(string userId)
         {
             // Get current user
@@ -150,6 +158,7 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
             return View(roleViewModelList);
         }
 
+        [Authorize(Roles = "developer")]
         [HttpPost]
         public async Task<IActionResult> AssignRoleToUser(List<AssignRoleToUserViewModel> requestList, string userId)
         {
