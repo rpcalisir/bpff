@@ -43,7 +43,7 @@ namespace BalkanPanoramaFilmFestival.Services
 
         public async Task SendEmailAsync(string toEmail, string subject, string message)
         {
-            var fromAddress = new MailAddress(_emailSettings.Email!, "info@bpff.com");
+            var fromAddress = new MailAddress(_emailSettings.Email!, "bpff");
             var toAddress = new MailAddress(toEmail);
 
             using(var smtpClient = new SmtpClient(_emailSettings.Host))

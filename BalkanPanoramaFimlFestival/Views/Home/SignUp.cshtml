@@ -61,7 +61,9 @@ So basically adding the scripts other than here will cause the scripts not worki
                 <label for="PhoneNumber" class="col-md-4 col-form-label" asp-for="PhoneNumber"></label>
                 <div class="col-md-8">
                     <div class="input-group">
-                        <input asp-for="PhoneNumber" class="form-control">
+                        @* id attribute makes it possible to run phone scripts *@
+                        @* type="tel" attribute makes it possible to enter only numbers *@
+                        <input id="phone" type="tel" asp-for="PhoneNumber" class="form-control"> 
                     </div>
                     <span class="text-danger" asp-validation-for="PhoneNumber"></span>
                 </div>
@@ -88,7 +90,12 @@ So basically adding the scripts other than here will cause the scripts not worki
             <div class="row mb-3">
                 <label for="ConfirmPassword" class="col-md-4 col-form-label" asp-for="ConfirmPassword"></label>
                 <div class="col-md-8">
-                    <input asp-for="ConfirmPassword" class="form-control">
+                    <div class="input-group">
+                        <input asp-for="ConfirmPassword" class="form-control">
+                        <button type="button" id="togglePassword" class="btn btn-outline-secondary">
+                            <i class="fas fa-eye"></i> <!-- Eye icon -->
+                        </button>
+                    </div>
                     <span class="text-danger" asp-validation-for="ConfirmPassword"></span>
                 </div>
             </div>
