@@ -15,6 +15,9 @@
     @* Phone Number library *@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css">
 
+    @* Country Selector Library *@
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
 </head>
 <body>
     <header>
@@ -56,6 +59,9 @@
 
     @* Phone Number library *@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+
+    @* Country Selector Script *@
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     @* In any View Page that is using this Layout, if a script wants to be used, RenderSectionAsync specifies where to put the script into. *@
     @await RenderSectionAsync("Scripts", required: false)

@@ -71,8 +71,13 @@ So basically adding the scripts other than here will cause the scripts not worki
             <div class="row mb-3">
                 <label for="Country" class="col-md-4 col-form-label" asp-for="Country"></label>
                 <div class="col-md-8">
-                    <input asp-for="Country" class="form-control">
-                    <span class="text-danger" asp-validation-for="Country"></span>
+                    <select id="CountrySelect" name="Country" class="form-control">
+                        <option value="">Select Country</option>
+                        <!-- Options will be dynamically populated -->
+                        <option value="OTHER">Other</option>
+                    </select>
+                    <input type="text" id="OtherCountry" name="OtherCountry" class="form-control mt-2" placeholder="Please specify" style="display: none;">
+                    <span id="CountryError" class="text-danger" style="display: none;">Please specify the country.</span>
                 </div>
             </div>
             <div class="row mb-3">
@@ -118,6 +123,55 @@ So basically adding the scripts other than here will cause the scripts not worki
         window.intlTelInput(input, {
             initialCountry: "tr", // Set your default country here
             utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js" // for formatting
+        });
+    });
+</script>
+
+@* Country Selector Script *@
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var countrySelect = document.getElementById('CountrySelect');
+        var otherCountryInput = document.getElementById('OtherCountry');
+        var countryError = document.getElementById('CountryError');
+        var form = document.querySelector('form');
+
+        // Fetch the list of countries from an external API
+        fetch('https://restcountries.com/v3.1/all')
+            .then(response => response.json())
+            .then(data => {
+                // Populate the select element with options
+                data.forEach(country => {
+                    if (country.name && country.cca2) {
+                        var option = document.createElement('option');
+                        option.value = country.cca2;
+                        option.textContent = country.name.common;
+                        countrySelect.appendChild(option);
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching countries:', error);
+            });
+
+        // Toggle visibility of the custom country input based on the selected option
+        countrySelect.addEventListener('change', function () {
+            if (this.value === 'OTHER') {
+                otherCountryInput.style.display = 'block';
+                otherCountryInput.focus();
+            } else {
+                otherCountryInput.style.display = 'none';
+                otherCountryInput.value = ''; // Clear the custom country input
+            }
+        });
+
+        // Validate the form on submit
+        form.addEventListener('submit', function (event) {
+            if (countrySelect.value === 'OTHER' && otherCountryInput.value.trim() === '') {
+                countryError.style.display = 'block';
+                event.preventDefault(); // Prevent form submission
+            } else {
+                countryError.style.display = 'none';
+            }
         });
     });
 </script>
