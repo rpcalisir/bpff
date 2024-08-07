@@ -64,10 +64,34 @@ namespace BalkanPanoramaFilmFestival.Controllers
                 return View();
             }
 
-            // Check if the email is confirmed
+            //// Check if the email is confirmed
+            //if (!await _userManager.IsEmailConfirmedAsync(foundUser))
+            //{
+            //    // Create confirmation token
+            //    var code = await _userManager.GenerateEmailConfirmationTokenAsync(foundUser);
+
+            //    // Create the confirmation URL
+            //    var callbackUrl = Url.Action(
+            //        nameof(ConfirmEmail),
+            //        "Home", // Adjust to your actual controller name
+            //        new { userId = foundUser.Id, code },
+            //        protocol: HttpContext.Request.Scheme);
+
+            //    // Send a new confirmation email
+            //    var message = $"Please confirm your account by clicking <a href='{callbackUrl}'>here</a>.";
+            //    await _emailService.SendEmailAsync(model.Email, "Confirm your email", message);
+
+            //    ModelState.AddModelError(string.Empty, "Email not confirmed. A new confirmation email has been sent.");
+
+            //    return View();
+            //}
+
+            // Check if the email is confirmed, if not send the confirmation mail again
             if (!await _userManager.IsEmailConfirmedAsync(foundUser))
             {
-                ModelState.AddModelError(string.Empty, "Email is not confirmed!");
+                await SendConfirmationEmailAsync(foundUser, model.Email, nameof(ConfirmEmail));
+
+                ModelState.AddModelError(string.Empty, "Email not confirmed. A new confirmation email has been sent.");
                 return View();
             }
 
@@ -125,29 +149,39 @@ namespace BalkanPanoramaFilmFestival.Controllers
             // in case there is an existing user, it returns error message inside of return object
             var identityResult = await _userManager.CreateAsync(user, model.ConfirmPassword);
 
+            //if (identityResult.Succeeded)
+            //{
+            //    // Generate email confirmation token
+            //    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+            //    // Create the confirmation URL
+            //    var callbackUrl = Url.Action(
+            //        nameof(ConfirmEmail),
+            //        "Home",
+            //        new { userId = user.Id, code },
+            //        protocol: Request.Scheme);
+
+            //    // Send the confirmation email
+            //    var message = $"Please confirm your account by clicking <a href='{callbackUrl}'>here</a>.";
+            //    await _emailService.SendEmailAsync(model.Email, "Confirm your email", message);
+
+            //    // Set a success message in TempData
+            //    TempData["SuccessMessage"] = "Sign up is successfully completed. Confirm your email address to sign in.";
+
+            //    //Return current page, with calling Register(Get) method, passing TempData into it,
+            //    //so message can be passed and empty form can be seen.
+            //    return RedirectToAction(nameof(SignUp));
+            //}
+
             if (identityResult.Succeeded)
             {
-                // Generate email confirmation token
-                var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-
-                // Create the confirmation URL
-                var callbackUrl = Url.Action(
-                    nameof(ConfirmEmail),
-                    "Home",
-                    new { userId = user.Id, code = code },
-                    protocol: Request.Scheme);
-
-                // Send the confirmation email
-                await _emailService.SendEmailAsync(
-                    model.Email,
-                    "Confirm your email",
-                    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl!)}'>clicking here</a>.");
+                await SendConfirmationEmailAsync(user, model.Email, nameof(ConfirmEmail));
 
                 // Set a success message in TempData
-                TempData["SuccessMessage"] = "Üyelik işlemi başarı ile gerçekleşmiştir. Giriş için mail adresinizi onaylayınız.";
+                TempData["SuccessMessage"] = "Sign up is successfully completed. Confirm your email address to sign in.";
 
-                //Return current page, with calling Register(Get) method, passing TempData into it,
-                //so message can be passed and empty form can be seen.
+                // Return current page, with calling Register(Get) method, passing TempData into it,
+                // so message can be passed and empty form can be seen.
                 return RedirectToAction(nameof(SignUp));
             }
 
@@ -158,7 +192,6 @@ namespace BalkanPanoramaFilmFestival.Controllers
                 //If AddModelError's first parameter is being given empty, it means it's used for a general error.
                 ModelState.AddModelError(string.Empty, error.Description);
             }
-
 
             // Usage of extension method
             //ModelState.AddModelErrorList(identityResult.Errors.Select(d => d.Description).ToList());
@@ -276,5 +309,25 @@ namespace BalkanPanoramaFilmFestival.Controllers
             return View();
         }
 
+
+        #region Private Implementation
+        private async Task SendConfirmationEmailAsync(RegisteredUser user, string email, string actionName)
+        {
+            // Generate email confirmation token
+            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+            // Create the confirmation URL
+            var callbackUrl = Url.Action(
+                actionName, // The name of the action method for confirmation
+                "Home", // Adjust to your actual controller name
+                new { userId = user.Id, code },
+                protocol: HttpContext.Request.Scheme);
+
+            // Send the confirmation email
+            var message = $"Please confirm your account by clicking <a href='{callbackUrl}'>here</a>.";
+            await _emailService.SendEmailAsync(email, "Confirm your email", message);
+        }
+
+        #endregion
     }
 }
