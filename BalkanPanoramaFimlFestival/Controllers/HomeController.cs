@@ -1,17 +1,11 @@
-﻿using BalkanPanoramaFilmFestival.Models;
-using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-using System.Net.Mail;
-using System.Net;
-using System;
-using WkHtmlToPdfDotNet.Contracts;
-using WkHtmlToPdfDotNet;
+﻿using Microsoft.AspNetCore.Mvc;
 using BalkanPanoramaFilmFestival.Models.Account;
 using BalkanPanoramaFilmFestival.ViewModels.Account;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using BalkanPanoramaFilmFestival.Extensions;
 using BalkanPanoramaFilmFestival.Services;
+using System.Text.Encodings.Web;
 
 namespace BalkanPanoramaFilmFestival.Controllers
 {
@@ -66,11 +60,18 @@ namespace BalkanPanoramaFilmFestival.Controllers
 
             if (foundUser == null)
             {
-                ModelState.AddModelError(string.Empty, "Kullanıcı bulunamadı!");
+                ModelState.AddModelError(string.Empty, "User cannot be found!");
                 return View();
             }
 
-            // If lockoutOnFailure is true, system will be locked after three unsuccessful login attempts.
+            // Check if the email is confirmed
+            if (!await _userManager.IsEmailConfirmedAsync(foundUser))
+            {
+                ModelState.AddModelError(string.Empty, "Email is not confirmed!");
+                return View();
+            }
+
+            // If lockoutOnFailure is true, system will be locked after three unsuccessful signin attempts.
             // RememberMe is being handled here with isPersistent
             var signInResult = await _signInManager.PasswordSignInAsync(foundUser, model.Password, model.RememberMe, true);
 
@@ -81,14 +82,14 @@ namespace BalkanPanoramaFilmFestival.Controllers
 
             if (signInResult.IsLockedOut)
             {
-                ModelState.AddModelErrorList(new List<string>() { "3 dakika boyunca giriş yapamazsınız!"
+                ModelState.AddModelErrorList(new List<string>() { "Cannot sign in for 3 minutes!"
                 });
                 return View();
             }
 
             ModelState.AddModelErrorList(new List<string>() {
-                "Email onaylanmadı veya şifre yanlış! ",
-                $"(Başarısız giriş sayısı:{await _userManager.GetAccessFailedCountAsync(foundUser)})(MAX:3)"
+                "Password is wrong! ",
+                $"(Number of failed sign in attempts:{await _userManager.GetAccessFailedCountAsync(foundUser)})(MAX:3)"
             });
 
             return View();
@@ -126,6 +127,23 @@ namespace BalkanPanoramaFilmFestival.Controllers
 
             if (identityResult.Succeeded)
             {
+                // Generate email confirmation token
+                var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+                // Create the confirmation URL
+                var callbackUrl = Url.Action(
+                    nameof(ConfirmEmail),
+                    "Home",
+                    new { userId = user.Id, code = code },
+                    protocol: Request.Scheme);
+
+                // Send the confirmation email
+                await _emailService.SendEmailAsync(
+                    model.Email,
+                    "Confirm your email",
+                    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl!)}'>clicking here</a>.");
+
+                // Set a success message in TempData
                 TempData["SuccessMessage"] = "Üyelik işlemi başarı ile gerçekleşmiştir. Giriş için mail adresinizi onaylayınız.";
 
                 //Return current page, with calling Register(Get) method, passing TempData into it,
@@ -147,6 +165,32 @@ namespace BalkanPanoramaFilmFestival.Controllers
 
             return View();
         }
+
+        [HttpGet]
+        public async Task<IActionResult> ConfirmEmail(string userId, string code)
+        {
+            if (userId == null || code == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{userId}'.");
+            }
+
+            var result = await _userManager.ConfirmEmailAsync(user, code);
+            if (result.Succeeded)
+            {
+                TempData["SuccessMessage"] = "Email is verified successfully";
+                return RedirectToAction("SignIn", "Home");
+            }
+
+            TempData["ErrorMessage"] = "Error confirming your email.";
+            return RedirectToAction("SignUp", "Home");
+        }
+
 
         public IActionResult ForgetPassword()
         {

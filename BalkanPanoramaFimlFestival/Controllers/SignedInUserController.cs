@@ -46,27 +46,31 @@ namespace BalkanPanoramaFilmFestival.Controllers
             {
                 return View();
             }
-            var signedInUser = await _userManager.FindByNameAsync(User.Identity!.Name!);
 
-            var user = new CompetitionApplicationUser
+            var signedInUser = await _userManager.FindByNameAsync(User!.Identity!.Name!);
+
+            if (signedInUser!.Email != null)
             {
-                CompetitionCategory = model.CompetitionCategoryDescription,
-                ProductionYear = model.ProductionYear,
-                Applicant = $"{signedInUser!.FirstName} {signedInUser!.LastName}",
-                ApplicantMail = signedInUser!.Email,
-                ApplicantCountry = signedInUser!.Country,
-                MovieName = model.MovieName,
-                DirectorName = model.DirectorName
-            };
+                var user = new CompetitionApplicationUser
+                {
+                    CompetitionCategory = model.CompetitionCategoryDescription, // Comes from the page form
+                    ProductionYear = model.ProductionYear, // Comes from the page form
+                    Applicant = $"{signedInUser.FirstName} {signedInUser.LastName}",
+                    ApplicantMail = signedInUser.Email,
+                    ApplicantCountry = signedInUser.Country,
+                    MovieName = model.MovieName, // Comes from the page form
+                    DirectorName = model.DirectorName // Comes from the page form
+                };
 
-            // Save the form data to the database
-            _context.CompetitionApplications.Add(user);
-            var result = await _context.SaveChangesAsync();
+                // Save the form data to the database
+                _context.CompetitionApplications.Add(user);
+                var result = await _context.SaveChangesAsync();
 
-            if (result > 0)
-            {
-                TempData["SuccessMessage"] = "Your application has been submitted successfully.";
-                return RedirectToAction(nameof(CompetitionApplication)); // Redirect to prevent resubmission on refresh
+                if (result > 0)
+                {
+                    TempData["SuccessMessage"] = "Your application has been submitted successfully.";
+                    return RedirectToAction(nameof(CompetitionApplication)); // Redirect to prevent resubmission on refresh
+                }
             }
 
             ModelState.AddModelError(string.Empty, "An error occurred while processing your application");

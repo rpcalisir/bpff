@@ -36,9 +36,13 @@ namespace BalkanPanoramaFilmFestival.Extensions
                 options.Password.RequiredUniqueChars = 1;
                 //options.SignIn.RequireConfirmedAccount = true;
 
-                //Lockout
+                // Lockout
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(3);
                 options.Lockout.MaxFailedAccessAttempts = 3;
+
+                // Confirmation Email Sign In
+                options.SignIn.RequireConfirmedAccount = true;
+                options.SignIn.RequireConfirmedEmail = true;
             })
             .AddUserValidator<UserValidator>() // Use custom validator
             .AddErrorDescriber<IdentityErrorDescriberLocalization>()

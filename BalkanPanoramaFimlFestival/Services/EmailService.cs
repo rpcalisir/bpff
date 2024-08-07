@@ -40,5 +40,26 @@ namespace BalkanPanoramaFilmFestival.Services
 
             await smptClient.SendMailAsync(mailMessage);
         }
+
+        public async Task SendEmailAsync(string toEmail, string subject, string message)
+        {
+            var smtpClient = new SmtpClient(_emailSettings.Host) // Use your SMTP server address
+            {
+                Port = _emailSettings.Port,
+                Credentials = new NetworkCredential(_emailSettings.Email, _emailSettings.Password),
+                EnableSsl = true,
+            };
+
+            var mailMessage = new MailMessage
+            {
+                From = new MailAddress(_emailSettings.Email!),
+                Subject = subject,
+                Body = message,
+                IsBodyHtml = true,
+            };
+            mailMessage.To.Add(toEmail);
+
+            await smtpClient.SendMailAsync(mailMessage);
+        }
     }
 }

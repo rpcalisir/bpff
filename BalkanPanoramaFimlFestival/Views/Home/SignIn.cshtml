@@ -24,6 +24,18 @@ So basically adding the scripts other than here will cause the scripts not worki
     <div class="col-md-4 offset-md-4">
         <h2>SIGN IN</h2>
 
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+            TempData["SuccessMessage"] = null; // Clear the message after displaying
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+            TempData["ErrorMessage"] = null; // Clear the message after displaying
+        }
+
         @* General errors related to application(comes from ModelState) *@
         <div asp-validation-summary=ModelOnly class="alert alert-danger" role="alert">
         </div>
