@@ -11,5 +11,8 @@ namespace BalkanPanoramaFilmFestival.Models.CompetitionApplication
         public required string ApplicantCountry { get; set; }
         public required string MovieName { get; set; }
         public required string DirectorName { get; set; }
+
+
+        public required string SelectedCountries { get; set; }
     }
 }

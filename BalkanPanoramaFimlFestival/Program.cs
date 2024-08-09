@@ -70,6 +70,8 @@ namespace BalkanPanoramaFilmFestival
                 options.SlidingExpiration = true; // If true, whenever user enters the website, timespan of cookie is refreshed.
             });
 
+            // Register CountryService
+            builder.Services.AddSingleton<ICountryService, CountryService>();
 
             var app = builder.Build();
 

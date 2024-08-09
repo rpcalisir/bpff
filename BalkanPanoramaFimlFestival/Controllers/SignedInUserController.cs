@@ -2,12 +2,12 @@
 using BalkanPanoramaFilmFestival.Models;
 using BalkanPanoramaFilmFestival.Models.Account;
 using BalkanPanoramaFilmFestival.Models.CompetitionApplication;
+using BalkanPanoramaFilmFestival.Services;
 using BalkanPanoramaFilmFestival.ViewModels.Account;
 using BalkanPanoramaFilmFestival.ViewModels.CompetitionApplication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace BalkanPanoramaFilmFestival.Controllers
 {
@@ -18,19 +18,34 @@ namespace BalkanPanoramaFilmFestival.Controllers
         private readonly SignInManager<RegisteredUser> _signInManager;
         private readonly UserManager<RegisteredUser> _userManager;
         private readonly ApplicationDbContext _context;
+        private readonly ICountryService _countryService;
 
         public SignedInUserController(SignInManager<RegisteredUser> signInManager,
             UserManager<RegisteredUser> userManager,
-            ApplicationDbContext context)
+            ApplicationDbContext context,
+            ICountryService countryService)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _context = context;
+            _countryService = countryService;
         }
 
         public IActionResult CompetitionApplication()
         {
-            return View();
+            //ViewBag.Countries = _countryService.GetAllCountries();
+
+            var model = new CompetitionApplicationUserViewModel
+            {
+                CompetitionCategory = string.Empty,
+                ProductionYear = string.Empty,
+                MovieName = string.Empty,
+                DirectorName = string.Empty,
+                SelectedCountries = new List<string>(),
+                AllCountries = _countryService.GetAllCountries() // Fetch the country list
+            };
+
+            return View(model); // viewmodel data is being passed to cshtml here, when page is first being displayed.
         }
 
         [HttpPost]
@@ -39,12 +54,27 @@ namespace BalkanPanoramaFilmFestival.Controllers
             if (!model.CompetitionCategory.Any())
             {
                 ModelState.AddModelError(string.Empty, "At least one competition category must be selected.");
+
+            }
+
+            if (!model.SelectedCountries.Any())
+            {
+                ModelState.AddModelError(string.Empty, "At least one country must be selected.");
+            }
+
+            if (model.SelectedCountries.Count > 3)
+            {
+                ModelState.AddModelError(string.Empty, "Max 3 countries can be selected.");
             }
 
             //In case of signup form data is not valid, return the view without deleting the form data
             if (!ModelState.IsValid)
             {
-                return View();
+                //ViewBag.Countries = _countryService.GetAllCountries();
+                //return View(model); // Return the view with validation errors
+
+                model.AllCountries = _countryService.GetAllCountries(); // Re-fetch the country list
+                return View(model);
             }
 
             var signedInUser = await _userManager.FindByNameAsync(User!.Identity!.Name!);
@@ -59,7 +89,8 @@ namespace BalkanPanoramaFilmFestival.Controllers
                     ApplicantMail = signedInUser.Email,
                     ApplicantCountry = signedInUser.Country,
                     MovieName = model.MovieName, // Comes from the page form
-                    DirectorName = model.DirectorName // Comes from the page form
+                    DirectorName = model.DirectorName, // Comes from the page form
+                    SelectedCountries = string.Join(", ", model.SelectedCountries) // Store as a comma-separated string
                 };
 
                 // Save the form data to the database
