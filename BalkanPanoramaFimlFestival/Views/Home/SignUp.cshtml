@@ -33,68 +33,67 @@ So basically adding the scripts other than here will cause the scripts not worki
     @* Country Selector Script *@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            var countrySelect = document.getElementById('CountrySelect');
-            var otherCountryInput = document.getElementById('OtherCountry');
-            var countryError = document.getElementById('CountryError');
-            var form = document.querySelector('form');
+            function initializeCountrySelector(countrySelectId, countryErrorId, hiddenFieldId) {
+                var countrySelect = document.getElementById(countrySelectId);
+                var countryError = document.getElementById(countryErrorId);
+                var form = document.querySelector('form');
+                var hiddenField = document.getElementById(hiddenFieldId);
 
-            // Fetch the list of countries from an external API
-            fetch('https://restcountries.com/v3.1/all')
-                .then(response => response.json())
-                .then(data => {
-                    // Populate the select element with options
-                    data.forEach(country => {
-                        if (country.name && country.cca2) {
-                            var option = document.createElement('option');
-                            option.value = country.cca2;
-                            option.textContent = country.name.common;
-                            countrySelect.appendChild(option);
-                        }
+                // Fetch the list of countries from an external API
+                fetch('https://restcountries.com/v3.1/all')
+                    .then(response => response.json())
+                    .then(data => {
+                        // Populate the select element with options
+                        data.forEach(country => {
+                            if (country.name && country.cca2) {
+                                var option = document.createElement('option');
+                                option.value = country.cca2;
+                                option.textContent = country.name.common;
+                                countrySelect.appendChild(option);
+                            }
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching countries:', error);
                     });
-                    // Add the "Other" option
-                    var otherOption = document.createElement('option');
-                    otherOption.value = 'OTHER';
-                    otherOption.textContent = 'Other';
-                    countrySelect.appendChild(otherOption);
-                })
-                .catch(error => {
-                    console.error('Error fetching countries:', error);
+
+                // Validate the form on submit
+                form.addEventListener('submit', function (event) {
+                    var selectedCountryCode = countrySelect.value;
+                    var selectedCountryName = countrySelect.options[countrySelect.selectedIndex]?.text || '';
+
+                    // Reset the error message
+                    countryError.style.display = 'none';
+                    countryError.textContent = '';
+
+                    if (selectedCountryCode === '') {
+                        countryError.textContent = 'Please select a country.';
+                        countryError.style.display = 'block';
+                        event.preventDefault(); // Prevent form submission
+                        countrySelect.focus();
+                    } else {
+                        // Set the hidden field value to the country name
+                        hiddenField.value = selectedCountryName;
+                    }
                 });
 
-            // Toggle visibility of the custom country input based on the selected option
-            countrySelect.addEventListener('change', function () {
-                if (this.value === 'OTHER') {
-                    otherCountryInput.style.display = 'block';
-                    otherCountryInput.focus();
-                } else {
-                    otherCountryInput.style.display = 'none';
-                    otherCountryInput.value = ''; // Clear the custom country input
-                    countryError.style.display = 'none'; // Hide error when switching options
-                }
-            });
+                // Add an event listener to clear the error message when a country is selected
+                countrySelect.addEventListener('change', function () {
+                    var selectedCountryCode = countrySelect.value;
 
-            // Validate the form on submit
-            form.addEventListener('submit', function (event) {
-                var isCountrySelected = countrySelect.value !== '';
-                var isOtherCountryEntered = otherCountryInput.style.display === 'block' && otherCountryInput.value.trim() !== '';
-                var isOtherSelectedAndEmpty = countrySelect.value === 'OTHER' && otherCountryInput.value.trim() === '';
+                    if (selectedCountryCode !== '') {
+                        // Clear the error message if a valid country is selected
+                        countryError.style.display = 'none';
+                        countryError.textContent = '';
+                    }
+                });
+            }
 
-                // Reset the error message, so this script works every time submit button is clicked.
-                countryError.style.display = 'none';
-                countryError.textContent = '';
-
-                if (isOtherSelectedAndEmpty) {
-                    countryError.textContent = 'Please specify the country if you selected "Other".';
-                    countryError.style.display = 'block';
-                    event.preventDefault(); // Prevent form submission
-                } else if (!isCountrySelected) {
-                    countryError.textContent = 'Please select a country.';
-                    countryError.style.display = 'block';
-                    event.preventDefault(); // Prevent form submission
-                }
-            });
+            // Initialize for Country
+            initializeCountrySelector('CountrySelect', 'CountryError', 'CountryName');
         });
     </script>
+
 }
 
 <div class="row">
@@ -116,21 +115,27 @@ So basically adding the scripts other than here will cause the scripts not worki
             <div class="row mb-3">
                 <label for="FirstName" class="col-md-4 col-form-label" asp-for="FirstName"></label>
                 <div class="col-md-8">
-                    <input asp-for="FirstName" class="form-control">
+                    <input class="form-control" asp-for="FirstName"
+                           id="FirstName" name="FirstName"
+                           maxlength="100" required placeholder="Max 100 characters">
                     <span class="text-danger" asp-validation-for="FirstName"></span>
                 </div>
             </div>
             <div class="row mb-3">
                 <label for="LastName" class="col-md-4 col-form-label" asp-for="LastName"></label>
                 <div class="col-md-8">
-                    <input asp-for="LastName" class="form-control">
+                    <input class="form-control" asp-for="LastName"
+                           id="LastName" name="LastName"
+                           maxlength="100" required placeholder="Max 100 characters">
                     <span class="text-danger" asp-validation-for="LastName"></span>
                 </div>
             </div>
             <div class="row mb-3">
                 <label for="Email" class="col-md-4 col-form-label" asp-for="Email"></label>
                 <div class="col-md-8">
-                    <input asp-for="Email" class="form-control">
+                    <input class="form-control" asp-for="Email"
+                           id="Email" name="Email"
+                           maxlength="100" required placeholder="Max 100 characters">
                     <span class="text-danger" asp-validation-for="Email"></span>
                 </div>
             </div>
@@ -140,20 +145,21 @@ So basically adding the scripts other than here will cause the scripts not worki
                     <div class="input-group">
                         @* id attribute makes it possible to run phone scripts *@
                         @* type="tel" attribute makes it possible to enter only numbers *@
-                        <input id="phone" type="tel" asp-for="PhoneNumber" class="form-control"> 
+                        <input id="phone" type="tel" asp-for="PhoneNumber" class="form-control"
+                        name="PhoneNumber" maxlength="25" required placeholder="Max 25 characters"> 
                     </div>
                     <span class="text-danger" asp-validation-for="PhoneNumber"></span>
                 </div>
             </div>
             <div class="row mb-3">
-                <label for="Country" class="col-md-4 col-form-label" asp-for="Country"></label>
+                <label for="Country" class="col-md-4 col-form-label" asp-for="Country">Country</label>
                 <div class="col-md-8">
                     <select id="CountrySelect" name="Country" class="form-control">
                         <option value="">Select Country</option>
-                        <!-- Options will be dynamically populated -->
+                        <!-- Options will be dynamically populated by the script -->
                         <option value="OTHER">Other</option>
                     </select>
-                    <input type="text" id="OtherCountry" name="Country" class="form-control mt-2" placeholder="Please specify" style="display: none;">
+                    <input type="hidden" id="CountryName" name="CountryName" />
                     <span id="CountryError" class="text-danger" style="display: none;">Please specify the country.</span>
                 </div>
             </div>
@@ -174,7 +180,7 @@ So basically adding the scripts other than here will cause the scripts not worki
                 <div class="col-md-8">
                     <div class="input-group">
                         <input asp-for="ConfirmPassword" class="form-control">
-                        <button type="button" id="togglePassword" class="btn btn-outline-secondary">
+                        <button type="button" id="toggleConfirmPassword" class="btn btn-outline-secondary">
                             <i class="fas fa-eye"></i> <!-- Eye icon -->
                         </button>
                     </div>

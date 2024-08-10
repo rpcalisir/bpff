@@ -131,8 +131,11 @@ namespace BalkanPanoramaFilmFestival.Controllers
             //In case of signup form data is not valid, return the view without deleting the form data
             if (!ModelState.IsValid)
             {
+                ModelState.AddModelError(string.Empty, "One of the inputs is not in correct!");
+
                 return View();
             }
+            var countryName = Request.Form["CountryName"];
 
             var user = new RegisteredUser
             {
@@ -141,7 +144,8 @@ namespace BalkanPanoramaFilmFestival.Controllers
                 FirstName = model.FirstName,
                 LastName = model.LastName,
                 PhoneNumber = model.PhoneNumber,
-                Country = model.Country,
+                //Country = model.Country,
+                Country = countryName!,
                 CreatedAt = DateTime.UtcNow
             };
 
@@ -178,7 +182,8 @@ namespace BalkanPanoramaFilmFestival.Controllers
                 await SendConfirmationEmailAsync(user, model.Email, nameof(ConfirmEmail));
 
                 // Set a success message in TempData
-                TempData["SuccessMessage"] = "Sign up is successfully completed. Confirm your email address to sign in.";
+                TempData["SuccessMessage"] = "Sign up is successfully completed. Confirm your email address to sign in. " +
+                    "Confirmation mail is sent, Do not forget to check Spam Folder";
 
                 // Return current page, with calling Register(Get) method, passing TempData into it,
                 // so message can be passed and empty form can be seen.

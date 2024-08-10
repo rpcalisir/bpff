@@ -112,14 +112,14 @@
                 // Validate the form on submit
                 form.addEventListener('submit', function (event) {
                     var selectedCountryCode = countrySelect.value;
-                    var selectedCountryName = countrySelect.options[countrySelect.selectedIndex].text;
+                    var selectedCountryName = countrySelect.options[countrySelect.selectedIndex]?.text || '';
 
                     // Reset the error message
                     countryError.style.display = 'none';
                     countryError.textContent = '';
 
                     if (selectedCountryCode === '') {
-                        countryError.textContent = 'Please select a country.';
+                        countryError.textContent = 'Please specify the country.';
                         countryError.style.display = 'block';
                         event.preventDefault(); // Prevent form submission
                         // Set focus to the country selector
@@ -129,15 +129,27 @@
                         hiddenField.value = selectedCountryName;
                     }
                 });
-            }
 
-            // Initialize for ProducerCountry
-            initializeCountrySelector('CountrySelectProducer', 'CountryErrorProducer', 'ProducerCountryName');
+                // Add an event listener to clear the error message when a country is selected
+                countrySelect.addEventListener('change', function () {
+                    var selectedCountryCode = countrySelect.value;
+
+                    if (selectedCountryCode !== '') {
+                        // Clear the error message if a valid country is selected
+                        countryError.style.display = 'none';
+                        countryError.textContent = '';
+                    }
+                });
+            }
 
             // Initialize for DirectorCountry
             initializeCountrySelector('CountrySelectDirector', 'CountryErrorDirector', 'DirectorCountryName');
+
+            // Initialize for ProducerCountry
+            initializeCountrySelector('CountrySelectProducer', 'CountryErrorProducer', 'ProducerCountryName');
         });
     </script>
+
 
     @* Character Left on Textbox Script *@
     <script>
