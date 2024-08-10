@@ -25,9 +25,13 @@
             if (selectedCountries.length === 0) {
                 validationMessageCountry.textContent = "Please select at least one country!";
                 hasError = true;
+                // Set focus to the first country checkbox
+                document.querySelector('input[name="SelectedCountries"]').focus();
             } else if (selectedCountries.length > 3) {
                 validationMessageCountry.textContent = "Max 3 countries can be selected!";
                 hasError = true;
+                // Set focus to the first country checkbox
+                document.querySelector('input[name="SelectedCountries"]').focus();
             } else {
                 validationMessageCountry.textContent = "";
             }
@@ -36,9 +40,13 @@
             if (selectedMovieGenres.length === 0) {
                 validationMessageGenre.textContent = "Please select at least one movie genre!";
                 hasError = true;
+                // Set focus to the first genre checkbox
+                document.querySelector('input[name="SelectedMovieGenres"]').focus();
             } else if (selectedMovieGenres.length > 3) {
                 validationMessageGenre.textContent = "Max 3 movie genres can be selected!";
                 hasError = true;
+                // Set focus to the first genre checkbox
+                document.querySelector('input[name="SelectedMovieGenres"]').focus();
             } else {
                 validationMessageGenre.textContent = "";
             }
@@ -75,7 +83,7 @@
     </script>
 
     @* Country Selector Script *@
-     <script>
+    <script>
         document.addEventListener("DOMContentLoaded", function () {
             function initializeCountrySelector(countrySelectId, countryErrorId, hiddenFieldId) {
                 var countrySelect = document.getElementById(countrySelectId);
@@ -114,6 +122,8 @@
                         countryError.textContent = 'Please select a country.';
                         countryError.style.display = 'block';
                         event.preventDefault(); // Prevent form submission
+                        // Set focus to the country selector
+                        countrySelect.focus();
                     } else {
                         // Set the hidden field value to the country name
                         hiddenField.value = selectedCountryName;
@@ -127,7 +137,7 @@
             // Initialize for DirectorCountry
             initializeCountrySelector('CountrySelectDirector', 'CountryErrorDirector', 'DirectorCountryName');
         });
-    </script> 
+    </script>
 
     @* Character Left on Textbox Script *@
     <script>
@@ -302,7 +312,9 @@
                                            class="form-check-input"
                                            id="country-@i"
                                            name="SelectedCountries"
-                                           value="@Model.AllCountries[i]" />
+                                           value="@Model.AllCountries[i]"
+                                    @* This makes it possible to preserve previous selection after page reload in case form is invalid *@
+                                    @(Model.SelectedCountries.Contains(Model.AllCountries[i]) ? "checked" : "") />
                                     <label class="form-check-label" for="country-@i">@Model.AllCountries[i]</label>
                                 </div>
                             </div>
@@ -330,7 +342,9 @@
                                            class="form-check-input"
                                            id="genre-@i"
                                            name="SelectedMovieGenres"
-                                           value="@Model.AllMovieGenres[i]" />
+                                           value="@Model.AllMovieGenres[i]"
+                                    @* This makes it possible to preserve previous selection after page reload in case form is invalid *@
+                                    @(Model.SelectedMovieGenres.Contains(Model.AllMovieGenres[i]) ? "checked" : "") />
                                     <label class="form-check-label" for="genre-@i">@Model.AllMovieGenres[i]</label>
                                 </div>
                             </div>

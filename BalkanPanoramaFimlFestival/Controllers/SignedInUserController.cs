@@ -102,6 +102,17 @@ namespace BalkanPanoramaFilmFestival.Controllers
             //In case of signup form data is not valid, return the view without deleting the form data
             if (!ModelState.IsValid)
             {
+                // Ensure the form retains the selected values
+                // This assumes SelectedCountries and SelectedMovieGenres
+                // are strings in the form of comma-separated values or lists
+                var selectedCountriesList = Request.Form["SelectedCountries"].ToList();
+                var selectedMovieGenres = Request.Form["SelectedMovieGenres"].ToList();
+                if (selectedCountriesList != null && selectedMovieGenres != null)
+                {
+                    model.SelectedCountries = selectedCountriesList!;
+                    model.SelectedMovieGenres = selectedMovieGenres!;
+                }
+
                 //ViewBag.Countries = _countryService.GetAllCountries();
                 //return View(model); // Return the view with validation errors
                 ModelState.AddModelError(string.Empty, "One of the inputs is not in correct!");
