@@ -18,17 +18,17 @@ namespace BalkanPanoramaFilmFestival.Controllers
         private readonly SignInManager<RegisteredUser> _signInManager;
         private readonly UserManager<RegisteredUser> _userManager;
         private readonly ApplicationDbContext _context;
-        private readonly ICountryService _countryService;
+        private readonly ICompetitionApplicationFormService _competitionApplicationFormService;
 
         public SignedInUserController(SignInManager<RegisteredUser> signInManager,
             UserManager<RegisteredUser> userManager,
             ApplicationDbContext context,
-            ICountryService countryService)
+            ICompetitionApplicationFormService countryService)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _context = context;
-            _countryService = countryService;
+            _competitionApplicationFormService = countryService;
         }
 
         public IActionResult CompetitionApplication()
@@ -38,11 +38,44 @@ namespace BalkanPanoramaFilmFestival.Controllers
             var model = new CompetitionApplicationUserViewModel
             {
                 CompetitionCategory = string.Empty,
-                ProductionYear = string.Empty,
-                MovieName = string.Empty,
-                DirectorName = string.Empty,
+                OriginalMovieName = string.Empty,
+                EnglishMovieName = string.Empty,
+                MovieWebsite = string.Empty,
                 SelectedCountries = new List<string>(),
-                AllCountries = _countryService.GetAllCountries() // Fetch the country list
+                SelectedMovieGenres = new List<string>(),
+                ProductionYear = string.Empty,
+                MovieTimeLength = string.Empty,
+                MovieLanguage = string.Empty,
+
+                // Direction Section
+                DirectorName = string.Empty,
+                DirectorCompany = string.Empty,
+                DirectorCountry = string.Empty,
+                DirectorPhone = string.Empty,
+                DirectorEmail = string.Empty,
+                DirectorBiographyTr = string.Empty,
+                DirectorBiographyEn = string.Empty,
+                DirectorFilmographyTr = string.Empty,
+                DirectorFilmographyEn = string.Empty,
+
+                // Movie Tag
+                MovieScript = string.Empty,
+                Cinematographer = string.Empty,
+                ArtDirector = string.Empty,
+                MovieFiction = string.Empty,
+                MovieActors = string.Empty,
+                BestActress = string.Empty,
+                BestActor = string.Empty,
+
+                // Producer
+                ProducerName = string.Empty,
+                ProducerCompany = string.Empty,
+                ProducerCountry = string.Empty,
+                ProducerPhone = string.Empty,
+                ProducerEmail = string.Empty,
+
+                AllCountries = _competitionApplicationFormService.GetAllCountries(), // Fetch the country list
+                AllMovieGenres = _competitionApplicationFormService.GetAllGenres(), // Fetch the genre list
             };
 
             return View(model); // viewmodel data is being passed to cshtml here, when page is first being displayed.
@@ -54,7 +87,6 @@ namespace BalkanPanoramaFilmFestival.Controllers
             if (!model.CompetitionCategory.Any())
             {
                 ModelState.AddModelError(string.Empty, "At least one competition category must be selected.");
-
             }
 
             if (!model.SelectedCountries.Any())
@@ -72,8 +104,10 @@ namespace BalkanPanoramaFilmFestival.Controllers
             {
                 //ViewBag.Countries = _countryService.GetAllCountries();
                 //return View(model); // Return the view with validation errors
+                ModelState.AddModelError(string.Empty, "One of the inputs is not in correct!");
 
-                model.AllCountries = _countryService.GetAllCountries(); // Re-fetch the country list
+                model.AllCountries = _competitionApplicationFormService.GetAllCountries(); // Re-fetch the country list for view
+                model.AllMovieGenres = _competitionApplicationFormService.GetAllGenres(); // Re-fetch the country list for view
                 return View(model);
             }
 
@@ -81,16 +115,56 @@ namespace BalkanPanoramaFilmFestival.Controllers
 
             if (signedInUser!.Email != null)
             {
+                // Access country name from the hidden fields
+                var directorCountryName = Request.Form["DirectorCountryName"];
+                var producerCountryName = Request.Form["ProducerCountryName"];
+
                 var user = new CompetitionApplicationUser
                 {
                     CompetitionCategory = model.CompetitionCategoryDescription, // Comes from the page form
+                    OriginalMovieName = model.OriginalMovieName, // Comes from the page form
+                    EnglishMovieName = model.EnglishMovieName, // Comes from the page form
+                    MovieWebsite = model.MovieWebsite, // Comes from the page form
+                    SelectedCountries = string.Join(", ", model.SelectedCountries), // Store as a comma-separated string
+                    SelectedMovieGenres = string.Join(", ", model.SelectedMovieGenres), // Comes from the page form
                     ProductionYear = model.ProductionYear, // Comes from the page form
+                    MovieTimeLength = model.MovieTimeLength,
+                    MovieLanguage = model.MovieLanguage,
+
+                    // Direction Section
+                    DirectorName = model.DirectorName, // Comes from the page form
+                    DirectorCompany = model.DirectorCompany,
+                    //DirectorCountry = model.DirectorCountry,
+                    DirectorCountry = directorCountryName!,
+                    DirectorPhone = model.DirectorPhone,
+                    DirectorEmail = model.DirectorEmail,
+                    DirectorWebsite = model.DirectorWebsite,
+                    DirectorBiographyTr = model.DirectorBiographyTr,
+                    DirectorBiographyEn = model.DirectorBiographyEn,
+                    DirectorFilmographyTr = model.DirectorFilmographyTr,
+                    DirectorFilmographyEn = model.DirectorFilmographyEn,
+
+                    // Movie Tag
+                    MovieScript = model.MovieScript,
+                    Cinematographer = model.Cinematographer,
+                    ArtDirector = model.ArtDirector,
+                    MovieFiction = model.MovieFiction,
+                    MovieActors = model.MovieActors,
+                    BestActress = model.BestActress,
+                    BestActor = model.BestActor,
+
+                    // Producer
+                    ProducerName = model.ProducerName,
+                    ProducerCompany = model.ProducerCompany,
+                    //ProducerCountry = model.ProducerCountry,
+                    ProducerCountry = producerCountryName!,
+                    ProducerPhone = model.ProducerPhone,
+                    ProducerEmail = model.ProducerEmail,
+                    ProducerWebsite = model.ProducerWebsite,
+
                     Applicant = $"{signedInUser.FirstName} {signedInUser.LastName}",
                     ApplicantMail = signedInUser.Email,
                     ApplicantCountry = signedInUser.Country,
-                    MovieName = model.MovieName, // Comes from the page form
-                    DirectorName = model.DirectorName, // Comes from the page form
-                    SelectedCountries = string.Join(", ", model.SelectedCountries) // Store as a comma-separated string
                 };
 
                 // Save the form data to the database

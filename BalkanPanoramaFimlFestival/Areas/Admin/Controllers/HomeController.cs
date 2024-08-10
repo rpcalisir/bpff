@@ -51,12 +51,32 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
             {
                 Id =x.Id,
                 CompetitionCategory = x.CompetitionCategory,
+                OriginalMovieName = x.OriginalMovieName,
+                EnglishMovieName = x.EnglishMovieName,
+                MovieWebsite = x.MovieWebsite,
+                SelectedCountries = x.SelectedCountries,
+                SelectedMovieGenres = x.SelectedMovieGenres,
                 ProductionYear = x.ProductionYear,
+                MovieTimeLength = x.MovieTimeLength,
+                MovieLanguage = x.MovieLanguage,
+
+                // Director Section
+                DirectorName = x.DirectorName,
+                DirectorCompany = x.DirectorCompany,
+                DirectorCountry = x.DirectorCountry,
+                DirectorPhone = x.DirectorPhone,
+                DirectorEmail = x.DirectorEmail,
+                DirectorWebsite = x.DirectorWebsite,
+                DirectorBiographyTr = x.DirectorBiographyTr,
+                DirectorBiographyEn = x.DirectorBiographyEn,
+                DirectorFilmographyTr = x.DirectorFilmographyTr,
+                DirectorFilmographyEn = x.DirectorFilmographyEn,
+
+
                 Applicant = x.Applicant,
                 ApplicantMail = x.ApplicantMail,
                 ApplicantCountry = x.ApplicantCountry,
-                MovieName = x.MovieName,
-                DirectorName = x.DirectorName
+                
             }).ToList();
 
             return View(competitionApplicationUserViewModelList);

@@ -2,7 +2,7 @@
 
 namespace BalkanPanoramaFilmFestival.Services
 {
-    public class CountryService : ICountryService
+    public class CompetitionApplicationFormService : ICompetitionApplicationFormService
     {
         public List<string> GetAllCountries()
         {
@@ -38,6 +38,33 @@ namespace BalkanPanoramaFilmFestival.Services
                 "BELGIUM",
                 "FRANCE",
                 // Add other countries here
+            };
+        }
+
+        public List<string> GetAllGenres()
+        {
+            return new List<string>
+            {
+                "ACTION",
+                "ADVENTURE",
+                "COMEDY",
+                "DRAMA",
+                "FANTASY",
+                "HISTORICAL",
+                "HORROR",
+                "MYSTERY",
+                "ROMANCE",
+                "SCI-FI",
+                "THRILLER",
+                "WESTERN",
+                "ANIMATION",
+                "DOCUMENTARY",
+                "MUSICAL",
+                "BIOGRAPHY",
+                "CRIME",
+                "SPORTS",
+                "WAR",
+                // Add other genres here
             };
         }
     }

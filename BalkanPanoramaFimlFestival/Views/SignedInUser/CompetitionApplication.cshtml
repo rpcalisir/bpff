@@ -11,22 +11,192 @@
         @await Html.PartialAsync("PartialScripts/_ValidationScriptsPartial")
     </script>
 
+    @* Countries and Genres Selection Script *@
     <script>
         document.querySelector('form').addEventListener('submit', function (event) {
             var selectedCountries = document.querySelectorAll('input[name="SelectedCountries"]:checked');
-            var validationMessage = document.getElementById('validation-message');
+            var selectedMovieGenres = document.querySelectorAll('input[name="SelectedMovieGenres"]:checked');
+            var validationMessageCountry = document.getElementById('validation-message-country');
+            var validationMessageGenre = document.getElementById('validation-message-genre');
 
+            var hasError = false;
+
+            // Validate countries
             if (selectedCountries.length === 0) {
-                event.preventDefault(); // Prevent the form from submitting
-                validationMessage.textContent = "Please select at least one country!";
+                validationMessageCountry.textContent = "Please select at least one country!";
+                hasError = true;
             } else if (selectedCountries.length > 3) {
-                event.preventDefault(); // Prevent the form from submitting
-                validationMessage.textContent = "Max 3 countries can be selected!";
+                validationMessageCountry.textContent = "Max 3 countries can be selected!";
+                hasError = true;
             } else {
-                validationMessage.textContent = "";
+                validationMessageCountry.textContent = "";
+            }
+
+            // Validate movie genres
+            if (selectedMovieGenres.length === 0) {
+                validationMessageGenre.textContent = "Please select at least one movie genre!";
+                hasError = true;
+            } else if (selectedMovieGenres.length > 3) {
+                validationMessageGenre.textContent = "Max 3 movie genres can be selected!";
+                hasError = true;
+            } else {
+                validationMessageGenre.textContent = "";
+            }
+
+            // Prevent form submission if there are errors
+            if (hasError) {
+                event.preventDefault(); // Prevent the form from submitting
             }
         });
     </script>
+
+    @* Phone Number Script *@
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var directorPhoneInput = document.querySelector("#director-phone");
+            var producerPhoneInput = document.querySelector("#producer-phone");
+
+            // Initialize intlTelInput for Director Phone
+            if (directorPhoneInput) {
+                window.intlTelInput(directorPhoneInput, {
+                    initialCountry: "tr", // Set your default country here
+                    utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js" // for formatting
+                });
+            }
+
+            // Initialize intlTelInput for Producer Phone
+            if (producerPhoneInput) {
+                window.intlTelInput(producerPhoneInput, {
+                    initialCountry: "tr", // Set your default country here
+                    utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js" // for formatting
+                });
+            }
+        });
+    </script>
+
+    @* Country Selector Script *@
+     <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            function initializeCountrySelector(countrySelectId, countryErrorId, hiddenFieldId) {
+                var countrySelect = document.getElementById(countrySelectId);
+                var countryError = document.getElementById(countryErrorId);
+                var form = document.querySelector('form');
+                var hiddenField = document.getElementById(hiddenFieldId);
+
+                // Fetch the list of countries from an external API
+                fetch('https://restcountries.com/v3.1/all')
+                    .then(response => response.json())
+                    .then(data => {
+                        // Populate the select element with options
+                        data.forEach(country => {
+                            if (country.name && country.cca2) {
+                                var option = document.createElement('option');
+                                option.value = country.cca2;
+                                option.textContent = country.name.common;
+                                countrySelect.appendChild(option);
+                            }
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching countries:', error);
+                    });
+
+                // Validate the form on submit
+                form.addEventListener('submit', function (event) {
+                    var selectedCountryCode = countrySelect.value;
+                    var selectedCountryName = countrySelect.options[countrySelect.selectedIndex].text;
+
+                    // Reset the error message
+                    countryError.style.display = 'none';
+                    countryError.textContent = '';
+
+                    if (selectedCountryCode === '') {
+                        countryError.textContent = 'Please select a country.';
+                        countryError.style.display = 'block';
+                        event.preventDefault(); // Prevent form submission
+                    } else {
+                        // Set the hidden field value to the country name
+                        hiddenField.value = selectedCountryName;
+                    }
+                });
+            }
+
+            // Initialize for ProducerCountry
+            initializeCountrySelector('CountrySelectProducer', 'CountryErrorProducer', 'ProducerCountryName');
+
+            // Initialize for DirectorCountry
+            initializeCountrySelector('CountrySelectDirector', 'CountryErrorDirector', 'DirectorCountryName');
+        });
+    </script> 
+
+    @* Character Left on Textbox Script *@
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Character limit handling for DirectorBiographyTr
+            var textareaDirectorBiographyTr = document.getElementById('DirectorBiographyTr');
+            var charCountDirectorBiographyTr = document.getElementById('charCountDirectorBiographyTr');
+
+            textareaDirectorBiographyTr.addEventListener('input', function () {
+                var remaining = 1000 - this.value.length;
+                charCountDirectorBiographyTr.textContent = remaining;
+            });
+
+            // Character limit handling for DirectorBiographyEn
+            var textareaDirectorBiographyEn = document.getElementById('DirectorBiographyEn');
+            var charCountDirectorBiographyEn = document.getElementById('charCountDirectorBiographyEn');
+
+            textareaDirectorBiographyEn.addEventListener('input', function () {
+                var remaining = 1000 - this.value.length;
+                charCountDirectorBiographyEn.textContent = remaining;
+            });
+
+            // Character limit handling for DirectorFilmographyTr
+            var textareaDirectorFilmographyTr = document.getElementById('DirectorFilmographyTr');
+            var charCountDirectorFilmographyTr = document.getElementById('charCountDirectorFilmographyTr');
+
+            textareaDirectorFilmographyTr.addEventListener('input', function () {
+                var remaining = 1000 - this.value.length;
+                charCountDirectorFilmographyTr.textContent = remaining;
+            });
+
+            // Character limit handling for DirectorFilmographyEn
+            var textareaDirectorFilmographyEn = document.getElementById('DirectorFilmographyEn');
+            var charCountDirectorFilmographyEn = document.getElementById('charCountDirectorFilmographyEn');
+
+            textareaDirectorFilmographyEn.addEventListener('input', function () {
+                var remaining = 1000 - this.value.length;
+                charCountDirectorFilmographyEn.textContent = remaining;
+            });
+
+            // Character limit handling for MovieScript
+            var textareaMovieScript = document.getElementById('MovieScript');
+            var charCountMovieScript = document.getElementById('charCountMovieScript');
+
+            textareaMovieScript.addEventListener('input', function () {
+                var remaining = 1000 - this.value.length;
+                charCountMovieScript.textContent = remaining;
+            });
+
+            // Character limit handling for MovieActors
+            var textareaMovieActors = document.getElementById('MovieActors');
+            var charCountMovieActors = document.getElementById('charCountMovieActors');
+
+            textareaMovieActors.addEventListener('input', function () {
+                var remaining = 1000 - this.value.length;
+                charCountMovieActors.textContent = remaining;
+            });
+
+            // Character limit handling for MovieFiction
+            var textareaMovieFiction = document.getElementById('MovieFiction');
+            var charCountMovieFictions = document.getElementById('charCountMovieFiction');
+
+            textareaMovieFiction.addEventListener('input', function () {
+                var remaining = 1000 - this.value.length;
+                charCountMovieFictions.textContent = remaining;
+            });
+        });
+    </script>
+
 }
 
 @* @{
@@ -34,7 +204,7 @@
     var countries = ViewBag.Countries as List<string>;
 } *@
 
-<h1 class="text-center">YARIŞMA BAŞVURUSU</h1>
+<h1 class="text-center mb-5">COMPETITION APPLICATION</h1>
 
 <div class="container">
 
@@ -49,6 +219,8 @@
     <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
     <form asp-controller="SignedInUser" asp-action="CompetitionApplication" method="post">
+
+        @* <-- CATEGORY --> *@
 
         <b2 class="col-md-10 offset-md-1"><strong>CHOOSE COMPETITION CATEGORY</strong></b2>
 
@@ -77,9 +249,49 @@
             </div>
         </div>
 
+        @* <-- GENERAL INFORMATION --> *@
+
+        <b2 class="col-md-10 offset-md-1"><strong>GENERAL INFORMATION</strong></b2>
+
+        <div class="row mb-3 col-md-10 offset-md-1 border border-secondary rounded p-3">
+            <div class="row mb-3 col-md-12">
+                <div class="col-md-6">
+                    <label for="OriginalMovieName" class="form-label" asp-for="OriginalMovieName">Original Movie Name</label>
+                    <input class="form-control" asp-for="OriginalMovieName"
+                           id="OriginalMovieName" name="OriginalMovieName"
+                           maxlength="100" required placeholder="Max 100 characters">
+                    <div class="form-text"></div>
+                    <span class="text-danger" asp-validation-for="OriginalMovieName"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="EnglishMovieName" class="form-label" asp-for="EnglishMovieName">English Movie Name</label>
+                    <input class="form-control" asp-for="EnglishMovieName"
+                           id="EnglishMovieName" name="EnglishMovieName"
+                           maxlength="100" required placeholder="Max 100 characters">
+                    <div class="form-text"></div>
+                    <span class="text-danger" asp-validation-for="EnglishMovieName"></span>
+                </div>
+            </div>
+
+            <div class="row mb-3 col-md-12">
+                <div class="col-md-12">
+                    <label for="MovieWebsite" class="form-label" asp-for="MovieWebsite">Movie Website (Optional)</label>
+                    <input class="form-control" asp-for="MovieWebsite"
+                           id="MovieWebsite" name="MovieWebsite"
+                           maxlength="100" placeholder="Max 100 characters">
+                    <div class="form-text"></div>
+                    <span class="text-danger" asp-validation-for="MovieWebsite"></span>
+                </div>
+            </div>
+        </div>
+
+        @* <-- COUNTRIES --> *@
+
+        <b2 class="col-md-10 offset-md-1"><strong>SELECT COUNTRIES(MAX 3)</strong></b2>
+
         <div class="row mb-3">
             <div class="col-md-10 offset-md-1">
-                <label>Select Countries:</label>
                 <div id="country-selection" class="border border-secondary rounded p-3">
                     <div class="d-flex flex-wrap">
                         @for (int i = 0; i < Model.AllCountries.Count; i++)
@@ -98,39 +310,317 @@
                     </div>
                 </div>
                 @* error comes from JS script, generates error for client side validation *@
-                <span class="text-danger" id="validation-message"></span>
+                <span class="text-danger" id="validation-message-country"></span>
             </div>
         </div>
 
+        @* <-- GENRES --> *@
+
+        <b2 class="col-md-10 offset-md-1"><strong>MOVIE GENRES(MAX 3)</strong></b2>
 
         <div class="row mb-3">
             <div class="col-md-10 offset-md-1">
-                <label for="ProductionYear" class="col-md-4 col-form-label" asp-for="ProductionYear"></label>
-                <div class="col-md-8">
-                    <input asp-for="ProductionYear" class="form-control">
-                    <span class="text-danger" asp-validation-for="ProductionYear"></span>
+                <div id="genre-selection" class="border border-secondary rounded p-3">
+                    <div class="d-flex flex-wrap">
+                        @for (int i = 0; i < Model.AllMovieGenres.Count; i++)
+                        {
+                            <div class="col-md-4 col-lg-3 mb-3">
+                                <div class="form-check">
+                                    <input type="checkbox"
+                                           class="form-check-input"
+                                           id="genre-@i"
+                                           name="SelectedMovieGenres"
+                                           value="@Model.AllMovieGenres[i]" />
+                                    <label class="form-check-label" for="genre-@i">@Model.AllMovieGenres[i]</label>
+                                </div>
+                            </div>
+                        }
+                    </div>
                 </div>
+                @* error comes from JS script, generates error for client side validation *@
+                <span class="text-danger" id="validation-message-genre"></span>
             </div>
         </div>
-        <div class="row mb-3">
-            <div class="col-md-10 offset-md-1">
-                <label for="MovieName" class="col-md-4 col-form-label" asp-for="MovieName"></label>
-                <div class="col-md-8">
-                    <input asp-for="MovieName" class="form-control">
-                    <span class="text-danger" asp-validation-for="MovieName"></span>
-                </div>
+
+        @* <-- PRODUCTION YEAR --> *@
+
+        <div class="row mb-3 col-md-10 offset-md-1 border border-secondary rounded p-3">
+            <div class="col-md-4">
+                <label for="ProductionYear" class="form-label" asp-for="ProductionYear">Production Year</label>
+                <input class="form-control" asp-for="ProductionYear"
+                       id="ProductionYear" name="ProductionYear"
+                       maxlength="4" required placeholder="Max 4 characters">
+                <div class="form-text"></div>
+                <span class="text-danger" asp-validation-for="ProductionYear"></span>
+            </div>
+            <div class="col-md-4">
+                <label for="MovieTimeLength" class="form-label" asp-for="MovieTimeLength">Time Length</label>
+                <input class="form-control" asp-for="MovieTimeLength"
+                       id="MovieTimeLength" name="MovieTimeLength"
+                       maxlength="10" required placeholder="Max 10 characters">
+                <div class="form-text"></div>
+                <span class="text-danger" asp-validation-for="MovieTimeLength"></span>
+            </div>
+            <div class="col-md-4">
+                <label for="MovieLanguage" class="form-label" asp-for="MovieLanguage">Movie Language</label>
+                <input class="form-control" asp-for="MovieLanguage"
+                       id="MovieLanguage" name="MovieLanguage"
+                       maxlength="20" required placeholder="Max 20 characters">
+                <div class="form-text"></div>
+                <span class="text-danger" asp-validation-for="MovieLanguage"></span>
             </div>
         </div>
-        <div class="row mb-3">
-            <div class="col-md-10 offset-md-1">
-                <label for="DirectorName" class="col-md-4 col-form-label" asp-for="DirectorName"></label>
-                <div class="col-md-8">
-                    <input asp-for="DirectorName" class="form-control">
+
+        @* <-- DIRECTOR --> *@
+        <b2 class="col-md-10 offset-md-1"><strong>DIRECTOR</strong></b2>
+
+        <div class="row mb-3 col-md-10 offset-md-1 border border-secondary rounded p-3">
+            <div class="row mb-3 col-md-12">
+                <div class="col-md-12">
+                    <label for="DirectorName" class="form-label" asp-for="DirectorName">Director Name</label>
+                    <input class="form-control" asp-for="DirectorName"
+                           id="DirectorName" name="DirectorName"
+                           maxlength="100" required placeholder="Max 100 characters">
+                    <div class="form-text"></div>
                     <span class="text-danger" asp-validation-for="DirectorName"></span>
                 </div>
             </div>
+
+            <div class="row mb-3 col-md-12">
+                <div class="col-md-6">
+                    <label for="DirectorCompany" class="form-label" asp-for="DirectorCompany">Director Company</label>
+                    <input class="form-control" asp-for="DirectorCompany"
+                           id="DirectorCompany" name="DirectorCompany"
+                           maxlength="100" required placeholder="Max 100 characters">
+                    <span class="text-danger" asp-validation-for="DirectorCompany"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="DirectorCountry" class="form-label" asp-for="DirectorCountry">Director Country</label>
+                    <select id="CountrySelectDirector" name="DirectorCountry" class="form-control">
+                        <option value="">Select Country</option>
+                    </select>
+                    <input type="hidden" id="DirectorCountryName" name="DirectorCountryName" />
+                    <span id="CountryErrorDirector" class="text-danger" style="display: none;">Please specify the country.</span>
+                </div>
+            </div>
+
+            <div class="row mb-3 col-md-12">
+                <div class="col-md-12">
+                    <label for="DirectorPhone" class="col-md-4 col-form-label" asp-for="DirectorPhone">Director Phone</label>
+
+                    <div class="input-group">
+                        @* id attribute makes it possible to run phone scripts, it must be unique *@
+                        @* type="tel" attribute makes it possible to enter only numbers *@
+                        <input id="director-phone" type="tel" asp-for="DirectorPhone" class="form-control"
+                               name="DirectorPhone"
+                               maxlength="25" required placeholder="Max 25 characters">
+                    </div>
+                    <span class="text-danger" asp-validation-for="DirectorPhone"></span>
+                </div>
+            </div>
+
+            <div class="row mb-3 col-md-12">
+                <div class="col-md-6">
+                    <label for="DirectorEmail" class="form-label" asp-for="DirectorEmail">Director Email Address</label>
+                    <input class="form-control" asp-for="DirectorEmail"
+                           id="DirectorEmail" name="DirectorEmail"
+                           maxlength="100" required placeholder="Max 100 characters">
+                    <div class="form-text"></div>
+                    <span class="text-danger" asp-validation-for="DirectorEmail"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="DirectorWebsite" class="form-label" asp-for="DirectorWebsite">Director Website(Optional)</label>
+                    <input class="form-control" asp-for="DirectorWebsite"
+                           id="DirectorWebsite" name="DirectorWebsite"
+                           maxlength="100" placeholder="Max 100 characters">
+                    <div class="form-text"></div>
+                    <span class="text-danger" asp-validation-for="DirectorWebsite"></span>
+                </div>
+            </div>
+
+            <div class="row mb-3 col-md-12">
+                <!-- Director Biography TR -->
+                <div class="col-md-6">
+                    <label for="DirectorBiographyTr" class="form-label" asp-for="DirectorBiographyTr">Director Biography TR</label>
+                    <textarea class="form-control" asp-for="DirectorBiographyTr" id="DirectorBiographyTr" rows="10" maxlength="1000" style="resize: none;"></textarea>
+                    <div class="form-text"><span id="charCountDirectorBiographyTr">1000</span> characters remaining</div>
+                    <span class="text-danger" asp-validation-for="DirectorBiographyTr"></span>
+                </div>
+
+                <!-- Director Biography EN -->
+                <div class="col-md-6">
+                    <label for="DirectorBiographyEn" class="form-label" asp-for="DirectorBiographyEn">Director Biography EN</label>
+                    <textarea class="form-control" asp-for="DirectorBiographyEn" id="DirectorBiographyEn" rows="10" maxlength="1000" style="resize: none;"></textarea>
+                    <div class="form-text"><span id="charCountDirectorBiographyEn">1000</span> characters remaining</div>
+                    <span class="text-danger" asp-validation-for="DirectorBiographyEn"></span>
+                </div>
+            </div>
+
+            <div class="row mb-3 col-md-12">
+                <div class="col-md-6">
+                    <label for="DirectorFilmographyTr" class="form-label" asp-for="DirectorFilmographyTr">Filmography TR</label>
+                    <textarea class="form-control" asp-for="DirectorFilmographyTr" id="DirectorFilmographyTr" rows="10" maxlength="1000" style="resize: none;"></textarea>
+                    <div class="form-text"><span id="charCountDirectorFilmographyTr">1000</span> characters remaining</div>
+                    <span class="text-danger" asp-validation-for="DirectorFilmographyTr"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="DirectorFilmographyEn" class="form-label" asp-for="DirectorFilmographyEn">Director Filmography En</label>
+                    <textarea class="form-control" asp-for="DirectorFilmographyEn" id="DirectorFilmographyEn" rows="10" maxlength="1000" style="resize: none;"></textarea>
+                    <div class="form-text"><span id="charCountDirectorFilmographyEn">1000</span> characters remaining</div>
+                    <span class="text-danger" asp-validation-for="DirectorFilmographyEn"></span>
+                </div>
+            </div>
+
         </div>
 
+        @* <-- --> *@
+
+        @* <-- MOVIE TAG --> *@
+
+        <b2 class="col-md-10 offset-md-1"><strong>MOVIE TAG</strong></b2>
+
+        <div class="row mb-3 col-md-10 offset-md-1 border border-secondary rounded p-3">
+
+            <div class="row mb-3 col-md-12 ">
+                <div class="col-md-12">
+                    <label for="MovieScript" class="form-label" asp-for="MovieScript">Movie Script</label>
+                    <textarea class="form-control" asp-for="MovieScript" id="MovieScript" rows="10" maxlength="1000" style="resize: none;"></textarea>
+                    <div class="form-text"><span id="charCountMovieScript">1000</span> characters remaining</div>
+                    <span class="text-danger" asp-validation-for="MovieScript"></span>
+                </div>
+            </div>
+
+            <div class="row mb-3 col-md-12 ">
+                <div class="col-md-6">
+                    <label for="Cinematographer" class="form-label" asp-for="Cinematographer">Cinematographer</label>
+                    <input class="form-control" asp-for="Cinematographer"
+                           id="Cinematographer" name="Cinematographer"
+                           maxlength="100" required placeholder="Max 100 characters">
+                    <div class="form-text"></div>
+                    <span class="text-danger" asp-validation-for="Cinematographer"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="ArtDirector" class="form-label" asp-for="ArtDirector">Art Director</label>
+                    <input class="form-control" asp-for="ArtDirector"
+                           id="ArtDirector" name="ArtDirector"
+                           maxlength="100" required placeholder="Max 100 characters">
+                    <div class="form-text"></div>
+                    <span class="text-danger" asp-validation-for="ArtDirector"></span>
+                </div>
+            </div>
+
+            <div class="row mb-3 col-md-12 ">
+                <div class="col-md-12">
+                    <label for="MovieFiction" class="form-label" asp-for="MovieFiction">Movie Fiction</label>
+                    <textarea class="form-control" asp-for="MovieFiction" id="MovieFiction" rows="10" maxlength="1000" style="resize: none;"></textarea>
+                    <div class="form-text"><span id="charCountMovieFiction">1000</span> characters remaining</div>
+                    <span class="text-danger" asp-validation-for="MovieFiction"></span>
+                </div>
+            </div>
+
+            <div class="row mb-3 col-md-12 ">
+                <div class="col-md-12">
+                    <label for="MovieActors" class="form-label" asp-for="MovieActors">Movie Actors</label>
+                    <textarea class="form-control" asp-for="MovieActors" id="MovieActors" rows="10" maxlength="1000" style="resize: none;"></textarea>
+                    <div class="form-text"><span id="charCountMovieActors">1000</span> characters remaining</div>
+                    <span class="text-danger" asp-validation-for="MovieActors"></span>
+                </div>
+            </div>
+
+            <div class="row mb-3 col-md-12">
+                <div class="col-md-6">
+                    <label for="BestActress" class="form-label" asp-for="BestActress">Best Actress</label>
+                    <input class="form-control" asp-for="BestActress"
+                           id="BestActress" name="BestActress"
+                           maxlength="100" required placeholder="Max 100 characters">
+                    <div class="form-text"></div>
+                    <span class="text-danger" asp-validation-for="BestActress"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="BestActor" class="form-label" asp-for="BestActor">Best Actor</label>
+                    <input class="form-control" asp-for="BestActor"
+                           id="BestActor" name="BestActor"
+                           maxlength="100" required placeholder="Max 100 characters">
+                    <div class="form-text"></div>
+                    <span class="text-danger" asp-validation-for="BestActor"></span>
+                </div>
+            </div>
+        </div>
+
+        @* <-- --> *@
+
+        @* <-- PRODUCER --> *@
+        <b2 class="col-md-10 offset-md-1"><strong>PRODUCER</strong></b2>
+
+        <div class="row mb-3 col-md-10 offset-md-1 border border-secondary rounded p-3">
+            <div class="row mb-3 col-md-12">
+                <div class="col-md-12">
+                    <label for="ProducerName" class="form-label" asp-for="ProducerName">Producer Name</label>
+                    <input class="form-control" asp-for="ProducerName"
+                           id="ProducerName" name="ProducerName"
+                           maxlength="100" required placeholder="Max 100 characters">
+                    <div class="form-text"></div>
+                    <span class="text-danger" asp-validation-for="ProducerName"></span>
+                </div>
+            </div>
+
+            <div class="row mb-3 col-md-12">
+                <div class="col-md-6">
+                    <label for="ProducerCompany" class="form-label" asp-for="ProducerCompany">Producer Company</label>
+                    <input class="form-control" asp-for="ProducerCompany"
+                           id="ProducerCompany" name="ProducerCompany"
+                           maxlength="100" required placeholder="Max 100 characters">
+                    <span class="text-danger" asp-validation-for="ProducerCompany"></span>
+                </div>
+                <div class="col-md-6">
+                    <label for="ProducerCountry" class="form-label" asp-for="ProducerCountry">Producer Country</label>
+                    <select id="CountrySelectProducer" name="ProducerCountry" class="form-control">
+                        <option value="">Select Country</option>
+                    </select>
+                    <input type="hidden" id="ProducerCountryName" name="ProducerCountryName" />
+                    <span id="CountryErrorProducer" class="text-danger" style="display: none;">Please specify the country.</span>
+                </div>
+            </div>
+            <div class="row mb-3 col-md-12">
+                <div class="col-md-12">
+                    <label for="ProducerPhone" class="col-md-4 col-form-label" asp-for="ProducerPhone">Producer Phone</label>
+
+                    <div class="input-group">
+                        <input id="producer-phone" type="tel" asp-for="ProducerPhone" class="form-control"
+                               name="ProducerPhone"
+                               maxlength="25" required placeholder="Max 25 characters">
+                    </div>
+                    <span class="text-danger" asp-validation-for="ProducerPhone"></span>
+                </div>
+            </div>
+
+            <div class="row mb-3 col-md-12">
+                <div class="col-md-6">
+                    <label for="ProducerEmail" class="form-label" asp-for="ProducerEmail">Producer Email Address</label>
+                    <input class="form-control" asp-for="ProducerEmail"
+                           id="ProducerEmail" name="ProducerEmail"
+                           maxlength="100" required placeholder="Max 100 characters">
+                    <div class="form-text"></div>
+                    <span class="text-danger" asp-validation-for="ProducerEmail"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="ProducerWebsite" class="form-label" asp-for="ProducerWebsite">Producer Website(Optional)</label>
+                    <input class="form-control" asp-for="ProducerWebsite"
+                           id="ProducerWebsite" name="ProducerWebsite"
+                           maxlength="100" placeholder="Max 100 characters">
+                    <div class="form-text"></div>
+                    <span class="text-danger" asp-validation-for="ProducerWebsite"></span>
+                </div>
+            </div>
+        </div>
+
+        @* <-- --> *@
 
         <div class="row">
             <div class="col-md-10 offset-md-1 text-start">

@@ -71,7 +71,7 @@ namespace BalkanPanoramaFilmFestival
             });
 
             // Register CountryService
-            builder.Services.AddSingleton<ICountryService, CountryService>();
+            builder.Services.AddSingleton<ICompetitionApplicationFormService, CompetitionApplicationFormService>();
 
             var app = builder.Build();
 

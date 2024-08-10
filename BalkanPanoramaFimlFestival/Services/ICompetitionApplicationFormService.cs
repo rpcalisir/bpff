@@ -2,8 +2,9 @@
 
 namespace BalkanPanoramaFilmFestival.Services
 {
-    public interface ICountryService
+    public interface ICompetitionApplicationFormService
     {
         List<string> GetAllCountries();
+        List<string> GetAllGenres();
     }
 }
