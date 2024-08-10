@@ -130,6 +130,48 @@ namespace BalkanPanoramaFilmFestival.Controllers
                 var directorCountryName = Request.Form["DirectorCountryName"];
                 var producerCountryName = Request.Form["ProducerCountryName"];
 
+                // Handle file upload
+                if (model.UploadedFile != null && model.UploadedFile.Length > 0)
+                {
+                    // Validate file type
+                    if (!model.UploadedFile.ContentType.Equals("application/pdf", StringComparison.OrdinalIgnoreCase))
+                    {
+                        ModelState.AddModelError(string.Empty, "The file must be a PDF.");
+                        return View(model);
+                    }
+
+                    // Validate file size (e.g., max 20 MB)
+                    if (model.UploadedFile.Length > 20 * 1024 * 1024)
+                    {
+                        ModelState.AddModelError(string.Empty, "The file size must be less than 20 MB.");
+
+                        return View(model);
+                    }
+
+                    // Define the path to save the file
+                    var uploadsFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
+
+                    // Ensure the uploads directory exists
+                    if (!Directory.Exists(uploadsFolderPath))
+                    {
+                        Directory.CreateDirectory(uploadsFolderPath);
+                    }
+
+                    // Generate a unique file name to prevent overwriting
+                    var uniqueFileName = Guid.NewGuid().ToString() + "_" + 
+                        Path.GetFileName(model.UploadedFile.FileName);
+                    var filePath = Path.Combine(uploadsFolderPath, uniqueFileName);
+
+                    // Save the file to the server
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await model.UploadedFile.CopyToAsync(fileStream);
+                    }
+
+                    // Store the relative file path in the database
+                    model.UploadedFilePath = "/uploads/" + uniqueFileName;
+                }
+
                 var user = new CompetitionApplicationUser
                 {
                     CompetitionCategory = model.CompetitionCategoryDescription, // Comes from the page form
@@ -172,6 +214,9 @@ namespace BalkanPanoramaFilmFestival.Controllers
                     ProducerPhone = model.ProducerPhone,
                     ProducerEmail = model.ProducerEmail,
                     ProducerWebsite = model.ProducerWebsite,
+
+                    // FILM WORK OPERATION CERTIFICATE
+                    UploadedFilePath = model.UploadedFilePath,
 
                     Applicant = $"{signedInUser.FirstName} {signedInUser.LastName}",
                     ApplicantMail = signedInUser.Email,

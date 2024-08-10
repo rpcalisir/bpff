@@ -64,28 +64,6 @@ namespace BalkanPanoramaFilmFestival.Controllers
                 return View();
             }
 
-            //// Check if the email is confirmed
-            //if (!await _userManager.IsEmailConfirmedAsync(foundUser))
-            //{
-            //    // Create confirmation token
-            //    var code = await _userManager.GenerateEmailConfirmationTokenAsync(foundUser);
-
-            //    // Create the confirmation URL
-            //    var callbackUrl = Url.Action(
-            //        nameof(ConfirmEmail),
-            //        "Home", // Adjust to your actual controller name
-            //        new { userId = foundUser.Id, code },
-            //        protocol: HttpContext.Request.Scheme);
-
-            //    // Send a new confirmation email
-            //    var message = $"Please confirm your account by clicking <a href='{callbackUrl}'>here</a>.";
-            //    await _emailService.SendEmailAsync(model.Email, "Confirm your email", message);
-
-            //    ModelState.AddModelError(string.Empty, "Email not confirmed. A new confirmation email has been sent.");
-
-            //    return View();
-            //}
-
             // Check if the email is confirmed, if not send the confirmation mail again
             if (!await _userManager.IsEmailConfirmedAsync(foundUser))
             {
@@ -153,30 +131,6 @@ namespace BalkanPanoramaFilmFestival.Controllers
             // in case there is an existing user, it returns error message inside of return object
             var identityResult = await _userManager.CreateAsync(user, model.ConfirmPassword);
 
-            //if (identityResult.Succeeded)
-            //{
-            //    // Generate email confirmation token
-            //    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-
-            //    // Create the confirmation URL
-            //    var callbackUrl = Url.Action(
-            //        nameof(ConfirmEmail),
-            //        "Home",
-            //        new { userId = user.Id, code },
-            //        protocol: Request.Scheme);
-
-            //    // Send the confirmation email
-            //    var message = $"Please confirm your account by clicking <a href='{callbackUrl}'>here</a>.";
-            //    await _emailService.SendEmailAsync(model.Email, "Confirm your email", message);
-
-            //    // Set a success message in TempData
-            //    TempData["SuccessMessage"] = "Sign up is successfully completed. Confirm your email address to sign in.";
-
-            //    //Return current page, with calling Register(Get) method, passing TempData into it,
-            //    //so message can be passed and empty form can be seen.
-            //    return RedirectToAction(nameof(SignUp));
-            //}
-
             if (identityResult.Succeeded)
             {
                 await SendConfirmationEmailAsync(user, model.Email, nameof(ConfirmEmail));
@@ -200,7 +154,6 @@ namespace BalkanPanoramaFilmFestival.Controllers
 
             // Usage of extension method
             //ModelState.AddModelErrorList(identityResult.Errors.Select(d => d.Description).ToList());
-
             return View();
         }
 

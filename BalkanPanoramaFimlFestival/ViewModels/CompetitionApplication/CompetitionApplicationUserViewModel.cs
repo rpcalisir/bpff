@@ -76,5 +76,9 @@ namespace BalkanPanoramaFilmFestival.ViewModels.CompetitionApplication
         public required string ProducerEmail { get; set; }
         public string? ProducerWebsite { get; set; }
 
+
+        // FILM WORK OPERATION CERTIFICATE
+        public IFormFile? UploadedFile { get; set; }
+        public string? UploadedFilePath { get; set; }
     }
 }

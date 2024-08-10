@@ -72,14 +72,50 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
                 DirectorFilmographyTr = x.DirectorFilmographyTr,
                 DirectorFilmographyEn = x.DirectorFilmographyEn,
 
+                UploadedFilePath = x.UploadedFilePath, // Ensure this is included
 
                 Applicant = x.Applicant,
                 ApplicantMail = x.ApplicantMail,
                 ApplicantCountry = x.ApplicantCountry,
-                
+
+
             }).ToList();
 
             return View(competitionApplicationUserViewModelList);
         }
+
+        [HttpGet]
+        public IActionResult DownloadPdf(string filePath)
+        {
+            if (string.IsNullOrEmpty(filePath))
+            {
+                return NotFound();
+            }
+
+            // Decode the URL-encoded file path
+            var decodedFilePath = Uri.UnescapeDataString(filePath);
+
+            // Log or debug the decoded file path
+            Console.WriteLine($"Decoded file path: {decodedFilePath}");
+
+            // Combine the root directory with the relative file path
+            var fullFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", decodedFilePath.TrimStart('/'));
+
+            // Log or debug the full file path
+            Console.WriteLine($"Full file path: {fullFilePath}");
+
+            if (!System.IO.File.Exists(fullFilePath))
+            {
+                return NotFound();
+            }
+
+            var fileBytes = System.IO.File.ReadAllBytes(fullFilePath);
+            var fileName = Path.GetFileName(fullFilePath);
+
+            return File(fileBytes, "application/pdf", fileName);
+        }
+
+
+
     }
 }

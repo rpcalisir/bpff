@@ -9,13 +9,14 @@
 <table class="table table-success table-striped">
     <thead>
         <tr>
-            <th>Kategori</th>
-            <th>Yapım Yılı</th>
-            <th>Başvuru Sahibi</th>
+            <th>Category</th>
+            <th>Production Year</th>
+            <th>Applicant</th>
             <th>Email</th>
-            <th>Ülke</th>
-            <th>Film Adı</th>
-            <th>Yönetmen</th>
+            <th>Country</th>
+            <th>Movie Name</th>
+            <th>Director</th>
+            <th>Download PDF</th> <!-- Added this column -->
         </tr>
     </thead>
 
@@ -24,22 +25,25 @@
         {
             <tr>
                 <td>@item.CompetitionCategory</td>
-               @*  <td>@item.OriginalMovieName</td>
-                <td>@item.EnglishMovieName</td>
-                <td>@item.MovieWebsite</td>
-                <td>@item.SelectedCountries</td>
-                <td>@item.SelectedMovieGenres</td> *@
                 <td>@item.ProductionYear</td>
-                @* <td>@item.MovieTimeLength</td> *@
-                @* <td>@item.MovieLanguage</td> *@
-
-
-
                 <td>@item.Applicant</td>
                 <td>@item.ApplicantMail</td>
                 <td>@item.ApplicantCountry</td>
                 <td>@item.DirectorName</td>
                 <td>@item.OriginalMovieName</td>
+                <td>
+                    @if (!string.IsNullOrEmpty(item.UploadedFilePath))
+                    {
+                        // Pass the relative file path (excluding leading '/')
+                        <a href="@Url.Action("DownloadPdf", "Home", 
+                        new { Area = "Admin", filePath = item.UploadedFilePath.TrimStart('/') })" 
+                        class="btn btn-primary">Download PDF</a>
+                    }
+                    else
+                    {
+                        <span>No PDF Uploaded</span>
+                    }
+                </td>
             </tr>
         }
     </tbody>

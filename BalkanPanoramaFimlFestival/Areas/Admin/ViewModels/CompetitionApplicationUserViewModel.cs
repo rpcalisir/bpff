@@ -27,8 +27,13 @@
         public required string DirectorFilmographyEn { get; set; }
 
 
+        // Signed In User
         public required string Applicant { get; set; }
         public required string ApplicantMail { get; set; }
         public required string ApplicantCountry { get; set; }
+
+
+        // FILM WORK OPERATION CERTIFICATE
+        public string? UploadedFilePath { get; set; }
     }
 }
