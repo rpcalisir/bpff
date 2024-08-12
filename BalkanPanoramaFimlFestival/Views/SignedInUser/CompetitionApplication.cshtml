@@ -18,8 +18,8 @@
     @* COMPETITION CATEGORY*@
 
 
-    @* ------------------------------------------------------------------------------------------------------------ *@
     @* GENERAL INFORMATION *@
+    @* ------------------------------------------------------------------------------------------------------------ *@
 
     @* Container Border Color Script *@
     <script>
@@ -65,8 +65,8 @@
         });
     </script>
 
-    @* GENERAL INFORMATION *@
     @* ------------------------------------------------------------------------------------------------------------ *@
+    @* GENERAL INFORMATION *@
 
 
     @* SELECT COUNTRIES *@
@@ -177,8 +177,8 @@
     @* MOVIE GENRES *@
 
 
-    @* ------------------------------------------------------------------------------------------------------------ *@
     @* MOVIE FEATURES *@
+    @* ------------------------------------------------------------------------------------------------------------ *@
 
     @* Container Border Color Script *@
     <script>
@@ -346,44 +346,77 @@
         });
     </script>
 
+    @* ------------------------------------------------------------------------------------------------------------ *@
     @* MOVIE FEATURES *@
-    @* ------------------------------------------------------------------------------------------------------------ *@
-
-    @* UP IS DONE *@
-
-
-
-
-
-
-
-
 
 
     @* DIRECTOR *@
     @* ------------------------------------------------------------------------------------------------------------ *@
+    <script>
+        function validateDirectorInfo() {
+            var directorContainer = document.getElementById('director-container');
+            var requiredElements = directorContainer.querySelectorAll('input[required], select[required], textarea[required]');
+            var allValid = true;
+
+            // Check each required element
+            requiredElements.forEach(function (element) {
+                if (!element.value.trim()) {
+                    allValid = false;
+                    element.classList.add('border-danger');
+                    element.classList.remove('border-success');
+                } else {
+                    element.classList.add('border-success');
+                    element.classList.remove('border-danger');
+                }
+            });
+
+            // Validate country selection separately
+            var directorCountry = document.getElementById('CountrySelectDirector');
+            var countryError = document.getElementById('CountryErrorDirector');
+            if (directorCountry && directorCountry.value === "") {
+                allValid = false;
+                directorCountry.classList.add('border-danger');
+                directorCountry.classList.remove('border-success');
+                countryError.style.display = "block";
+            } else if (directorCountry) {
+                directorCountry.classList.add('border-success');
+                directorCountry.classList.remove('border-danger');
+                countryError.style.display = "none";
+            }
+
+            // Ensure container border color updates based on the validity of all required fields
+            if (allValid) {
+                directorContainer.classList.add('border-success');
+                directorContainer.classList.remove('border-danger');
+            } else {
+                directorContainer.classList.add('border-danger');
+                directorContainer.classList.remove('border-success');
+            }
+
+            return allValid; // Return whether the director info is valid
+        }
+
+        // Attach the validation function to the form submit event
+        document.querySelector('form').addEventListener('submit', function (event) {
+            if (!validateDirectorInfo()) {
+                event.preventDefault(); // Prevent form submission if there are errors
+            }
+        });
+
+        // Attach the validation function to each required input's input/change event
+        document.querySelectorAll('#director-container input[required], #director-container select[required], #director-container textarea[required]').forEach(function (element) {
+            element.addEventListener('input', validateDirectorInfo);
+            element.addEventListener('change', validateDirectorInfo); // For select elements
+        });
+    </script>
 
     @* ------------------------------------------------------------------------------------------------------------ *@
     @* DIRECTOR *@
 
-    @* MOVIE TAG *@
-    @* ------------------------------------------------------------------------------------------------------------ *@
-    @* ------------------------------------------------------------------------------------------------------------ *@
-    @* MOVIE TAG *@
 
-
-    @* PRODUCER *@
-    @* ------------------------------------------------------------------------------------------------------------ *@
+    @* SPECIAL *@
 
     @* ------------------------------------------------------------------------------------------------------------ *@
-    @* PRODUCER *@
-
-    @* FILM WORK OPERATION CERTIFICATE *@
-    @* ------------------------------------------------------------------------------------------------------------ *@
-
-    @* ------------------------------------------------------------------------------------------------------------ *@
-    @* FILM WORK OPERATION CERTIFICATE *@
-
 
     @* Country Selector Script *@
     <script>
@@ -471,18 +504,6 @@
         });
     </script>
 
-
-
-
-
-
-
-
-
-
-
-
-
     @* Phone Number Script *@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -506,6 +527,155 @@
             }
         });
     </script>
+    @* ------------------------------------------------------------------------------------------------------------ *@
+    @* SPECIAL *@
+
+
+    @* MOVIE TAG *@
+    @* ------------------------------------------------------------------------------------------------------------ *@
+    <script>
+        function validateMovieTagInfo() {
+            var movieTagContainer = document.getElementById('movie-tag-container');
+            var requiredInputs = movieTagContainer.querySelectorAll('input[required], textarea[required]');
+            var allValid = true;
+
+            // Check each required input
+            requiredInputs.forEach(function (input) {
+                if (!input.value.trim()) {
+                    allValid = false;
+                    input.classList.add('border-danger');
+                    input.classList.remove('border-success');
+                } else {
+                    input.classList.add('border-success');
+                    input.classList.remove('border-danger');
+                }
+            });
+
+            // Update container border color based on the validity of inputs
+            if (allValid) {
+                movieTagContainer.classList.add('border-success');
+                movieTagContainer.classList.remove('border-danger');
+            } else {
+                movieTagContainer.classList.add('border-danger');
+                movieTagContainer.classList.remove('border-success');
+            }
+
+            return allValid; // Return whether the movie tag info is valid
+        }
+
+        // Attach the validation function to the form submit event
+        document.querySelector('form').addEventListener('submit', function (event) {
+            if (!validateMovieTagInfo()) {
+                event.preventDefault(); // Prevent form submission if there are errors
+            }
+        });
+
+        // Attach the validation function to each required input's input/change event
+        document.querySelectorAll('#movie-tag-container input[required], #movie-tag-container textarea[required]').forEach(function (input) {
+            input.addEventListener('input', validateMovieTagInfo);
+            input.addEventListener('change', validateMovieTagInfo); // for select elements if any
+        });
+    </script>
+    @* ------------------------------------------------------------------------------------------------------------ *@
+    @* MOVIE TAG *@
+
+
+    @* PRODUCER *@
+    @* ------------------------------------------------------------------------------------------------------------ *@
+    <script>
+        function validateProducerInfo() {
+            var producerContainer = document.getElementById('producer-container');
+            var requiredInputs = producerContainer.querySelectorAll('input[required], select[required]');
+            var allValid = true;
+
+            // Check each required input and select
+            requiredInputs.forEach(function (input) {
+                if (input.type === 'select-one') {
+                    // Check select elements
+                    if (!input.value.trim()) {
+                        allValid = false;
+                        input.classList.add('border-danger');
+                        input.classList.remove('border-success');
+                    } else {
+                        input.classList.add('border-success');
+                        input.classList.remove('border-danger');
+                    }
+                } else {
+                    // Check input elements
+                    if (!input.value.trim()) {
+                        allValid = false;
+                        input.classList.add('border-danger');
+                        input.classList.remove('border-success');
+                    } else {
+                        input.classList.add('border-success');
+                        input.classList.remove('border-danger');
+                    }
+                }
+            });
+
+            // Update container border color based on the validity of inputs
+            if (allValid) {
+                producerContainer.classList.add('border-success');
+                producerContainer.classList.remove('border-danger');
+            } else {
+                producerContainer.classList.add('border-danger');
+                producerContainer.classList.remove('border-success');
+            }
+
+            return allValid; // Return whether the producer info is valid
+        }
+
+        // Attach the validation function to the form submit event
+        document.querySelector('form').addEventListener('submit', function (event) {
+            if (!validateProducerInfo()) {
+                event.preventDefault(); // Prevent form submission if there are errors
+            }
+        });
+
+        // Attach the validation function to each required input's input/change event
+        document.querySelectorAll('#producer-container input[required], #producer-container select[required]').forEach(function (input) {
+            input.addEventListener('input', validateProducerInfo);
+            input.addEventListener('change', validateProducerInfo); // for select elements
+        });
+    </script>
+    @* ------------------------------------------------------------------------------------------------------------ *@
+    @* PRODUCER *@
+
+    @* UP IS DONE *@
+
+
+    @* FILM WORK OPERATION CERTIFICATE *@
+    @* ------------------------------------------------------------------------------------------------------------ *@
+    <script>
+        function validateFileUpload() {
+            var container = document.getElementById('film-work-operation-container');
+            var fileInput = document.getElementById('UploadedFile');
+            var fileUploaded = fileInput.files.length > 0;
+
+            // Update border color of the container based on file upload status
+            if (fileUploaded) {
+                container.classList.add('border-success');
+                container.classList.remove('border-danger');
+            } else {
+                container.classList.add('border-danger');
+                container.classList.remove('border-success');
+            }
+        }
+
+        // Attach the validation function to the file input's change event
+        document.getElementById('UploadedFile').addEventListener('change', validateFileUpload);
+
+        // Optionally, you may want to validate the file input on form submission
+        document.querySelector('form').addEventListener('submit', function (event) {
+            if (document.getElementById('UploadedFile').files.length === 0) {
+                validateFileUpload();
+                event.preventDefault(); // Prevent form submission if no file is uploaded
+            }
+        });
+    </script>
+
+    @* ------------------------------------------------------------------------------------------------------------ *@
+    @* FILM WORK OPERATION CERTIFICATE *@
 }
 
 @* @{
@@ -628,7 +798,7 @@
 
         <b2 class="col-md-10 offset-md-1"><strong>MOVIE GENRES(MAX 3)</strong></b2>
 
-        <div  class="row mb-3">
+        <div class="row mb-3">
             <div class="col-md-10 offset-md-1">
                 <div id="movie-genres-container" class="border border-secondary rounded p-3">
                     <div class="d-flex flex-wrap">
@@ -739,7 +909,7 @@
                 <!-- Director Biography TR -->
                 <div class="col-md-6">
                     <label for="DirectorBiographyTr" class="form-label" asp-for="DirectorBiographyTr">Director Biography TR</label>
-                    <textarea class="form-control" asp-for="DirectorBiographyTr" id="DirectorBiographyTr" rows="10" maxlength="1000" style="resize: none;"></textarea>
+                    <textarea class="form-control" asp-for="DirectorBiographyTr" id="DirectorBiographyTr" rows="10" maxlength="1000" required style="resize: none;"></textarea>
                     <div class="form-text"><span id="charCountDirectorBiographyTr">1000</span> characters remaining</div>
                     <span class="text-danger" asp-validation-for="DirectorBiographyTr"></span>
                 </div>
@@ -747,7 +917,7 @@
                 <!-- Director Biography EN -->
                 <div class="col-md-6">
                     <label for="DirectorBiographyEn" class="form-label" asp-for="DirectorBiographyEn">Director Biography EN</label>
-                    <textarea class="form-control" asp-for="DirectorBiographyEn" id="DirectorBiographyEn" rows="10" maxlength="1000" style="resize: none;"></textarea>
+                    <textarea class="form-control" asp-for="DirectorBiographyEn" id="DirectorBiographyEn" rows="10" maxlength="1000" required style="resize: none;"></textarea>
                     <div class="form-text"><span id="charCountDirectorBiographyEn">1000</span> characters remaining</div>
                     <span class="text-danger" asp-validation-for="DirectorBiographyEn"></span>
                 </div>
@@ -756,14 +926,14 @@
             <div class="row mb-3 col-md-12">
                 <div class="col-md-6">
                     <label for="DirectorFilmographyTr" class="form-label" asp-for="DirectorFilmographyTr">Filmography TR</label>
-                    <textarea class="form-control" asp-for="DirectorFilmographyTr" id="DirectorFilmographyTr" rows="10" maxlength="1000" style="resize: none;"></textarea>
+                    <textarea class="form-control" asp-for="DirectorFilmographyTr" id="DirectorFilmographyTr" rows="10" maxlength="1000" required style="resize: none;"></textarea>
                     <div class="form-text"><span id="charCountDirectorFilmographyTr">1000</span> characters remaining</div>
                     <span class="text-danger" asp-validation-for="DirectorFilmographyTr"></span>
                 </div>
 
                 <div class="col-md-6">
                     <label for="DirectorFilmographyEn" class="form-label" asp-for="DirectorFilmographyEn">Director Filmography En</label>
-                    <textarea class="form-control" asp-for="DirectorFilmographyEn" id="DirectorFilmographyEn" rows="10" maxlength="1000" style="resize: none;"></textarea>
+                    <textarea class="form-control" asp-for="DirectorFilmographyEn" id="DirectorFilmographyEn" rows="10" maxlength="1000" required style="resize: none;"></textarea>
                     <div class="form-text"><span id="charCountDirectorFilmographyEn">1000</span> characters remaining</div>
                     <span class="text-danger" asp-validation-for="DirectorFilmographyEn"></span>
                 </div>
@@ -781,7 +951,7 @@
             <div class="row mb-3 col-md-12 ">
                 <div class="col-md-12">
                     <label for="MovieScript" class="form-label" asp-for="MovieScript">Movie Script</label>
-                    <textarea class="form-control" asp-for="MovieScript" id="MovieScript" rows="10" maxlength="1000" style="resize: none;"></textarea>
+                    <textarea class="form-control" asp-for="MovieScript" id="MovieScript" rows="10" maxlength="1000" required style="resize: none;"></textarea>
                     <div class="form-text"><span id="charCountMovieScript">1000</span> characters remaining</div>
                     <span class="text-danger" asp-validation-for="MovieScript"></span>
                 </div>
@@ -799,7 +969,7 @@
             <div class="row mb-3 col-md-12 ">
                 <div class="col-md-12">
                     <label for="MovieFiction" class="form-label" asp-for="MovieFiction">Movie Fiction</label>
-                    <textarea class="form-control" asp-for="MovieFiction" id="MovieFiction" rows="10" maxlength="1000" style="resize: none;"></textarea>
+                    <textarea class="form-control" asp-for="MovieFiction" id="MovieFiction" rows="10" maxlength="1000" required style="resize: none;"></textarea>
                     <div class="form-text"><span id="charCountMovieFiction">1000</span> characters remaining</div>
                     <span class="text-danger" asp-validation-for="MovieFiction"></span>
                 </div>
@@ -807,7 +977,7 @@
             <div class="row mb-3 col-md-12 ">
                 <div class="col-md-12">
                     <label for="MovieActors" class="form-label" asp-for="MovieActors">Movie Actors</label>
-                    <textarea class="form-control" asp-for="MovieActors" id="MovieActors" rows="10" maxlength="1000" style="resize: none;"></textarea>
+                    <textarea class="form-control" asp-for="MovieActors" id="MovieActors" rows="10" maxlength="1000" required style="resize: none;"></textarea>
                     <div class="form-text"><span id="charCountMovieActors">1000</span> characters remaining</div>
                     <span class="text-danger" asp-validation-for="MovieActors"></span>
                 </div>
@@ -841,7 +1011,7 @@
             <div class="row mb-3 col-md-12">
                 <div class="col-md-12">
                     <label for="ProducerName" class="form-label" asp-for="ProducerName">Producer Name</label>
-                    <input value="Producer Name" class="form-control" asp-for="ProducerName"
+                    <input class="form-control" asp-for="ProducerName"
                            id="ProducerName" name="ProducerName"
                            maxlength="100" required placeholder="Max 100 characters">
                     <div class="form-text"></div>
@@ -852,21 +1022,19 @@
             <div class="row mb-3 col-md-12">
                 <div class="col-md-6">
                     <label for="ProducerCompany" class="form-label" asp-for="ProducerCompany">Producer Company</label>
-                    <input value="Producer Company" class="form-control" asp-for="ProducerCompany"
+                    <input class="form-control" asp-for="ProducerCompany"
                            id="ProducerCompany" name="ProducerCompany"
                            maxlength="100" required placeholder="Max 100 characters">
                     <span class="text-danger" asp-validation-for="ProducerCompany"></span>
                 </div>
-                <div class="row mb-3 col-md-12">
-                    <div class="col-md-6">
-                        <label for="ProducerCountry" class="form-label" asp-for="ProducerCountry">Producer Country</label>
-                        <select id="CountrySelectProducer" name="ProducerCountry" class="form-control" required>
-                            <option value="">Select Country</option>
-                            <!-- Populate countries here -->
-                        </select>
-                        <input type="hidden" id="ProducerCountryName" name="ProducerCountryName" />
-                        <span id="CountryErrorProducer" class="text-danger" style="display: none;">Please select a country.</span>
-                    </div>
+                <div class="col-md-6">
+                    <label for="ProducerCountry" class="form-label" asp-for="ProducerCountry">Producer Country</label>
+                    <select id="CountrySelectProducer" name="ProducerCountry" class="form-control" required>
+                        <option value="">Select Country</option>
+                        <!-- Populate countries here -->
+                    </select>
+                    <input type="hidden" id="ProducerCountryName" name="ProducerCountryName" />
+                    <span id="CountryErrorProducer" class="text-danger" style="display: none;">Please select a country.</span>
                 </div>
             </div>
             <div class="row mb-3 col-md-12">
@@ -874,7 +1042,7 @@
                     <label for="ProducerPhone" class="col-md-4 col-form-label" asp-for="ProducerPhone">Producer Phone</label>
 
                     <div class="input-group">
-                        <input value="0532 456 78 89" id="producer-phone" type="tel" asp-for="ProducerPhone" class="form-control"
+                        <input id="producer-phone" type="tel" asp-for="ProducerPhone" class="form-control"
                                name="ProducerPhone"
                                maxlength="25" required placeholder="Max 25 characters">
                     </div>
@@ -885,7 +1053,7 @@
             <div class="row mb-3 col-md-12">
                 <div class="col-md-6">
                     <label for="ProducerEmail" class="form-label" asp-for="ProducerEmail">Producer Email Address</label>
-                    <input value="ProducerEmail" class="form-control" asp-for="ProducerEmail"
+                    <input class="form-control" asp-for="ProducerEmail"
                            id="ProducerEmail" name="ProducerEmail"
                            maxlength="100" required placeholder="Max 100 characters">
                     <div class="form-text"></div>
@@ -907,7 +1075,7 @@
 
         <b2 class="col-md-10 offset-md-1"><strong>FILM WORK OPERATION CERTIFICATE</strong></b2>
 
-        <div id="film-work-operation-container" class="row mb-3 col-md-12">
+        <div id="film-work-operation-container" class="row mb-3 col-md-10 offset-md-1 border border-secondary rounded p-3">
             <div class="col-md-12">
                 <label for="UploadedFile" class="form-label">Upload PDF</label>
                 <input type="file" class="form-control" id="UploadedFile" name="UploadedFile" accept=".pdf">
@@ -940,17 +1108,6 @@
         border-color: red !important; /* Dark red color */
         /* border-width: 2px !important; /* Bolder border */ */
     }
-
-    /* Apply styles to all input types, select dropdowns, and text areas */
-    /*     input:invalid, select:invalid, textarea:invalid {
-                                                    border-color: #a94442; /* Dark red border for errors
-                                                }*/
-
-    /* Apply styles to all input types, select dropdowns, and text areas */
-    /*    input:valid, select:valid, textarea:valid {
-                                                    border-color: #90ee90; /* Light green border for success
-                                                } */
-
 
 
     /* Director and Producer */
