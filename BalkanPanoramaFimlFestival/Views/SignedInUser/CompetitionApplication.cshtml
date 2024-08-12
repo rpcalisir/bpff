@@ -181,7 +181,7 @@
     @* ------------------------------------------------------------------------------------------------------------ *@
 
     @* Container Border Color Script *@
-    <script>
+     <script>
         function validateMovieFeatures() {
             var generalInfoContainer = document.getElementById('movie-features-container');
             var requiredInputs = generalInfoContainer.querySelectorAll('input[required], select[required]');
@@ -346,6 +346,76 @@
         });
     </script>
 
+    @* Movie Language Selector *@
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const languageSelectMovie = document.getElementById('LanguageSelectMovie');
+            const languageErrorMovie = document.getElementById('LanguageErrorMovie');
+
+            // Fetch the list of languages from an external API and populate the selectors
+            fetch('https://restcountries.com/v3.1/all')
+                .then(response => response.json())
+                .then(data => {
+                    // Create a Set to avoid duplicate languages
+                    const languages = new Set();
+
+                    // Extract languages from the data
+                    data.forEach(country => {
+                        if (country.languages) {
+                            Object.values(country.languages).forEach(language => {
+                                languages.add(language);
+                            });
+                        }
+                    });
+
+                    // Get the language selector element
+                    const languageSelector = document.getElementById('LanguageSelectMovie');
+
+                    // Populate the language selector with options
+                    languages.forEach(language => {
+                        const option = document.createElement('option');
+                        option.value = language;
+                        option.textContent = language;
+                        languageSelector.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching countries:', error);
+                });
+
+            // Set initial styles for selector
+            languageSelectMovie.style.borderColor = 'red';
+
+            // Movie Language Selector
+            languageSelectMovie.addEventListener('change', function () {
+                if (this.value) {
+                    this.style.borderColor = 'green';
+                    languageErrorMovie.style.display = 'none';
+                } else {
+                    this.style.borderColor = 'red';
+                    languageErrorMovie.style.display = 'block';
+                }
+            });
+
+            // Form submission handler
+            document.querySelector('form').addEventListener('submit', function (event) {
+                let valid = true;
+
+                // Validate Movie Language
+                if (!languageSelectMovie.value) {
+                    languageSelectMovie.focus();
+                    languageSelectMovie.style.borderColor = 'red';
+                    languageErrorMovie.style.display = 'block';
+                    valid = false;
+                }
+
+                // Prevent form submission if validation fails
+                if (!valid) {
+                    event.preventDefault();
+                }
+            });
+        });
+    </script>
     @* ------------------------------------------------------------------------------------------------------------ *@
     @* MOVIE FEATURES *@
 
@@ -831,7 +901,7 @@
         <div id="movie-features-container" class="row mb-3 col-md-10 offset-md-1 border border-secondary rounded p-3">
             <div class="col-md-4">
                 <label for="ProductionYear" class="form-label" asp-for="ProductionYear">Production Year</label>
-                <select class="form-control" id="ProductionYear" name="ProductionYear">
+                <select class="form-control" id="ProductionYear" name="ProductionYear" required>
                     <option value="">Select Production Year</option>
                     <option value="2022">2022</option>
                     <option value="2023">2023</option>
@@ -850,11 +920,12 @@
             </div>
             <div class="col-md-4">
                 <label for="MovieLanguage" class="form-label" asp-for="MovieLanguage">Movie Language</label>
-                <input class="form-control" asp-for="MovieLanguage"
-                       id="MovieLanguage" name="MovieLanguage"
-                       maxlength="20" required placeholder="Max 20 characters">
-                <div class="form-text"></div>
-                <span class="text-danger" asp-validation-for="MovieLanguage"></span>
+                <select id="LanguageSelectMovie" name="MovieLanguage" class="form-control" required>
+                    <option value="">Select Movie Language</option>
+                    <!-- Populate countries here -->
+                </select>
+                <input type="hidden" id="MovieLanguageName" name="MovieLanguageName" />
+                <span id="LanguageErrorMovie" class="text-danger" style="display: none;">Please select a language.</span>
             </div>
         </div>
 
