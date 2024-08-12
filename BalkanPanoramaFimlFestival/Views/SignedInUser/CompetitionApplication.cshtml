@@ -11,52 +11,477 @@
         @await Html.PartialAsync("PartialScripts/_ValidationScriptsPartial")
     </script>
 
-    @* Countries and Genres Selection Script *@
-    <script>
-        document.querySelector('form').addEventListener('submit', function (event) {
-            var selectedCountries = document.querySelectorAll('input[name="SelectedCountries"]:checked');
-            var selectedMovieGenres = document.querySelectorAll('input[name="SelectedMovieGenres"]:checked');
-            var validationMessageCountry = document.getElementById('validation-message-country');
-            var validationMessageGenre = document.getElementById('validation-message-genre');
+    @* COMPETITION CATEGORY*@
+    @* ------------------------------------------------------------------------------------------------------------ *@
 
+    @* ------------------------------------------------------------------------------------------------------------ *@
+    @* COMPETITION CATEGORY*@
+
+
+    @* ------------------------------------------------------------------------------------------------------------ *@
+    @* GENERAL INFORMATION *@
+
+    @* Container Border Color Script *@
+    <script>
+            function validateGeneralInfo() {
+                var generalInfoContainer = document.getElementById('general-info-container');
+                var requiredInputs = generalInfoContainer.querySelectorAll('input[required]');
+                var allValid = true;
+
+                // Check each required input
+                requiredInputs.forEach(function (input) {
+                    if (!input.value.trim()) {
+                        allValid = false;
+                        input.classList.add('border-danger');
+                        input.classList.remove('border-success');
+                    } else {
+                        input.classList.add('border-success');
+                        input.classList.remove('border-danger');
+                    }
+                });
+
+                // Update container border color based on the validity of inputs
+                if (allValid) {
+                    generalInfoContainer.classList.add('border-success');
+                    generalInfoContainer.classList.remove('border-danger');
+                } else {
+                    generalInfoContainer.classList.add('border-danger');
+                    generalInfoContainer.classList.remove('border-success');
+                }
+
+                return allValid; // Return whether the general info is valid
+            }
+
+        // Attach the validation function to the form submit event
+        document.querySelector('form').addEventListener('submit', function (event) {
+            if (!validateGeneralInfo()) {
+                event.preventDefault(); // Prevent form submission if there are errors
+            }
+        });
+
+        // Attach the validation function to each required input's input event
+        document.querySelectorAll('#general-info-container input[required]').forEach(function (input) {
+            input.addEventListener('input', validateGeneralInfo);
+        });
+    </script>
+
+    @* GENERAL INFORMATION *@
+    @* ------------------------------------------------------------------------------------------------------------ *@
+
+
+    @* SELECT COUNTRIES *@
+    @* ------------------------------------------------------------------------------------------------------------ *@
+
+    <script>
+        function validateCountries() {
+            var selectedCountries = document.querySelectorAll('input[name="SelectedCountries"]:checked');
+            var validationMessageCountry = document.getElementById('validation-message-country');
             var hasError = false;
 
             // Validate countries
             if (selectedCountries.length === 0) {
                 validationMessageCountry.textContent = "Please select at least one country!";
                 hasError = true;
-                // Set focus to the first country checkbox
-                document.querySelector('input[name="SelectedCountries"]').focus();
-            } else if (selectedCountries.length > 3) {
-                validationMessageCountry.textContent = "Max 3 countries can be selected!";
+            } else if (selectedCountries.length > 5) {
+                validationMessageCountry.textContent = "Max 5 countries can be selected!";
                 hasError = true;
-                // Set focus to the first country checkbox
-                document.querySelector('input[name="SelectedCountries"]').focus();
             } else {
                 validationMessageCountry.textContent = "";
             }
 
-            // Validate movie genres
+            // Update border color based on country selection
+            var countryContainer = document.getElementById('countries-container');
+            if (selectedCountries.length === 0) {
+                countryContainer.classList.add('border-danger');
+                countryContainer.classList.remove('border-success');
+            } else if (selectedCountries.length > 5) {
+                countryContainer.classList.add('border-danger');
+                countryContainer.classList.remove('border-success');
+            }
+            else {
+                countryContainer.classList.add('border-success');
+                countryContainer.classList.remove('border-danger');
+            }
+
+            return !hasError; // Return whether there are errors
+        }
+
+        // Attach the validation function to the form submit event
+        // If this is not added, nothing happens after clicking the submit button
+        document.querySelector('form').addEventListener('submit', function (event) {
+            if (!validateCountries()) {
+                event.preventDefault(); // Prevent form submission if there are errors
+            }
+        });
+
+        // Attach the validation function to checkbox change events
+        document.querySelectorAll('input[name="SelectedCountries"]').forEach(checkbox => {
+            checkbox.addEventListener('change', validateCountries);
+        });
+    </script>
+
+    @* ------------------------------------------------------------------------------------------------------------ *@
+    @* SELECT COUNTRIES *@
+
+
+    @* MOVIE GENRES *@
+    @* ------------------------------------------------------------------------------------------------------------ *@
+    <script>
+        function validateMovieGenres() {
+            var selectedMovieGenres = document.querySelectorAll('input[name="SelectedMovieGenres"]:checked');
+            var validationMessageGenre = document.getElementById('validation-message-genre');
+            var hasError = false;
+
+            // Validate genres
             if (selectedMovieGenres.length === 0) {
                 validationMessageGenre.textContent = "Please select at least one movie genre!";
                 hasError = true;
-                // Set focus to the first genre checkbox
-                document.querySelector('input[name="SelectedMovieGenres"]').focus();
             } else if (selectedMovieGenres.length > 3) {
                 validationMessageGenre.textContent = "Max 3 movie genres can be selected!";
                 hasError = true;
-                // Set focus to the first genre checkbox
-                document.querySelector('input[name="SelectedMovieGenres"]').focus();
             } else {
                 validationMessageGenre.textContent = "";
             }
 
-            // Prevent form submission if there are errors
-            if (hasError) {
-                event.preventDefault(); // Prevent the form from submitting
+            // Update border color based on movie genre selection
+            var movieGenresContainer = document.getElementById('movie-genres-container');
+            if (selectedMovieGenres.length === 0) {
+                movieGenresContainer.classList.add('border-danger');
+                movieGenresContainer.classList.remove('border-success');
+            } else if (selectedMovieGenres.length > 3) {
+                movieGenresContainer.classList.add('border-danger');
+                movieGenresContainer.classList.remove('border-success');
+            }
+            else {
+                movieGenresContainer.classList.add('border-success');
+                movieGenresContainer.classList.remove('border-danger');
+            }
+
+            return !hasError; // Return whether there are errors
+        }
+
+        // Attach the validation function to the form submit event
+        // If this is not added, nothing happens after clicking the submit button
+        document.querySelector('form').addEventListener('submit', function (event) {
+            if (!validateMovieGenres()) {
+                event.preventDefault(); // Prevent form submission if there are errors
+            }
+        });
+
+        // Attach the validation function to checkbox change events
+        document.querySelectorAll('input[name="SelectedMovieGenres"]').forEach(checkbox => {
+            checkbox.addEventListener('change', validateMovieGenres);
+        });
+    </script>
+    @* ------------------------------------------------------------------------------------------------------------ *@
+    @* MOVIE GENRES *@
+
+
+    @* ------------------------------------------------------------------------------------------------------------ *@
+    @* MOVIE FEATURES *@
+
+    @* Container Border Color Script *@
+    <script>
+        function validateMovieFeatures() {
+            var generalInfoContainer = document.getElementById('movie-features-container');
+            var requiredInputs = generalInfoContainer.querySelectorAll('input[required], select[required]');
+            var allValid = true;
+
+            // Check each required input or select
+            requiredInputs.forEach(function (input) {
+                if (!input.value.trim()) {
+                    allValid = false;
+                    input.classList.add('border-danger');
+                    input.classList.remove('border-success');
+                } else {
+                    input.classList.add('border-success');
+                    input.classList.remove('border-danger');
+                }
+            });
+
+            // Update container border color based on the validity of inputs and select
+            if (allValid) {
+                generalInfoContainer.classList.add('border-success');
+                generalInfoContainer.classList.remove('border-danger');
+            } else {
+                generalInfoContainer.classList.add('border-danger');
+                generalInfoContainer.classList.remove('border-success');
+            }
+
+            return allValid; // Return whether the general info is valid
+        }
+
+        // Attach the validation function to the form submit event
+        document.querySelector('form').addEventListener('submit', function (event) {
+            if (!validateMovieFeatures()) {
+                event.preventDefault(); // Prevent form submission if there are errors
+            }
+        });
+
+        // Attach the validation function to each required input or select's input event
+        document.querySelectorAll('#movie-features-container input[required], #movie-features-container select[required]').
+            forEach(function (input) {
+                input.addEventListener('input', validateMovieFeatures);
+                input.addEventListener('change', validateMovieFeatures); // Include change event for select elements
+            });
+    </script>
+
+    @* ProductionYear - Color Script *@
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var productionYearSelect = document.getElementById('ProductionYear');
+            var productionYearError = document.getElementById('ProductionYearError');
+            var form = document.querySelector('form');
+
+            // Set the initial border color to red
+            productionYearSelect.classList.add('border-danger');
+
+            // Validate the form on submit
+            form.addEventListener('submit', function (event) {
+                var selectedYear = productionYearSelect.value;
+
+                // Reset the error message
+                productionYearError.style.display = 'none';
+                productionYearError.textContent = '';
+
+                if (selectedYear === '') {
+                    // Show error message and set the border color to red
+                    productionYearError.textContent = 'Please select a production year.';
+                    productionYearError.style.display = 'block';
+                    productionYearSelect.classList.remove('border-success');
+                    productionYearSelect.classList.add('border-danger');
+                    event.preventDefault(); // Prevent form submission
+                    // Set focus to the year selector
+                    productionYearSelect.focus();
+                } else {
+                    // Remove error and set the border color to green
+                    productionYearSelect.classList.remove('border-danger');
+                    productionYearSelect.classList.add('border-success');
+                }
+            });
+
+            // Add an event listener to update the border color when a year is selected
+            productionYearSelect.addEventListener('change', function () {
+                var selectedYear = productionYearSelect.value;
+
+                if (selectedYear !== '') {
+                    // Clear the error message and set the border color to green
+                    productionYearError.style.display = 'none';
+                    productionYearError.textContent = '';
+                    productionYearSelect.classList.remove('border-danger');
+                    productionYearSelect.classList.add('border-success');
+                } else {
+                    // Reset to default color (black)
+                    productionYearSelect.classList.remove('border-success');
+                    productionYearSelect.classList.add('border-black');
+                }
+            });
+        });
+    </script>
+
+    @* MovieTimeLength Selector *@
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const movieTimeLength = document.getElementById('MovieTimeLength');
+            const movieTimeLengthError = document.getElementById('MovieTimeLengthError');
+            const competitionCategoryRadios = document.querySelectorAll('input[name="CompetitionCategory"]');
+
+            // Radio button change event listener
+            competitionCategoryRadios.forEach(radio => {
+                radio.addEventListener('change', function () {
+                    if (this.checked) {
+                        movieTimeLength.removeAttribute('disabled'); // Enable the selector
+                        movieTimeLength.innerHTML = ''; // Clear previous options
+                        movieTimeLength.append(new Option("Select Time Length", "")); // Add placeholder option
+                        movieTimeLengthError.textContent = ''; // Clear any existing error message
+
+                        // Populate the selector based on selected radio button
+                        let options = [];
+                        if (this.value === 'Option1' || this.value === 'Option3') {
+                            options = generateOptions(60, 240);
+                        } else if (this.value === 'Option2') {
+                            options = generateOptions(5, 25);
+                        }
+                        options.forEach(option => movieTimeLength.append(option));
+
+                        // Add initial invalid state to the selector
+                        movieTimeLength.classList.add('is-invalid');
+                    }
+                });
+            });
+
+            // MovieTimeLength change event to handle valid selection
+            movieTimeLength.addEventListener('change', function () {
+                if (this.value) {
+                    this.classList.remove('is-invalid');
+                    this.classList.add('is-valid');
+                    movieTimeLengthError.textContent = ''; // Clear the error message
+                } else {
+                    this.classList.remove('is-valid');
+                    this.classList.add('is-invalid');
+                    movieTimeLengthError.textContent = 'Please select a time length.'; // Show error message
+                }
+            });
+
+            function generateOptions(min, max) {
+                let options = [];
+                for (let i = min; i <= max; i++) {
+                    options.push(new Option(i + ' minutes', i));
+                }
+                return options;
+            }
+        });
+
+        document.querySelector('form').addEventListener('submit', function (event) {
+            const movieTimeLength = document.getElementById('MovieTimeLength');
+            const movieTimeLengthError = document.getElementById('MovieTimeLengthError');
+
+            if (movieTimeLength.disabled || !movieTimeLength.value) {
+                movieTimeLength.focus(); // Bring focus to the selector
+                movieTimeLength.classList.remove('is-valid');
+                movieTimeLength.classList.add('is-invalid');
+                movieTimeLengthError.textContent = 'Please select a time length.'; // Show error message
+                event.preventDefault(); // Prevent form submission
             }
         });
     </script>
+
+    @* MOVIE FEATURES *@
+    @* ------------------------------------------------------------------------------------------------------------ *@
+
+    @* UP IS DONE *@
+
+
+
+
+
+
+
+
+
+
+    @* DIRECTOR *@
+    @* ------------------------------------------------------------------------------------------------------------ *@
+
+    @* ------------------------------------------------------------------------------------------------------------ *@
+    @* DIRECTOR *@
+
+    @* MOVIE TAG *@
+    @* ------------------------------------------------------------------------------------------------------------ *@
+    @* ------------------------------------------------------------------------------------------------------------ *@
+    @* MOVIE TAG *@
+
+
+    @* PRODUCER *@
+    @* ------------------------------------------------------------------------------------------------------------ *@
+
+    @* ------------------------------------------------------------------------------------------------------------ *@
+    @* PRODUCER *@
+
+    @* FILM WORK OPERATION CERTIFICATE *@
+    @* ------------------------------------------------------------------------------------------------------------ *@
+
+    @* ------------------------------------------------------------------------------------------------------------ *@
+    @* FILM WORK OPERATION CERTIFICATE *@
+
+
+    @* Country Selector Script *@
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const countrySelectDirector = document.getElementById('CountrySelectDirector');
+            const countrySelectProducer = document.getElementById('CountrySelectProducer');
+            const countryErrorDirector = document.getElementById('CountryErrorDirector');
+            const countryErrorProducer = document.getElementById('CountryErrorProducer');
+
+            // Fetch the list of countries from an external API and populate the selectors
+            fetch('https://restcountries.com/v3.1/all')
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(country => {
+                        if (country.name && country.cca2) {
+                            var optionDirector = document.createElement('option');
+                            optionDirector.value = country.cca2;
+                            optionDirector.textContent = country.name.common;
+                            countrySelectDirector.appendChild(optionDirector);
+
+                            var optionProducer = document.createElement('option');
+                            optionProducer.value = country.cca2;
+                            optionProducer.textContent = country.name.common;
+                            countrySelectProducer.appendChild(optionProducer);
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching countries:', error);
+                });
+
+            // Set initial styles for both selectors
+            countrySelectDirector.style.borderColor = 'red';
+            countrySelectProducer.style.borderColor = 'red';
+
+            // Director Country Selector
+            countrySelectDirector.addEventListener('change', function () {
+                if (this.value) {
+                    this.style.borderColor = 'green';
+                    countryErrorDirector.style.display = 'none';
+                } else {
+                    this.style.borderColor = 'red';
+                    countryErrorDirector.style.display = 'block';
+                }
+            });
+
+            // Producer Country Selector
+            countrySelectProducer.addEventListener('change', function () {
+                if (this.value) {
+                    this.style.borderColor = 'green';
+                    countryErrorProducer.style.display = 'none';
+                } else {
+                    this.style.borderColor = 'red';
+                    countryErrorProducer.style.display = 'block';
+                }
+            });
+
+            // Form submission handler
+            document.querySelector('form').addEventListener('submit', function (event) {
+                let valid = true;
+
+                // Validate Director Country
+                if (!countrySelectDirector.value) {
+                    countrySelectDirector.focus();
+                    countrySelectDirector.style.borderColor = 'red';
+                    countryErrorDirector.style.display = 'block';
+                    valid = false;
+                }
+
+                // Validate Producer Country
+                if (!countrySelectProducer.value) {
+                    if (valid) {
+                        countrySelectProducer.focus();
+                    }
+                    countrySelectProducer.style.borderColor = 'red';
+                    countryErrorProducer.style.display = 'block';
+                    valid = false;
+                }
+
+                // Prevent form submission if validation fails
+                if (!valid) {
+                    event.preventDefault();
+                }
+            });
+        });
+    </script>
+
+
+
+
+
+
+
+
+
+
+
+
 
     @* Phone Number Script *@
     <script>
@@ -80,153 +505,6 @@
                 });
             }
         });
-    </script>
-
-    @* Country Selector Script *@
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            function initializeCountrySelector(countrySelectId, countryErrorId, hiddenFieldId) {
-                var countrySelect = document.getElementById(countrySelectId);
-                var countryError = document.getElementById(countryErrorId);
-                var form = document.querySelector('form');
-                var hiddenField = document.getElementById(hiddenFieldId);
-
-                // Fetch the list of countries from an external API
-                fetch('https://restcountries.com/v3.1/all')
-                    .then(response => response.json())
-                    .then(data => {
-                        // Populate the select element with options
-                        data.forEach(country => {
-                            if (country.name && country.cca2) {
-                                var option = document.createElement('option');
-                                option.value = country.cca2;
-                                option.textContent = country.name.common;
-                                countrySelect.appendChild(option);
-                            }
-                        });
-                    })
-                    .catch(error => {
-                        console.error('Error fetching countries:', error);
-                    });
-
-                // Validate the form on submit
-                form.addEventListener('submit', function (event) {
-                    var selectedCountryCode = countrySelect.value;
-                    var selectedCountryName = countrySelect.options[countrySelect.selectedIndex]?.text || '';
-
-                    // Reset the error message
-                    countryError.style.display = 'none';
-                    countryError.textContent = '';
-
-                    if (selectedCountryCode === '') {
-                        countryError.textContent = 'Please specify the country.';
-                        countryError.style.display = 'block';
-                        event.preventDefault(); // Prevent form submission
-                        // Set focus to the country selector
-                        countrySelect.focus();
-                    } else {
-                        // Set the hidden field value to the country name
-                        hiddenField.value = selectedCountryName;
-                    }
-                });
-
-                // Add an event listener to clear the error message when a country is selected
-                countrySelect.addEventListener('change', function () {
-                    var selectedCountryCode = countrySelect.value;
-
-                    if (selectedCountryCode !== '') {
-                        // Clear the error message if a valid country is selected
-                        countryError.style.display = 'none';
-                        countryError.textContent = '';
-                    }
-                });
-            }
-
-            // Initialize for DirectorCountry
-            initializeCountrySelector('CountrySelectDirector', 'CountryErrorDirector', 'DirectorCountryName');
-
-            // Initialize for ProducerCountry
-            initializeCountrySelector('CountrySelectProducer', 'CountryErrorProducer', 'ProducerCountryName');
-        });
-    </script>
-
-
-    @* Character Left on Textbox Script *@
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // Character limit handling for DirectorBiographyTr
-            var textareaDirectorBiographyTr = document.getElementById('DirectorBiographyTr');
-            var charCountDirectorBiographyTr = document.getElementById('charCountDirectorBiographyTr');
-
-            textareaDirectorBiographyTr.addEventListener('input', function () {
-                var remaining = 1000 - this.value.length;
-                charCountDirectorBiographyTr.textContent = remaining;
-            });
-
-            // Character limit handling for DirectorBiographyEn
-            var textareaDirectorBiographyEn = document.getElementById('DirectorBiographyEn');
-            var charCountDirectorBiographyEn = document.getElementById('charCountDirectorBiographyEn');
-
-            textareaDirectorBiographyEn.addEventListener('input', function () {
-                var remaining = 1000 - this.value.length;
-                charCountDirectorBiographyEn.textContent = remaining;
-            });
-
-            // Character limit handling for DirectorFilmographyTr
-            var textareaDirectorFilmographyTr = document.getElementById('DirectorFilmographyTr');
-            var charCountDirectorFilmographyTr = document.getElementById('charCountDirectorFilmographyTr');
-
-            textareaDirectorFilmographyTr.addEventListener('input', function () {
-                var remaining = 1000 - this.value.length;
-                charCountDirectorFilmographyTr.textContent = remaining;
-            });
-
-            // Character limit handling for DirectorFilmographyEn
-            var textareaDirectorFilmographyEn = document.getElementById('DirectorFilmographyEn');
-            var charCountDirectorFilmographyEn = document.getElementById('charCountDirectorFilmographyEn');
-
-            textareaDirectorFilmographyEn.addEventListener('input', function () {
-                var remaining = 1000 - this.value.length;
-                charCountDirectorFilmographyEn.textContent = remaining;
-            });
-
-            // Character limit handling for MovieScript
-            var textareaMovieScript = document.getElementById('MovieScript');
-            var charCountMovieScript = document.getElementById('charCountMovieScript');
-
-            textareaMovieScript.addEventListener('input', function () {
-                var remaining = 1000 - this.value.length;
-                charCountMovieScript.textContent = remaining;
-            });
-
-            // Character limit handling for MovieActors
-            var textareaMovieActors = document.getElementById('MovieActors');
-            var charCountMovieActors = document.getElementById('charCountMovieActors');
-
-            textareaMovieActors.addEventListener('input', function () {
-                var remaining = 1000 - this.value.length;
-                charCountMovieActors.textContent = remaining;
-            });
-
-            // Character limit handling for MovieFiction
-            var textareaMovieFiction = document.getElementById('MovieFiction');
-            var charCountMovieFictions = document.getElementById('charCountMovieFiction');
-
-            textareaMovieFiction.addEventListener('input', function () {
-                var remaining = 1000 - this.value.length;
-                charCountMovieFictions.textContent = remaining;
-            });
-        });
-    </script>
-
-    <script>
-        document.getElementById('DirectorBiographyTr').value = 'DirectorBiographyTr';
-        document.getElementById('DirectorBiographyEn').value = 'DirectorBiographyEn';
-        document.getElementById('DirectorFilmographyTr').value = 'DirectorFilmographyTr';
-        document.getElementById('DirectorFilmographyEn').value = 'DirectorFilmographyEn';
-        document.getElementById('MovieScript').value = 'MovieScript';
-        document.getElementById('MovieFiction').value = 'MovieFiction';
-        document.getElementById('MovieActors').value = 'MovieActors';
     </script>
 }
 
@@ -256,7 +534,7 @@
 
         <b2 class="col-md-10 offset-md-1"><strong>CHOOSE COMPETITION CATEGORY</strong></b2>
 
-        <div class="row mb-3">
+        <div id="movie-category-container" class="row mb-3">
             <div class="col-md-10 offset-md-1">
                 <div class="form-check form-check-inline">
                     <input type="radio" asp-for="CompetitionCategory" value="Option1" class="form-check-input" id="option1" />
@@ -285,11 +563,11 @@
 
         <b2 class="col-md-10 offset-md-1"><strong>GENERAL INFORMATION</strong></b2>
 
-        <div class="row mb-3 col-md-10 offset-md-1 border border-secondary rounded p-3">
+        <div id="general-info-container" class="row mb-3 col-md-10 offset-md-1 border border-secondary rounded p-3">
             <div class="row mb-3 col-md-12">
                 <div class="col-md-6">
                     <label for="OriginalMovieName" class="form-label" asp-for="OriginalMovieName">Original Movie Name</label>
-                    <input value="Original Movie Name" class="form-control" asp-for="OriginalMovieName"
+                    <input class="form-control" asp-for="OriginalMovieName"
                            id="OriginalMovieName" name="OriginalMovieName"
                            maxlength="100" required placeholder="Max 100 characters">
                     <div class="form-text"></div>
@@ -298,10 +576,9 @@
 
                 <div class="col-md-6">
                     <label for="EnglishMovieName" class="form-label" asp-for="EnglishMovieName">English Movie Name</label>
-                    <input value="English Movie Name" class="form-control" asp-for="EnglishMovieName"
+                    <input class="form-control" asp-for="EnglishMovieName"
                            id="EnglishMovieName" name="EnglishMovieName"
                            maxlength="100" required placeholder="Max 100 characters">
-                    <div class="form-text"></div>
                     <span class="text-danger" asp-validation-for="EnglishMovieName"></span>
                 </div>
             </div>
@@ -312,7 +589,6 @@
                     <input class="form-control" asp-for="MovieWebsite"
                            id="MovieWebsite" name="MovieWebsite"
                            maxlength="100" placeholder="Max 100 characters">
-                    <div class="form-text"></div>
                     <span class="text-danger" asp-validation-for="MovieWebsite"></span>
                 </div>
             </div>
@@ -320,11 +596,11 @@
 
         @* <-- COUNTRIES --> *@
 
-        <b2 class="col-md-10 offset-md-1"><strong>SELECT COUNTRIES(MAX 3)</strong></b2>
+        <b2 class="col-md-10 offset-md-1"><strong>SELECT COUNTRIES(MAX 5)</strong></b2>
 
         <div class="row mb-3">
             <div class="col-md-10 offset-md-1">
-                <div id="country-selection" class="border border-secondary rounded p-3">
+                <div id="countries-container" class="border border-secondary rounded p-3">
                     <div class="d-flex flex-wrap">
                         @for (int i = 0; i < Model.AllCountries.Count; i++)
                         {
@@ -352,9 +628,9 @@
 
         <b2 class="col-md-10 offset-md-1"><strong>MOVIE GENRES(MAX 3)</strong></b2>
 
-        <div class="row mb-3">
+        <div  class="row mb-3">
             <div class="col-md-10 offset-md-1">
-                <div id="genre-selection" class="border border-secondary rounded p-3">
+                <div id="movie-genres-container" class="border border-secondary rounded p-3">
                     <div class="d-flex flex-wrap">
                         @for (int i = 0; i < Model.AllMovieGenres.Count; i++)
                         {
@@ -378,28 +654,33 @@
             </div>
         </div>
 
-        @* <-- PRODUCTION YEAR --> *@
+        @* <-- MOVIE FEATURES --> *@
 
-        <div class="row mb-3 col-md-10 offset-md-1 border border-secondary rounded p-3">
+        <b2 class="col-md-10 offset-md-1"><strong>MOVIE FEATURES</strong></b2>
+
+        <div id="movie-features-container" class="row mb-3 col-md-10 offset-md-1 border border-secondary rounded p-3">
             <div class="col-md-4">
                 <label for="ProductionYear" class="form-label" asp-for="ProductionYear">Production Year</label>
-                <input value="2024" class="form-control" asp-for="ProductionYear"
-                       id="ProductionYear" name="ProductionYear"
-                       maxlength="4" required placeholder="Max 4 characters">
+                <select class="form-control" id="ProductionYear" name="ProductionYear">
+                    <option value="">Select Production Year</option>
+                    <option value="2022">2022</option>
+                    <option value="2023">2023</option>
+                    <option value="2024">2024</option>
+                </select>
                 <div class="form-text"></div>
-                <span class="text-danger" asp-validation-for="ProductionYear"></span>
+                <span class="text-danger" id="ProductionYearError" asp-validation-for="ProductionYear"></span>
             </div>
+
             <div class="col-md-4">
-                <label for="MovieTimeLength" class="form-label" asp-for="MovieTimeLength">Time Length</label>
-                <input value="200" class="form-control" asp-for="MovieTimeLength"
-                       id="MovieTimeLength" name="MovieTimeLength"
-                       maxlength="10" required placeholder="Max 10 characters">
-                <div class="form-text"></div>
-                <span class="text-danger" asp-validation-for="MovieTimeLength"></span>
+                <label for="MovieTimeLength" class="form-label">Time Length(Select Category First)</label>
+                <select class="form-control" id="MovieTimeLength" name="MovieTimeLength" required>
+                    <!-- Options will be populated by JavaScript -->
+                </select>
+                <div class="text-danger" id="MovieTimeLengthError"></div> <!-- To show validation message -->
             </div>
             <div class="col-md-4">
                 <label for="MovieLanguage" class="form-label" asp-for="MovieLanguage">Movie Language</label>
-                <input value="Movie Language" class="form-control" asp-for="MovieLanguage"
+                <input class="form-control" asp-for="MovieLanguage"
                        id="MovieLanguage" name="MovieLanguage"
                        maxlength="20" required placeholder="Max 20 characters">
                 <div class="form-text"></div>
@@ -410,9 +691,9 @@
         @* <-- DIRECTOR --> *@
         <b2 class="col-md-10 offset-md-1"><strong>DIRECTOR</strong></b2>
 
-        <div class="row mb-3 col-md-10 offset-md-1 border border-secondary rounded p-3">
+        <div id="director-container" class="row mb-3 col-md-10 offset-md-1 border border-secondary rounded p-3">
             <div class="row mb-3 col-md-12">
-                <div class="col-md-12">
+                <div class="col-md-6">
                     <label for="DirectorName" class="form-label" asp-for="DirectorName">Director Name</label>
                     <input value="Director Name" class="form-control" asp-for="DirectorName"
                            id="DirectorName" name="DirectorName"
@@ -420,29 +701,18 @@
                     <div class="form-text"></div>
                     <span class="text-danger" asp-validation-for="DirectorName"></span>
                 </div>
-            </div>
-
-            <div class="row mb-3 col-md-12">
                 <div class="col-md-6">
-                    <label for="DirectorCompany" class="form-label" asp-for="DirectorCompany">Director Company</label>
-                    <input value="Director Company" class="form-control" asp-for="DirectorCompany"
-                           id="DirectorCompany" name="DirectorCompany"
+                    <label for="DirectorEmail" class="form-label" asp-for="DirectorEmail">Director Email Address</label>
+                    <input value="Director Email Address" class="form-control" asp-for="DirectorEmail"
+                           id="DirectorEmail" name="DirectorEmail"
                            maxlength="100" required placeholder="Max 100 characters">
-                    <span class="text-danger" asp-validation-for="DirectorCompany"></span>
-                </div>
-
-                <div class="col-md-6">
-                    <label for="DirectorCountry" class="form-label" asp-for="DirectorCountry">Director Country</label>
-                    <select id="CountrySelectDirector" name="DirectorCountry" class="form-control">
-                        <option value="">Select Country</option>
-                    </select>
-                    <input type="hidden" id="DirectorCountryName" name="DirectorCountryName" />
-                    <span id="CountryErrorDirector" class="text-danger" style="display: none;">Please specify the country.</span>
+                    <div class="form-text"></div>
+                    <span class="text-danger" asp-validation-for="DirectorEmail"></span>
                 </div>
             </div>
 
             <div class="row mb-3 col-md-12">
-                <div class="col-md-12">
+                <div class="col-md-6">
                     <label for="DirectorPhone" class="col-md-4 col-form-label" asp-for="DirectorPhone">Director Phone</label>
 
                     <div class="input-group">
@@ -454,25 +724,14 @@
                     </div>
                     <span class="text-danger" asp-validation-for="DirectorPhone"></span>
                 </div>
-            </div>
-
-            <div class="row mb-3 col-md-12">
                 <div class="col-md-6">
-                    <label for="DirectorEmail" class="form-label" asp-for="DirectorEmail">Director Email Address</label>
-                    <input value="Director Email Address" class="form-control" asp-for="DirectorEmail"
-                           id="DirectorEmail" name="DirectorEmail"
-                           maxlength="100" required placeholder="Max 100 characters">
-                    <div class="form-text"></div>
-                    <span class="text-danger" asp-validation-for="DirectorEmail"></span>
-                </div>
-
-                <div class="col-md-6">
-                    <label for="DirectorWebsite" class="form-label" asp-for="DirectorWebsite">Director Website(Optional)</label>
-                    <input value="Director Website(Optional)" class="form-control" asp-for="DirectorWebsite"
-                           id="DirectorWebsite" name="DirectorWebsite"
-                           maxlength="100" placeholder="Max 100 characters">
-                    <div class="form-text"></div>
-                    <span class="text-danger" asp-validation-for="DirectorWebsite"></span>
+                    <label for="DirectorCountry" class="form-label" asp-for="DirectorCountry">Director Country</label>
+                    <select id="CountrySelectDirector" name="DirectorCountry" class="form-control" required>
+                        <option value="">Select Country</option>
+                        <!-- Populate countries here -->
+                    </select>
+                    <input type="hidden" id="DirectorCountryName" name="DirectorCountryName" />
+                    <span id="CountryErrorDirector" class="text-danger" style="display: none;">Please select a country.</span>
                 </div>
             </div>
 
@@ -480,7 +739,7 @@
                 <!-- Director Biography TR -->
                 <div class="col-md-6">
                     <label for="DirectorBiographyTr" class="form-label" asp-for="DirectorBiographyTr">Director Biography TR</label>
-                    <textarea class="form-control" asp-for="DirectorBiographyTr" id="DirectorBiographyTr" rows="10" maxlength="1000"  style="resize: none;"></textarea>
+                    <textarea class="form-control" asp-for="DirectorBiographyTr" id="DirectorBiographyTr" rows="10" maxlength="1000" style="resize: none;"></textarea>
                     <div class="form-text"><span id="charCountDirectorBiographyTr">1000</span> characters remaining</div>
                     <span class="text-danger" asp-validation-for="DirectorBiographyTr"></span>
                 </div>
@@ -518,8 +777,7 @@
 
         <b2 class="col-md-10 offset-md-1"><strong>MOVIE TAG</strong></b2>
 
-        <div class="row mb-3 col-md-10 offset-md-1 border border-secondary rounded p-3">
-
+        <div id="movie-tag-container" class="row mb-3 col-md-10 offset-md-1 border border-secondary rounded p-3">
             <div class="row mb-3 col-md-12 ">
                 <div class="col-md-12">
                     <label for="MovieScript" class="form-label" asp-for="MovieScript">Movie Script</label>
@@ -528,9 +786,8 @@
                     <span class="text-danger" asp-validation-for="MovieScript"></span>
                 </div>
             </div>
-
             <div class="row mb-3 col-md-12 ">
-                <div class="col-md-6">
+                <div class="col-md-12">
                     <label for="Cinematographer" class="form-label" asp-for="Cinematographer">Cinematographer</label>
                     <input value="Cinematographer" class="form-control" asp-for="Cinematographer"
                            id="Cinematographer" name="Cinematographer"
@@ -538,17 +795,7 @@
                     <div class="form-text"></div>
                     <span class="text-danger" asp-validation-for="Cinematographer"></span>
                 </div>
-
-                <div class="col-md-6">
-                    <label for="ArtDirector" class="form-label" asp-for="ArtDirector">Art Director</label>
-                    <input value="Art Director" class="form-control" asp-for="ArtDirector"
-                           id="ArtDirector" name="ArtDirector"
-                           maxlength="100" required placeholder="Max 100 characters">
-                    <div class="form-text"></div>
-                    <span class="text-danger" asp-validation-for="ArtDirector"></span>
-                </div>
             </div>
-
             <div class="row mb-3 col-md-12 ">
                 <div class="col-md-12">
                     <label for="MovieFiction" class="form-label" asp-for="MovieFiction">Movie Fiction</label>
@@ -557,7 +804,6 @@
                     <span class="text-danger" asp-validation-for="MovieFiction"></span>
                 </div>
             </div>
-
             <div class="row mb-3 col-md-12 ">
                 <div class="col-md-12">
                     <label for="MovieActors" class="form-label" asp-for="MovieActors">Movie Actors</label>
@@ -566,7 +812,6 @@
                     <span class="text-danger" asp-validation-for="MovieActors"></span>
                 </div>
             </div>
-
             <div class="row mb-3 col-md-12">
                 <div class="col-md-6">
                     <label for="BestActress" class="form-label" asp-for="BestActress">Best Actress</label>
@@ -576,7 +821,6 @@
                     <div class="form-text"></div>
                     <span class="text-danger" asp-validation-for="BestActress"></span>
                 </div>
-
                 <div class="col-md-6">
                     <label for="BestActor" class="form-label" asp-for="BestActor">Best Actor</label>
                     <input value="Best Actor" class="form-control" asp-for="BestActor"
@@ -593,7 +837,7 @@
         @* <-- PRODUCER --> *@
         <b2 class="col-md-10 offset-md-1"><strong>PRODUCER</strong></b2>
 
-        <div class="row mb-3 col-md-10 offset-md-1 border border-secondary rounded p-3">
+        <div id="producer-container" class="row mb-3 col-md-10 offset-md-1 border border-secondary rounded p-3">
             <div class="row mb-3 col-md-12">
                 <div class="col-md-12">
                     <label for="ProducerName" class="form-label" asp-for="ProducerName">Producer Name</label>
@@ -613,13 +857,16 @@
                            maxlength="100" required placeholder="Max 100 characters">
                     <span class="text-danger" asp-validation-for="ProducerCompany"></span>
                 </div>
-                <div class="col-md-6">
-                    <label for="ProducerCountry" class="form-label" asp-for="ProducerCountry">Producer Country</label>
-                    <select id="CountrySelectProducer" name="ProducerCountry" class="form-control">
-                        <option value="">Select Country</option>
-                    </select>
-                    <input type="hidden" id="ProducerCountryName" name="ProducerCountryName" />
-                    <span id="CountryErrorProducer" class="text-danger" style="display: none;">Please specify the country.</span>
+                <div class="row mb-3 col-md-12">
+                    <div class="col-md-6">
+                        <label for="ProducerCountry" class="form-label" asp-for="ProducerCountry">Producer Country</label>
+                        <select id="CountrySelectProducer" name="ProducerCountry" class="form-control" required>
+                            <option value="">Select Country</option>
+                            <!-- Populate countries here -->
+                        </select>
+                        <input type="hidden" id="ProducerCountryName" name="ProducerCountryName" />
+                        <span id="CountryErrorProducer" class="text-danger" style="display: none;">Please select a country.</span>
+                    </div>
                 </div>
             </div>
             <div class="row mb-3 col-md-12">
@@ -660,7 +907,7 @@
 
         <b2 class="col-md-10 offset-md-1"><strong>FILM WORK OPERATION CERTIFICATE</strong></b2>
 
-        <div class="row mb-3 col-md-12">
+        <div id="film-work-operation-container" class="row mb-3 col-md-12">
             <div class="col-md-12">
                 <label for="UploadedFile" class="form-label">Upload PDF</label>
                 <input type="file" class="form-control" id="UploadedFile" name="UploadedFile" accept=".pdf">
@@ -677,3 +924,74 @@
         </div>
     </form>
 </div>
+
+
+@* Text fields red glow *@
+<style>
+
+    /* Light green border for success */
+    .border-success {
+        border-color: #90ee90 !important; /* Light green color */
+        border-width: 2px !important; /* Bolder border */
+    }
+
+    /* Dark red border for error */
+    .border-danger {
+        border-color: red !important; /* Dark red color */
+        /* border-width: 2px !important; /* Bolder border */ */
+    }
+
+    /* Apply styles to all input types, select dropdowns, and text areas */
+    /*     input:invalid, select:invalid, textarea:invalid {
+                                                    border-color: #a94442; /* Dark red border for errors
+                                                }*/
+
+    /* Apply styles to all input types, select dropdowns, and text areas */
+    /*    input:valid, select:valid, textarea:valid {
+                                                    border-color: #90ee90; /* Light green border for success
+                                                } */
+
+
+
+    /* Director and Producer */
+    /* Red border for error */
+    .border-danger-director {
+        border-color: #a94442 !important; /* Dark red color */
+        border-width: 2px !important; /* Bolder border */
+    }
+
+    .border-danger-producer {
+        border-color: #a94442 !important; /* Dark red color */
+        border-width: 2px !important; /* Bolder border */
+    }
+
+    /* Light green border for success */
+    .border-success-director {
+        border-color: #90ee90 !important; /* Light green color */
+        border-width: 2px !important; /* Bolder border */
+    }
+
+    .border-success-producer {
+        border-color: #90ee90 !important; /* Light green color */
+        border-width: 2px !important; /* Bolder border */
+    }
+
+
+    /* Movie Time Length */
+    #MovieTimeLength {
+        border-color: red; /* Default border color red */
+    }
+
+        #MovieTimeLength:disabled {
+            background-color: #f8d7da; /* Slightly red background for disabled state */
+            color: #6c757d; /* Gray text color */
+        }
+
+        #MovieTimeLength.is-valid {
+            border-color: green; /* Border color turns green when valid */
+        }
+
+        #MovieTimeLength.is-invalid {
+            border-color: red; /* Border color stays red when invalid */
+        }
+</style>

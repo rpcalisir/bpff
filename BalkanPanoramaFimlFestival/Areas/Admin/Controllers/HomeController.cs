@@ -66,7 +66,6 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
                 DirectorCountry = x.DirectorCountry,
                 DirectorPhone = x.DirectorPhone,
                 DirectorEmail = x.DirectorEmail,
-                DirectorWebsite = x.DirectorWebsite,
                 DirectorBiographyTr = x.DirectorBiographyTr,
                 DirectorBiographyEn = x.DirectorBiographyEn,
                 DirectorFilmographyTr = x.DirectorFilmographyTr,

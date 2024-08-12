@@ -22,7 +22,6 @@ namespace BalkanPanoramaFilmFestival.Models.CompetitionApplication
         public required string DirectorCountry { get; set; }
         public required string DirectorPhone { get; set; }
         public required string DirectorEmail { get; set; }
-        public string? DirectorWebsite { get; set; }
         public required string DirectorBiographyTr { get; set; }
         public required string DirectorBiographyEn { get; set; }
         public required string DirectorFilmographyTr { get; set; }
@@ -31,7 +30,6 @@ namespace BalkanPanoramaFilmFestival.Models.CompetitionApplication
         // Movie Tag
         public required string MovieScript { get; set; }
         public required string Cinematographer { get; set; }
-        public required string ArtDirector { get; set; }
         public required string MovieFiction { get; set; }
         public required string MovieActors { get; set; }
         public required string BestActress { get; set; }

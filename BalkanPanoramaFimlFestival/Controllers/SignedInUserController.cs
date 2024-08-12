@@ -61,7 +61,6 @@ namespace BalkanPanoramaFilmFestival.Controllers
                 // Movie Tag
                 MovieScript = string.Empty,
                 Cinematographer = string.Empty,
-                ArtDirector = string.Empty,
                 MovieFiction = string.Empty,
                 MovieActors = string.Empty,
                 BestActress = string.Empty,
@@ -191,7 +190,6 @@ namespace BalkanPanoramaFilmFestival.Controllers
                     DirectorCountry = directorCountryName!,
                     DirectorPhone = model.DirectorPhone,
                     DirectorEmail = model.DirectorEmail,
-                    DirectorWebsite = model.DirectorWebsite,
                     DirectorBiographyTr = model.DirectorBiographyTr,
                     DirectorBiographyEn = model.DirectorBiographyEn,
                     DirectorFilmographyTr = model.DirectorFilmographyTr,
@@ -200,7 +198,6 @@ namespace BalkanPanoramaFilmFestival.Controllers
                     // Movie Tag
                     MovieScript = model.MovieScript,
                     Cinematographer = model.Cinematographer,
-                    ArtDirector = model.ArtDirector,
                     MovieFiction = model.MovieFiction,
                     MovieActors = model.MovieActors,
                     BestActress = model.BestActress,
