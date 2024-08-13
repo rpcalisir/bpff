@@ -181,7 +181,7 @@
     @* ------------------------------------------------------------------------------------------------------------ *@
 
     @* Container Border Color Script *@
-     <script>
+    <script>
         function validateMovieFeatures() {
             var generalInfoContainer = document.getElementById('movie-features-container');
             var requiredInputs = generalInfoContainer.querySelectorAll('input[required], select[required]');
@@ -597,6 +597,110 @@
             }
         });
     </script>
+
+    @* Character Left on Textbox Script *@
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Character limit handling for DirectorBiographyTr
+            var textareaDirectorBiographyTr = document.getElementById('DirectorBiographyTr');
+            var charCountDirectorBiographyTr = document.getElementById('charCountDirectorBiographyTr');
+
+            textareaDirectorBiographyTr.addEventListener('input', function () {
+                var remaining = 1000 - this.value.length;
+                charCountDirectorBiographyTr.textContent = remaining;
+            });
+
+            // Character limit handling for DirectorBiographyEn
+            var textareaDirectorBiographyEn = document.getElementById('DirectorBiographyEn');
+            var charCountDirectorBiographyEn = document.getElementById('charCountDirectorBiographyEn');
+
+            textareaDirectorBiographyEn.addEventListener('input', function () {
+                var remaining = 1000 - this.value.length;
+                charCountDirectorBiographyEn.textContent = remaining;
+            });
+
+            // Character limit handling for DirectorFilmographyTr
+            var textareaDirectorFilmographyTr = document.getElementById('DirectorFilmographyTr');
+            var charCountDirectorFilmographyTr = document.getElementById('charCountDirectorFilmographyTr');
+
+            textareaDirectorFilmographyTr.addEventListener('input', function () {
+                var remaining = 1000 - this.value.length;
+                charCountDirectorFilmographyTr.textContent = remaining;
+            });
+
+            // Character limit handling for DirectorFilmographyEn
+            var textareaDirectorFilmographyEn = document.getElementById('DirectorFilmographyEn');
+            var charCountDirectorFilmographyEn = document.getElementById('charCountDirectorFilmographyEn');
+
+            textareaDirectorFilmographyEn.addEventListener('input', function () {
+                var remaining = 1000 - this.value.length;
+                charCountDirectorFilmographyEn.textContent = remaining;
+            });
+
+            // Character limit handling for MovieScript
+            var textareaMovieScript = document.getElementById('MovieScript');
+            var charCountMovieScript = document.getElementById('charCountMovieScript');
+
+            textareaMovieScript.addEventListener('input', function () {
+                var remaining = 1000 - this.value.length;
+                charCountMovieScript.textContent = remaining;
+            });
+
+            // Character limit handling for MovieFiction
+            var textareaMovieFiction = document.getElementById('MovieFiction');
+            var charCountMovieFictions = document.getElementById('charCountMovieFiction');
+
+            textareaMovieFiction.addEventListener('input', function () {
+                var remaining = 1000 - this.value.length;
+                charCountMovieFictions.textContent = remaining;
+            });
+
+            // Character limit handling for MovieActors
+            var textareaMovieActors = document.getElementById('MovieActors');
+            var charCountMovieActors = document.getElementById('charCountMovieActors');
+
+            textareaMovieActors.addEventListener('input', function () {
+                var remaining = 1000 - this.value.length;
+                charCountMovieActors.textContent = remaining;
+            });
+
+            // Character limit handling for SinopsisTr
+            var textareaSinopsisTr = document.getElementById('SinopsisTr');
+            var charCountSinopsisTr = document.getElementById('charCountSinopsisTr');
+
+            textareaSinopsisTr.addEventListener('input', function () {
+                var remaining = 1000 - this.value.length;
+                charCountSinopsisTr.textContent = remaining;
+            });
+
+            // Character limit handling for SinopsisEn
+            var textareaSinopsisEn = document.getElementById('SinopsisEn');
+            var charCountSinopsisEn = document.getElementById('charCountSinopsisEn');
+
+            textareaSinopsisEn.addEventListener('input', function () {
+                var remaining = 1000 - this.value.length;
+                charCountSinopsisEn.textContent = remaining;
+            });
+
+            // Character limit handling for FestivalsAttended
+            var textareaFestivalsAttended = document.getElementById('FestivalsAttended');
+            var charCountFestivalsAttended = document.getElementById('charCountFestivalsAttended');
+
+            textareaFestivalsAttended.addEventListener('input', function () {
+                var remaining = 1000 - this.value.length;
+                charCountFestivalsAttended.textContent = remaining;
+            });
+
+            // Character limit handling for AwardsReceived
+            var textareaAwardsReceived = document.getElementById('AwardsReceived');
+            var charCountAwardsReceived = document.getElementById('charCountAwardsReceived');
+
+            textareaAwardsReceived.addEventListener('input', function () {
+                var remaining = 1000 - this.value.length;
+                charCountAwardsReceived.textContent = remaining;
+            });
+        });
+    </script>
     @* ------------------------------------------------------------------------------------------------------------ *@
     @* SPECIAL *@
 
@@ -746,6 +850,133 @@
 
     @* ------------------------------------------------------------------------------------------------------------ *@
     @* FILM WORK OPERATION CERTIFICATE *@
+
+
+    @* SINOPSIS *@
+    @* ------------------------------------------------------------------------------------------------------------ *@
+    <script>
+        function validateSinopsisContainer() {
+            var sinopsisContainer = document.getElementById('sinopsis-container');
+            var requiredInputs = sinopsisContainer.querySelectorAll('input[required], select[required], textarea[required]');
+            var allValid = true;
+
+            // Check each required input and select
+            requiredInputs.forEach(function (input) {
+                if (input.type === 'select-one') {
+                    // Check select elements
+                    if (!input.value.trim()) {
+                        allValid = false;
+                        input.classList.add('border-danger');
+                        input.classList.remove('border-success');
+                    } else {
+                        input.classList.add('border-success');
+                        input.classList.remove('border-danger');
+                    }
+                } else {
+                    // Check input elements
+                    if (!input.value.trim()) {
+                        allValid = false;
+                        input.classList.add('border-danger');
+                        input.classList.remove('border-success');
+                    } else {
+                        input.classList.add('border-success');
+                        input.classList.remove('border-danger');
+                    }
+                }
+            });
+
+            // Update container border color based on the validity of inputs
+            if (allValid) {
+                sinopsisContainer.classList.add('border-success');
+                sinopsisContainer.classList.remove('border-danger');
+            } else {
+                sinopsisContainer.classList.add('border-danger');
+                sinopsisContainer.classList.remove('border-success');
+            }
+
+            return allValid; // Return whether the sinopsis info is valid
+        }
+
+        // Attach the validation function to the form submit event
+        document.querySelector('form').addEventListener('submit', function (event) {
+            if (!validateSinopsisContainer()) {
+                event.preventDefault(); // Prevent form submission if there are errors
+            }
+        });
+
+        // Attach the validation function to each required input's input/change event
+        document.querySelectorAll('#sinopsis-container input[required], #sinopsis-container select[required], #sinopsis-container textarea[required]').forEach(function (input) {
+            input.addEventListener('input', validateSinopsisContainer);
+            input.addEventListener('change', validateSinopsisContainer); // for select elements
+        });
+    </script>
+
+    @* ------------------------------------------------------------------------------------------------------------ *@
+    @* SINOPSIS *@
+
+
+    @* <-- MOVIE TECHNICAL INFORMATION --> *@
+    @* ------------------------------------------------------------------------------------------------------------ *@
+    <script>
+        function validateMovieTechInfoContainer() {
+            var movieTechInfoContainer = document.getElementById('movietechinfo-container');
+            var requiredInputs = movieTechInfoContainer.querySelectorAll('select[required]');
+            var allValid = true;
+
+            // Check each required input and select
+            requiredInputs.forEach(function (input) {
+                if (input.type === 'select-one') {
+                    // Check select elements
+                    if (!input.value.trim()) {
+                        allValid = false;
+                        input.classList.add('border-danger');
+                        input.classList.remove('border-success');
+                    } else {
+                        input.classList.add('border-success');
+                        input.classList.remove('border-danger');
+                    }
+                } else {
+                    // Check input elements
+                    if (!input.value.trim()) {
+                        allValid = false;
+                        input.classList.add('border-danger');
+                        input.classList.remove('border-success');
+                    } else {
+                        input.classList.add('border-success');
+                        input.classList.remove('border-danger');
+                    }
+                }
+            });
+
+            // Update container border color based on the validity of inputs
+            if (allValid) {
+                movieTechInfoContainer.classList.add('border-success');
+                movieTechInfoContainer.classList.remove('border-danger');
+            } else {
+                movieTechInfoContainer.classList.add('border-danger');
+                movieTechInfoContainer.classList.remove('border-success');
+            }
+
+            return allValid; // Return whether the movietechinfo info is valid
+        }
+
+        // Attach the validation function to the form submit event
+        document.querySelector('form').addEventListener('submit', function (event) {
+            if (!validateMovieTechInfoContainer()) {
+                event.preventDefault(); // Prevent form submission if there are errors
+            }
+        });
+
+        // Attach the validation function to each required input's input/change event
+        document.querySelectorAll('#movietechinfo-container select[required]').forEach(function (input) {
+            input.addEventListener('input', validateMovieTechInfoContainer);
+            input.addEventListener('change', validateMovieTechInfoContainer); // for select elements
+        });
+    </script>
+
+    @* ------------------------------------------------------------------------------------------------------------ *@
+    @* <-- MOVIE TECHNICAL INFORMATION --> *@
+
 }
 
 @* @{
@@ -1143,7 +1374,6 @@
         </div>
 
         @* <-- FILM WORK OPERATION CERTIFICATE --> *@
-
         <b2 class="col-md-10 offset-md-1"><strong>FILM WORK OPERATION CERTIFICATE</strong></b2>
 
         <div id="film-work-operation-container" class="row mb-3 col-md-10 offset-md-1 border border-secondary rounded p-3">
@@ -1153,7 +1383,120 @@
                 <span class="text-danger" asp-validation-for="UploadedFile"></span>
             </div>
         </div>
+        @* <-- --> *@
 
+        @* <-- SINOPSIS --> *@
+        <b2 class="col-md-10 offset-md-1"><strong>SINOPSIS</strong></b2>
+
+        <div id="sinopsis-container" class="row mb-3 col-md-10 offset-md-1 border border-secondary rounded p-3">
+            <div class="row mb-3 col-md-12">
+                <!-- Sinopsis TR -->
+                <div class="col-md-6">
+                    <label for="SinopsisTr" class="form-label" asp-for="SinopsisTr">Sinopsis TR</label>
+                    <textarea class="form-control" asp-for="SinopsisTr" id="SinopsisTr" rows="10" maxlength="1000" required style="resize: none;"></textarea>
+                    <div class="form-text"><span id="charCountSinopsisTr">1000</span> characters remaining</div>
+                    <span class="text-danger" asp-validation-for="SinopsisTr"></span>
+                </div>
+
+                <!-- Sinopsis EN -->
+                <div class="col-md-6">
+                    <label for="SinopsisEn" class="form-label" asp-for="SinopsisEn">Sinopsis EN</label>
+                    <textarea class="form-control" asp-for="SinopsisEn" id="SinopsisEn" rows="10" maxlength="1000" required style="resize: none;"></textarea>
+                    <div class="form-text"><span id="charCountSinopsisEn">1000</span> characters remaining</div>
+                    <span class="text-danger" asp-validation-for="SinopsisEn"></span>
+                </div>
+            </div>
+
+            <div class="row mb-3 col-md-12">
+                <!-- Festivals Attended -->
+                <div class="col-md-6">
+                    <label for="FestivalsAttended" class="form-label" asp-for="FestivalsAttended">Festivals Attended</label>
+                    <textarea class="form-control" asp-for="FestivalsAttended" id="FestivalsAttended" rows="10" maxlength="1000" required style="resize: none;"></textarea>
+                    <div class="form-text"><span id="charCountFestivalsAttended">1000</span> characters remaining</div>
+                    <span class="text-danger" asp-validation-for="FestivalsAttended"></span>
+                </div>
+
+                <!-- Awards Received -->
+                <div class="col-md-6">
+                    <label for="AwardsReceived" class="form-label" asp-for="AwardsReceived">Awards Received</label>
+                    <textarea class="form-control" asp-for="AwardsReceived" id="AwardsReceived" rows="10" maxlength="1000" required style="resize: none;"></textarea>
+                    <div class="form-text"><span id="charCountAwardsReceived">1000</span> characters remaining</div>
+                    <span class="text-danger" asp-validation-for="AwardsReceived"></span>
+                </div>
+            </div>
+
+            <div class="row mb-3 col-md-12">
+                <!-- Premier Status -->
+                <div class="col-md-6">
+                    <label for="PremierStatus" class="form-label" asp-for="PremierStatus">Premier Status</label>
+                    <select class="form-control" id="PremierStatus" name="PremierStatus" required>
+                        <option value="">Select Premier Status</option>
+                        <option value="Valid">Valid</option>
+                        <option value="Invalid">Invalid</option>
+                    </select>
+                    <div class="form-text"></div>
+                    <span class="text-danger" id="PremierStatus" asp-validation-for="PremierStatus"></span>
+                </div>
+
+                <!-- First Screening -->
+                <div class="col-md-6">
+                    <label for="FirstScreening" class="form-label" asp-for="FirstScreening">First Screening</label>
+                    <select class="form-control" id="FirstScreening" name="FirstScreening" required>
+                        <option value="">Select First Screening</option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                    </select>
+                    <div class="form-text"></div>
+                    <span class="text-danger" id="FirstScreening" asp-validation-for="FirstScreening"></span>
+                </div>
+            </div>
+        </div>
+        @* <-- --> *@
+
+
+        @* <-- Movie Technical Information --> *@
+        <b2 class="col-md-10 offset-md-1"><strong>MOVIE TECHNICAL INFORMATION</strong></b2>
+
+        <div id="movietechinfo-container" class="row mb-3 col-md-10 offset-md-1 border border-secondary rounded p-3">
+            <div class="row mb-3 col-md-12">
+                <!-- MovieTechInfoColor -->
+                <div class="col-md-4">
+                    <label for="MovieTechInfoColor" class="form-label" asp-for="MovieTechInfoColor">Movie Color</label>
+                    <select class="form-control" id="MovieTechInfoColor" name="MovieTechInfoColor" required>
+                        <option value="">Select Movie Color</option>
+                        <option value="Black and White">Black and White</option>
+                        <option value="Colored">Colored</option>
+                    </select>
+                    <div class="form-text"></div>
+                    <span class="text-danger" id="MovieTechInfoColor" asp-validation-for="MovieTechInfoColor"></span>
+                </div>
+
+                <!-- Screen Size -->
+                <div class="col-md-4">
+                    <label for="ScreenSize" class="form-label" asp-for="ScreenSize">Screen Size</label>
+                    <select class="form-control" id="ScreenSize" name="ScreenSize" required>
+                        <option value="">Select Screen Size</option>
+                        <option value="4:3">4:3</option>
+                        <option value="16:9">16:9</option>
+                    </select>
+                    <div class="form-text"></div>
+                    <span class="text-danger" id="ScreenSize" asp-validation-for="ScreenSize"></span>
+                </div>
+
+                <!-- MovieTechInfoAudio -->
+                <div class="col-md-4">
+                    <label for="MovieTechInfoAudio" class="form-label" asp-for="MovieTechInfoAudio">Movie Audio</label>
+                    <select class="form-control" id="MovieTechInfoAudio" name="MovieTechInfoAudio" required>
+                        <option value="">Select Audio</option>
+                        <option value="No Audio">No Audio</option>
+                        <option value="With Audio">With Audio</option>
+                    </select>
+                    <div class="form-text"></div>
+                    <span class="text-danger" id="MovieTechInfoAudio" asp-validation-for="MovieTechInfoAudio"></span>
+                </div>
+
+            </div>
+        </div>
         @* <-- --> *@
 
         <div class="row">
@@ -1177,7 +1520,7 @@
     /* Dark red border for error */
     .border-danger {
         border-color: red !important; /* Dark red color */
-        /* border-width: 2px !important; /* Bolder border */ */
+        /* border-width: 2px !important; /* Bolder border */
     }
 
 

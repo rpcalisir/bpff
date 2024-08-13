@@ -73,6 +73,19 @@ namespace BalkanPanoramaFilmFestival.Controllers
                 ProducerPhone = string.Empty,
                 ProducerEmail = string.Empty,
 
+                // Sinopsis
+                SinopsisTr = string.Empty,
+                SinopsisEn = string.Empty,
+                FestivalsAttended = string.Empty,
+                AwardsReceived = string.Empty,
+                PremierStatus = string.Empty,
+                FirstScreening = string.Empty,
+
+                // Movie Technical Information
+                MovieTechInfoColor = string.Empty,
+                ScreenSize = string.Empty,
+                MovieTechInfoAudio = string.Empty,
+
                 AllCountries = _competitionApplicationFormService.GetAllCountries(), // Fetch the country list
                 AllMovieGenres = _competitionApplicationFormService.GetAllGenres(), // Fetch the genre list
             };
@@ -157,7 +170,7 @@ namespace BalkanPanoramaFilmFestival.Controllers
                     }
 
                     // Generate a unique file name to prevent overwriting
-                    var uniqueFileName = Guid.NewGuid().ToString() + "_" + 
+                    var uniqueFileName = Guid.NewGuid().ToString() + "_" +
                         Path.GetFileName(model.UploadedFile.FileName);
                     var filePath = Path.Combine(uploadsFolderPath, uniqueFileName);
 
@@ -214,6 +227,19 @@ namespace BalkanPanoramaFilmFestival.Controllers
 
                     // FILM WORK OPERATION CERTIFICATE
                     UploadedFilePath = model.UploadedFilePath,
+
+                    // Sinopsis
+                    SinopsisTr = model.SinopsisTr,
+                    SinopsisEn = model.SinopsisEn,
+                    FestivalsAttended = model.FestivalsAttended,
+                    AwardsReceived = model.AwardsReceived,
+                    PremierStatus = model.PremierStatus,
+                    FirstScreening = model.FirstScreening,
+
+                    // Movie Technical Information
+                    MovieTechInfoColor = model.MovieTechInfoColor,
+                    ScreenSize = model.ScreenSize,
+                    MovieTechInfoAudio = model.MovieTechInfoAudio,
 
                     Applicant = $"{signedInUser.FirstName} {signedInUser.LastName}",
                     ApplicantMail = signedInUser.Email,
