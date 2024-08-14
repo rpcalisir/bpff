@@ -26,11 +26,11 @@ namespace BalkanPanoramaFilmFestival.Models
             //    entity.ToTable("users");
             //});
 
-            modelBuilder.Entity<RegisteredUser>(entity =>
-            {
-                entity.ToTable("AspNetUsers"); // Table name in your database
-                entity.Property(e => e.Id).HasColumnName("Id"); // Column names should match
-            });
+            //modelBuilder.Entity<RegisteredUser>(entity =>
+            //{
+            //    entity.ToTable("AspNetUsers"); // Table name in your database
+            //    entity.Property(e => e.Id).HasColumnName("Id"); // Column names should match
+            //});
             base.OnModelCreating(modelBuilder);
         }
     }

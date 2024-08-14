@@ -46,7 +46,6 @@ namespace BalkanPanoramaFilmFestival.ViewModels.CompetitionApplication
 
         // Director Section
         public required string DirectorName { get; set; }
-        public required string DirectorCompany { get; set; }
         public required string DirectorCountry { get; set; }
         public required string DirectorPhone { get; set; }
         public required string DirectorEmail { get; set; }
@@ -76,8 +75,8 @@ namespace BalkanPanoramaFilmFestival.ViewModels.CompetitionApplication
 
 
         // FILM WORK OPERATION CERTIFICATE
-        public IFormFile? UploadedFile { get; set; }
-        public string? UploadedFilePath { get; set; }
+        public IFormFile? UploadedPdfFile { get; set; }
+        public string? UploadedPdfFilePath { get; set; }
 
         // Sinopsis
         public required string SinopsisTr { get; set; }
@@ -91,5 +90,15 @@ namespace BalkanPanoramaFilmFestival.ViewModels.CompetitionApplication
         public required string MovieTechInfoColor { get; set; }
         public required string ScreenSize { get; set; }
         public required string MovieTechInfoAudio { get; set; }
+
+        // MEDIA
+        public List<IFormFile>? UploadedMoviePictures { get; set; }
+        public string? UploadedMoviePicturesFilePaths { get; set; }
+        public IFormFile? UploadedMoviePoster { get; set; }
+        public string? UploadedMoviePosterFilePath { get; set; }
+        public IFormFile? UploadedMovieSubtitle { get; set; }
+        public string? UploadedMovieSubtitleFilePath { get; set; }
+        public IFormFile? UploadedDirectorPhoto { get; set; }
+        public string? UploadedDirectorPhotoFilePath { get; set; }
     }
 }

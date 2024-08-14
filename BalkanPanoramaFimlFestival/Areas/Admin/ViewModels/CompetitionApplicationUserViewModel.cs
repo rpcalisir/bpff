@@ -16,7 +16,6 @@
 
         // Director Section
         public required string DirectorName { get; set; }
-        public required string DirectorCompany { get; set; }
         public required string DirectorCountry { get; set; }
         public required string DirectorPhone { get; set; }
         public required string DirectorEmail { get; set; }
@@ -33,6 +32,10 @@
 
 
         // FILM WORK OPERATION CERTIFICATE
-        public string? UploadedFilePath { get; set; }
+        public required string UploadedPdfFilePath { get; set; }
+
+        // MEDIA
+        public required string UploadedMoviePicturesFilePaths { get; set; }
+
     }
 }

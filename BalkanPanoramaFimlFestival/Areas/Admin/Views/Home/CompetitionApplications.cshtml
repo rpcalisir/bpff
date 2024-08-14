@@ -17,6 +17,7 @@
             <th>Movie Name</th>
             <th>Director</th>
             <th>Download PDF</th> <!-- Added this column -->
+            <th>Download Movie Pictures</th> <!-- Added this column -->
         </tr>
     </thead>
 
@@ -32,16 +33,28 @@
                 <td>@item.DirectorName</td>
                 <td>@item.OriginalMovieName</td>
                 <td>
-                    @if (!string.IsNullOrEmpty(item.UploadedFilePath))
+                    @if (!string.IsNullOrEmpty(item.UploadedPdfFilePath))
                     {
                         // Pass the relative file path (excluding leading '/')
-                        <a href="@Url.Action("DownloadPdf", "Home", 
-                        new { Area = "Admin", filePath = item.UploadedFilePath.TrimStart('/') })" 
-                        class="btn btn-primary">Download PDF</a>
+                        <a href="@Url.Action("DownloadPdf", "Home",
+                        new { Area = "Admin", filePath = item.UploadedPdfFilePath.TrimStart('/') })"
+                           class="btn btn-primary">Download PDF</a>
                     }
                     else
                     {
                         <span>No PDF Uploaded</span>
+                    }
+                </td>
+                <td>
+                    @if (item.UploadedMoviePicturesFilePaths != null && item.UploadedMoviePicturesFilePaths.Any())
+                    {
+                        // Pass the list of file paths as a comma-separated string
+                        var filePaths = string.Join(",", item.UploadedMoviePicturesFilePaths);
+                        <a href="@Url.Action("DownloadMoviePictures", "Home", new { uploadedMoviePicturesFilePaths = filePaths })" class="btn btn-primary">Download All Pictures</a>
+                    }
+                    else
+                    {
+                        <span>No Pictures Uploaded</span>
                     }
                 </td>
             </tr>

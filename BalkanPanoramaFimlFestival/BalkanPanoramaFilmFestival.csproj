@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <Folder Include="Areas\Admin\Data\" />
+    <Folder Include="wwwroot\pictures\" />
     <Folder Include="wwwroot\uploads\" />
   </ItemGroup>
 

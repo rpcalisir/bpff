@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.IO.Compression;
 
 namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
 {
@@ -62,7 +63,6 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
 
                 // Director Section
                 DirectorName = x.DirectorName,
-                DirectorCompany = x.DirectorCompany,
                 DirectorCountry = x.DirectorCountry,
                 DirectorPhone = x.DirectorPhone,
                 DirectorEmail = x.DirectorEmail,
@@ -71,7 +71,11 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
                 DirectorFilmographyTr = x.DirectorFilmographyTr,
                 DirectorFilmographyEn = x.DirectorFilmographyEn,
 
-                UploadedFilePath = x.UploadedFilePath, // Ensure this is included
+                // FILM WORK OPERATION CERTIFICATE
+                UploadedPdfFilePath = x.UploadedPdfFilePath, // Ensure this is included
+
+                // MEDIA
+                UploadedMoviePicturesFilePaths = x.UploadedMoviePicturesFilePaths,
 
                 Applicant = x.Applicant,
                 ApplicantMail = x.ApplicantMail,
@@ -114,7 +118,71 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
             return File(fileBytes, "application/pdf", fileName);
         }
 
+        [HttpGet]
+        public IActionResult DownloadMoviePictures(string uploadedMoviePicturesFilePaths)
+        {
+            // Split the string into individual file paths
+            var filePaths = uploadedMoviePicturesFilePaths
+                .Trim('[', ']', '\"') // Trim brackets and quotes
+                .Split(',')            // Split by comma
+                .Select(path => path.Trim()) // Trim whitespace around each path
+                .ToList();
 
+            if (filePaths == null || !filePaths.Any())
+            {
+                return NotFound();
+            }
 
+            using (var memoryStream = new MemoryStream())
+            {
+                using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
+                {
+                    foreach (var filePath in filePaths)
+                    {
+                        if (string.IsNullOrEmpty(filePath)) continue;
+
+                        // Remove any trailing quotes or other unwanted characters
+                        var cleanedFilePath = filePath.Trim('\"');
+
+                        // Define the path to the file in the wwwroot/pictures directory
+                        var fullFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", cleanedFilePath.TrimStart('/'));
+
+                        if (System.IO.File.Exists(fullFilePath))
+                        {
+                            var fileName = Path.GetFileName(fullFilePath);
+                            var fileEntry = archive.CreateEntry(fileName);
+
+                            using (var fileStream = new FileStream(fullFilePath, FileMode.Open, FileAccess.Read))
+                            using (var entryStream = fileEntry.Open())
+                            {
+                                fileStream.CopyTo(entryStream);
+                            }
+                        }
+                    }
+                }
+
+                // Reset the position of the memory stream
+                memoryStream.Position = 0;
+
+                // Return the zip file
+                return File(memoryStream.ToArray(), "application/zip", "movie_pictures.zip");
+            }
+        }
+
+        private string GetContentType(string filePath)
+        {
+            var extension = Path.GetExtension(filePath).ToLowerInvariant();
+
+            return extension switch
+            {
+                ".jpg" or ".jpeg" => "image/jpeg",
+                ".png" => "image/png",
+                ".gif" => "image/gif",
+                ".bmp" => "image/bmp",
+                ".webp" => "image/webp",
+                ".svg" => "image/svg+xml",
+                _ => "application/octet-stream" // Default value for unknown file types
+            };
+        }
     }
 }

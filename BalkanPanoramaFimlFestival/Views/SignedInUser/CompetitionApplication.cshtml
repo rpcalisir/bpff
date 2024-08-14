@@ -423,6 +423,16 @@
     @* DIRECTOR *@
     @* ------------------------------------------------------------------------------------------------------------ *@
     <script>
+        function updateHiddenFieldDirectorCountry() {
+            var directorCountrySelect = document.getElementById('CountrySelectDirector');
+            var directorCountryName = document.getElementById('DirectorCountryName');
+
+            if (directorCountrySelect && directorCountryName) {
+                var selectedCountryText = directorCountrySelect.options[directorCountrySelect.selectedIndex].text;
+                directorCountryName.value = selectedCountryText;
+            }
+        }
+
         function validateDirectorInfo() {
             var directorContainer = document.getElementById('director-container');
             var requiredElements = directorContainer.querySelectorAll('input[required], select[required], textarea[required]');
@@ -465,6 +475,12 @@
 
             return allValid; // Return whether the director info is valid
         }
+
+        // Attach the update function to country select change event
+        document.getElementById('CountrySelectDirector').addEventListener('change', function () {
+            updateHiddenFieldDirectorCountry();
+            validateDirectorInfo(); // Validate on change
+        });
 
         // Attach the validation function to the form submit event
         document.querySelector('form').addEventListener('submit', function (event) {
@@ -757,37 +773,48 @@
     @* PRODUCER *@
     @* ------------------------------------------------------------------------------------------------------------ *@
     <script>
+        function updateHiddenFieldProducerCountry() {
+            var producerCountrySelect = document.getElementById('CountrySelectProducer');
+            var producerCountryName = document.getElementById('ProducerCountryName');
+
+            if (producerCountrySelect && producerCountryName) {
+                var selectedCountryText = producerCountrySelect.options[producerCountrySelect.selectedIndex].text;
+                producerCountryName.value = selectedCountryText;
+            }
+        }
+
         function validateProducerInfo() {
             var producerContainer = document.getElementById('producer-container');
-            var requiredInputs = producerContainer.querySelectorAll('input[required], select[required]');
+            var requiredElements = producerContainer.querySelectorAll('input[required], select[required], textarea[required]');
             var allValid = true;
 
-            // Check each required input and select
-            requiredInputs.forEach(function (input) {
-                if (input.type === 'select-one') {
-                    // Check select elements
-                    if (!input.value.trim()) {
-                        allValid = false;
-                        input.classList.add('border-danger');
-                        input.classList.remove('border-success');
-                    } else {
-                        input.classList.add('border-success');
-                        input.classList.remove('border-danger');
-                    }
+            // Check each required element
+            requiredElements.forEach(function (element) {
+                if (!element.value.trim()) {
+                    allValid = false;
+                    element.classList.add('border-danger');
+                    element.classList.remove('border-success');
                 } else {
-                    // Check input elements
-                    if (!input.value.trim()) {
-                        allValid = false;
-                        input.classList.add('border-danger');
-                        input.classList.remove('border-success');
-                    } else {
-                        input.classList.add('border-success');
-                        input.classList.remove('border-danger');
-                    }
+                    element.classList.add('border-success');
+                    element.classList.remove('border-danger');
                 }
             });
 
-            // Update container border color based on the validity of inputs
+            // Validate country selection separately
+            var producerCountry = document.getElementById('CountrySelectProducer');
+            var countryError = document.getElementById('CountryErrorProducer');
+            if (producerCountry && producerCountry.value === "") {
+                allValid = false;
+                producerCountry.classList.add('border-danger');
+                producerCountry.classList.remove('border-success');
+                countryError.style.display = "block";
+            } else if (producerCountry) {
+                producerCountry.classList.add('border-success');
+                producerCountry.classList.remove('border-danger');
+                countryError.style.display = "none";
+            }
+
+            // Ensure container border color updates based on the validity of all required fields
             if (allValid) {
                 producerContainer.classList.add('border-success');
                 producerContainer.classList.remove('border-danger');
@@ -799,6 +826,12 @@
             return allValid; // Return whether the producer info is valid
         }
 
+        // Attach the update function to country select change event
+        document.getElementById('CountrySelectProducer').addEventListener('change', function () {
+            updateHiddenFieldProducerCountry();
+            validateProducerInfo(); // Validate on change
+        });
+
         // Attach the validation function to the form submit event
         document.querySelector('form').addEventListener('submit', function (event) {
             if (!validateProducerInfo()) {
@@ -807,11 +840,12 @@
         });
 
         // Attach the validation function to each required input's input/change event
-        document.querySelectorAll('#producer-container input[required], #producer-container select[required]').forEach(function (input) {
-            input.addEventListener('input', validateProducerInfo);
-            input.addEventListener('change', validateProducerInfo); // for select elements
+        document.querySelectorAll('#producer-container input[required], #producer-container select[required], #producer-container textarea[required]').forEach(function (element) {
+            element.addEventListener('input', validateProducerInfo);
+            element.addEventListener('change', validateProducerInfo); // For select elements
         });
     </script>
+
     @* ------------------------------------------------------------------------------------------------------------ *@
     @* PRODUCER *@
 
@@ -821,13 +855,13 @@
     @* FILM WORK OPERATION CERTIFICATE *@
     @* ------------------------------------------------------------------------------------------------------------ *@
     <script>
-        function validateFileUpload() {
+        function validatePdfFileUpload() {
             var container = document.getElementById('film-work-operation-container');
-            var fileInput = document.getElementById('UploadedFile');
-            var fileUploaded = fileInput.files.length > 0;
+            var uploadedPdfFileInput = document.getElementById('UploadedPdfFile');
+            var pdfFileUploaded = uploadedPdfFileInput.files.length > 0;
 
             // Update border color of the container based on file upload status
-            if (fileUploaded) {
+            if (pdfFileUploaded) {
                 container.classList.add('border-success');
                 container.classList.remove('border-danger');
             } else {
@@ -837,13 +871,14 @@
         }
 
         // Attach the validation function to the file input's change event
-        document.getElementById('UploadedFile').addEventListener('change', validateFileUpload);
+        document.getElementById('UploadedPdfFile').addEventListener('change', validatePdfFileUpload);
 
         // Optionally, you may want to validate the file input on form submission
         document.querySelector('form').addEventListener('submit', function (event) {
-            if (document.getElementById('UploadedFile').files.length === 0) {
-                validateFileUpload();
+            if (document.getElementById('UploadedPdfFile').files.length === 0) {
+                validatePdfFileUpload();
                 event.preventDefault(); // Prevent form submission if no file is uploaded
+                document.getElementById('UploadedPdfFile').focus(); // Add focus to the file input
             }
         });
     </script>
@@ -854,6 +889,8 @@
 
     @* SINOPSIS *@
     @* ------------------------------------------------------------------------------------------------------------ *@
+
+    @* sinopsis-container border color validation script *@
     <script>
         function validateSinopsisContainer() {
             var sinopsisContainer = document.getElementById('sinopsis-container');
@@ -977,6 +1014,283 @@
     @* ------------------------------------------------------------------------------------------------------------ *@
     @* <-- MOVIE TECHNICAL INFORMATION --> *@
 
+    @* MEDIA *@
+    @* ------------------------------------------------------------------------------------------------------------ *@
+    @* UploadedMoviePictures Upload Check Script *@
+    @* UploadedMoviePictures Upload Check Script *@
+    <script>
+        function validateMoviePicturesUpload() {
+            var uploadedPicturesInput = document.getElementById('UploadedMoviePictures');
+            var errorMessages = document.getElementById('errorMessages');
+            var maxFiles = 5;
+            var maxSizeInMB = 10;
+            var maxSizeInBytes = maxSizeInMB * 1024 * 1024;
+
+            var totalSize = 0;
+            var files = uploadedPicturesInput.files;
+            var hasFiles = files.length > 0;
+
+            // Calculate total file size
+            for (var i = 0; i < files.length; i++) {
+                totalSize += files[i].size;
+            }
+
+            var tooManyFiles = files.length > maxFiles;
+            var exceedsSizeLimit = totalSize > maxSizeInBytes;
+
+            // Prepare error messages
+            var messages = [];
+            if (!hasFiles) {
+                messages.push('At least 1 movie picture must be uploaded.');
+            }
+            if (tooManyFiles) {
+                messages.push(`You can upload a maximum of ${maxFiles} pictures.`);
+            }
+            if (exceedsSizeLimit) {
+                messages.push(`The total size of the uploaded pictures must be less than ${maxSizeInMB} MB.`);
+            }
+
+            // Show or clear error messages and set border color based on validation
+            if (messages.length > 0) {
+                errorMessages.textContent = messages.join(' ');
+                uploadedPicturesInput.style.borderColor = 'red'; // Set border color to red on error
+            } else {
+                errorMessages.textContent = '';
+                uploadedPicturesInput.style.borderColor = 'green'; // Set border color to green if no error
+            }
+        }
+
+        // Attach the validation function to the file input's change event
+        document.getElementById('UploadedMoviePictures').addEventListener('change', function () {
+            validateMoviePicturesUpload();
+        });
+
+        // Validate the file input on form submission
+        document.querySelector('form').addEventListener('submit', function (event) {
+            var uploadedPicturesInput = document.getElementById('UploadedMoviePictures');
+            var totalSize = 0;
+            var files = uploadedPicturesInput.files;
+            var maxFiles = 5;
+            var maxSizeInBytes = 10 * 1024 * 1024;
+
+            // Calculate total file size
+            for (var i = 0; i < files.length; i++) {
+                totalSize += files[i].size;
+            }
+
+            var tooManyFiles = files.length > maxFiles;
+            var exceedsSizeLimit = totalSize > maxSizeInBytes;
+
+            if (files.length === 0 || tooManyFiles || exceedsSizeLimit) {
+                validateMoviePicturesUpload();
+                event.preventDefault(); // Prevent form submission if validation fails
+                uploadedPicturesInput.focus(); // Add focus to the file input
+            }
+        });
+    </script>
+
+    @* UploadedMoviePoster Upload Check Script *@
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const uploadedMoviePosterInput = document.getElementById('UploadedMoviePoster');
+            const errorMessages = document.getElementById('posterErrorMessages');
+
+            function validateMoviePosterUpload() {
+                const files = uploadedMoviePosterInput.files;
+                const maxFiles = 1;
+                const maxSizeInMB = 3;
+                const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
+
+                let errorMessagesArray = [];
+                let totalSize = 0;
+
+                // Calculate total size of uploaded files
+                for (let i = 0; i < files.length; i++) {
+                    totalSize += files[i].size;
+                }
+
+                const tooManyFiles = files.length > maxFiles;
+                const exceedsSizeLimit = totalSize > maxSizeInBytes;
+
+                // Determine error messages based on validation
+                if (tooManyFiles) {
+                    errorMessagesArray.push(`You can upload a maximum of ${maxFiles} picture.`);
+                }
+                if (exceedsSizeLimit) {
+                    errorMessagesArray.push(`The total size of the uploaded picture must be less than ${maxSizeInMB} MB.`);
+                }
+                if (files.length === 0) {
+                    errorMessagesArray.push('A movie poster must be uploaded.');
+                }
+
+                // Update border color and error messages
+                if (errorMessagesArray.length > 0) {
+                    errorMessages.textContent = errorMessagesArray.join(' ');
+                    uploadedMoviePosterInput.style.borderColor = 'red'; // Set border color to red on error
+                } else {
+                    errorMessages.textContent = '';
+                    uploadedMoviePosterInput.style.borderColor = 'green'; // Set border color to green if no error
+                }
+            }
+
+            // Attach the validation function to the file input's change event
+            uploadedMoviePosterInput.addEventListener('change', function () {
+                validateMoviePosterUpload();
+            });
+
+            // Validate on form submission
+            document.querySelector('form').addEventListener('submit', function (event) {
+                const files = uploadedMoviePosterInput.files;
+                const maxFiles = 1;
+
+                // Check if validation fails
+                if (files.length === 0 || files.length > maxFiles) {
+                    validateMoviePosterUpload();
+                    event.preventDefault(); // Prevent form submission if validation fails
+                    uploadedMoviePosterInput.focus(); // Add focus to the file input
+                }
+            });
+        });
+    </script>
+
+    @* MovieSubtitle Optional Checkbox Handle Script *@
+    @* MovieSubtitle Optional Checkbox Handle Script *@
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const uploadedMovieSubtitleInput = document.getElementById('UploadedMovieSubtitle');
+            const movieSubtitleOptionalCheckbox = document.getElementById('MovieSubtitleOptional');
+            const subtitleErrorMessages = document.getElementById('subtitleErrorMessages');
+            const container = document.getElementById('media-container');
+
+            const maxSizeInMB = 2;
+            const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
+            const maxFiles = 1;
+
+            function validateMovieSubtitleUpload() {
+                const files = uploadedMovieSubtitleInput.files;
+                let errorMessages = [];
+                let totalSize = 0;
+
+                if (movieSubtitleOptionalCheckbox.checked) {
+                    // Checkbox is checked, disable file input, clear files, and clear errors
+                    uploadedMovieSubtitleInput.disabled = true;
+                    uploadedMovieSubtitleInput.value = ''; // Clear the file input
+                    subtitleErrorMessages.textContent = '';
+                    uploadedMovieSubtitleInput.style.borderColor = 'green'; // Set border color to green
+                    return true;
+                } else {
+                    // Enable file input if checkbox is not checked
+                    uploadedMovieSubtitleInput.disabled = false;
+                }
+
+                // Validate files
+                if (files.length === 0) {
+                    errorMessages.push('A subtitle file must be uploaded.');
+                } else if (files.length > maxFiles) {
+                    errorMessages.push(`You can upload a maximum of ${maxFiles} subtitle file.`);
+                } else {
+                    // Calculate total size of uploaded files
+                    for (let i = 0; i < files.length; i++) {
+                        totalSize += files[i].size;
+                    }
+
+                    if (totalSize > maxSizeInBytes) {
+                        errorMessages.push(`The total size of the uploaded subtitle file must be less than ${maxSizeInMB} MB.`);
+                    }
+                }
+
+                // Update border color and error messages
+                if (errorMessages.length > 0) {
+                    subtitleErrorMessages.textContent = errorMessages.join(' ');
+                    uploadedMovieSubtitleInput.style.borderColor = 'red'; // Set border color to red on error
+                } else {
+                    subtitleErrorMessages.textContent = '';
+                    uploadedMovieSubtitleInput.style.borderColor = 'green'; // Set border color to green if no error
+                }
+            }
+
+            // Attach event listeners
+            movieSubtitleOptionalCheckbox.addEventListener('change', validateMovieSubtitleUpload);
+            uploadedMovieSubtitleInput.addEventListener('change', validateMovieSubtitleUpload);
+
+            // Validate on form submission
+            document.querySelector('form').addEventListener('submit', function (event) {
+                const files = uploadedMovieSubtitleInput.files;
+                if (!movieSubtitleOptionalCheckbox.checked && (files.length === 0 || files.length > 1)) {
+                    validateMovieSubtitleUpload();
+                    event.preventDefault(); // Prevent form submission if validation fails
+                    uploadedMovieSubtitleInput.focus(); // Add focus to the file input
+                }
+            });
+        });
+    </script>
+
+    @* UploadedDirectorPhoto Upload Check Script *@
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const uploadedDirectorPhotoInput = document.getElementById('UploadedDirectorPhoto');
+            const errorMessages = document.getElementById('directorPhotoErrorMessages');
+
+            function validateDirectorPhotoUpload() {
+                const files = uploadedDirectorPhotoInput.files;
+                const maxFiles = 1;
+                const maxSizeInMB = 3;
+                const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
+
+                let errorMessagesArray = [];
+                let totalSize = 0;
+
+                // Calculate total size of uploaded files
+                for (let i = 0; i < files.length; i++) {
+                    totalSize += files[i].size;
+                }
+
+                const tooManyFiles = files.length > maxFiles;
+                const exceedsSizeLimit = totalSize > maxSizeInBytes;
+
+                // Determine error messages based on validation
+                if (tooManyFiles) {
+                    errorMessagesArray.push(`You can upload a maximum of ${maxFiles} photo.`);
+                }
+                if (exceedsSizeLimit) {
+                    errorMessagesArray.push(`The total size of the uploaded photo must be less than ${maxSizeInMB} MB.`);
+                }
+                if (files.length === 0) {
+                    errorMessagesArray.push('A director photo must be uploaded.');
+                }
+
+                // Update border color and error messages
+                if (errorMessagesArray.length > 0) {
+                    errorMessages.textContent = errorMessagesArray.join(' ');
+                    uploadedDirectorPhotoInput.style.borderColor = 'red'; // Set border color to red on error
+                } else {
+                    errorMessages.textContent = '';
+                    uploadedDirectorPhotoInput.style.borderColor = 'green'; // Set border color to green if no error
+                }
+            }
+
+            // Attach the validation function to the file input's change event
+            uploadedDirectorPhotoInput.addEventListener('change', function () {
+                validateDirectorPhotoUpload();
+            });
+
+            // Validate on form submission
+            document.querySelector('form').addEventListener('submit', function (event) {
+                const files = uploadedDirectorPhotoInput.files;
+                const maxFiles = 1;
+
+                // Check if validation fails
+                if (files.length === 0 || files.length > maxFiles) {
+                    validateDirectorPhotoUpload();
+                    event.preventDefault(); // Prevent form submission if validation fails
+                    uploadedDirectorPhotoInput.focus(); // Add focus to the file input
+                }
+            });
+        });
+    </script>
+
+    @* ------------------------------------------------------------------------------------------------------------ *@
+    @* MEDIA *@
 }
 
 @* @{
@@ -1378,9 +1692,9 @@
 
         <div id="film-work-operation-container" class="row mb-3 col-md-10 offset-md-1 border border-secondary rounded p-3">
             <div class="col-md-12">
-                <label for="UploadedFile" class="form-label">Upload PDF</label>
-                <input type="file" class="form-control" id="UploadedFile" name="UploadedFile" accept=".pdf">
-                <span class="text-danger" asp-validation-for="UploadedFile"></span>
+                <label for="UploadedPdfFile" class="form-label">Upload PDF</label>
+                <input type="file" class="form-control" id="UploadedPdfFile" name="UploadedPdfFile" accept=".pdf">
+                <span class="text-danger" asp-validation-for="UploadedPdfFile"></span>
             </div>
         </div>
         @* <-- --> *@
@@ -1496,6 +1810,57 @@
                 </div>
 
             </div>
+        </div>
+        @* <-- --> *@
+
+        @* <-- MEDIA --> *@
+        <b2 class="col-md-10 offset-md-1"><strong>MEDIA</strong></b2>
+
+        <div id="media-container" class="row mb-3 col-md-10 offset-md-1 border border-secondary rounded p-3">
+            <div class="row mb-3 col-md-12">
+
+                <!-- UploadedMoviePictures -->
+                <div class="col-md-6">
+                    <label for="UploadedMoviePictures" class="form-label">Upload Movie Pictures(MIN:1 MAX:5 - TOTAL SIZE MAX 10 MB)</label>
+                    <input type="file" class="form-control" id="UploadedMoviePictures" name="UploadedMoviePictures" required multiple accept="image/*">
+                    @* <span class="text-danger" asp-validation-for="UploadedMoviePictures"></span> *@
+                    <div id="errorMessages" class="text-danger mt-2"></div> <!-- Container for error messages --> 
+                </div>
+
+                <!-- UploadedMoviePoster -->
+                <div class="col-md-6">
+                    <label for="UploadedMoviePoster" class="form-label">Movie Poster (MIN: 1 MAX: 1 - TOTAL SIZE MAX 3 MB)</label>
+                    <input type="file" class="form-control" id="UploadedMoviePoster" name="UploadedMoviePoster" required accept="image/*">
+                    <div id="posterErrorMessages" class="text-danger mt-2"></div> <!-- Container for custom error messages -->
+                </div>
+
+            </div>
+
+            <div class="row mb-3 col-md-12">
+                <!-- UploadedMovieSubtitle and Optional Checkbox -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="UploadedMovieSubtitle" class="form-label">Movie Subtitle(MIN: 1 MAX: 1 - TOTAL SIZE MAX 2 MB)</label>
+                        <input type="file" class="form-control" id="UploadedMovieSubtitle" name="UploadedMovieSubtitle"
+                               accept=".srt, .ass, .sub, application/x-subrip, application/x-ass, text/x-subrip, text/x-ass">
+                        <div id="subtitleErrorMessages" class="text-danger mt-2"></div> <!-- Error message container -->
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="MovieSubtitleOptional" name="MovieSubtitleOptional">
+                        <label class="form-check-label" for="MovieSubtitleOptional">
+                            Movie does not have subtitle
+                        </label>
+                    </div>
+                </div>
+
+                <!-- UploadedDirectorPhoto -->
+                <div class="col-md-6">
+                    <label for="UploadedDirectorPhoto" class="form-label">Director Photo(MIN:1 MAX:1 - TOTAL SIZE MAX 3 MB)</label>
+                    <input type="file" class="form-control" id="UploadedDirectorPhoto" name="UploadedDirectorPhoto" required accept="image/*">
+                    <div id="directorPhotoErrorMessages" class="text-danger mt-2"></div> <!-- Container for custom error messages -->
+                </div>
+            </div>
+
         </div>
         @* <-- --> *@
 

@@ -49,7 +49,6 @@ namespace BalkanPanoramaFilmFestival.Controllers
 
                 // Direction Section
                 DirectorName = string.Empty,
-                DirectorCompany = string.Empty,
                 DirectorCountry = string.Empty,
                 DirectorPhone = string.Empty,
                 DirectorEmail = string.Empty,
@@ -96,20 +95,20 @@ namespace BalkanPanoramaFilmFestival.Controllers
         [HttpPost]
         public async Task<IActionResult> CompetitionApplication(CompetitionApplicationUserViewModel model)
         {
-            if (!model.CompetitionCategory.Any())
-            {
-                ModelState.AddModelError(string.Empty, "At least one competition category must be selected.");
-            }
+            //if (!model.CompetitionCategory.Any())
+            //{
+            //    ModelState.AddModelError(string.Empty, "At least one competition category must be selected.");
+            //}
 
-            if (!model.SelectedCountries.Any())
-            {
-                ModelState.AddModelError(string.Empty, "At least one country must be selected.");
-            }
+            //if (!model.SelectedCountries.Any())
+            //{
+            //    ModelState.AddModelError(string.Empty, "At least one country must be selected.");
+            //}
 
-            if (model.SelectedCountries.Count > 3)
-            {
-                ModelState.AddModelError(string.Empty, "Max 3 countries can be selected.");
-            }
+            //if (model.SelectedCountries.Count > 3)
+            //{
+            //    ModelState.AddModelError(string.Empty, "Max 3 countries can be selected.");
+            //}
 
             //In case of signup form data is not valid, return the view without deleting the form data
             if (!ModelState.IsValid)
@@ -142,18 +141,18 @@ namespace BalkanPanoramaFilmFestival.Controllers
                 var directorCountryName = Request.Form["DirectorCountryName"];
                 var producerCountryName = Request.Form["ProducerCountryName"];
 
-                // Handle file upload
-                if (model.UploadedFile != null && model.UploadedFile.Length > 0)
+                // Handle Pdf file upload
+                if (model.UploadedPdfFile != null && model.UploadedPdfFile.Length > 0)
                 {
                     // Validate file type
-                    if (!model.UploadedFile.ContentType.Equals("application/pdf", StringComparison.OrdinalIgnoreCase))
+                    if (!model.UploadedPdfFile.ContentType.Equals("application/pdf", StringComparison.OrdinalIgnoreCase))
                     {
                         ModelState.AddModelError(string.Empty, "The file must be a PDF.");
                         return View(model);
                     }
 
                     // Validate file size (e.g., max 20 MB)
-                    if (model.UploadedFile.Length > 20 * 1024 * 1024)
+                    if (model.UploadedPdfFile.Length > 20 * 1024 * 1024)
                     {
                         ModelState.AddModelError(string.Empty, "The file size must be less than 20 MB.");
 
@@ -171,18 +170,35 @@ namespace BalkanPanoramaFilmFestival.Controllers
 
                     // Generate a unique file name to prevent overwriting
                     var uniqueFileName = Guid.NewGuid().ToString() + "_" +
-                        Path.GetFileName(model.UploadedFile.FileName);
+                        Path.GetFileName(model.UploadedPdfFile.FileName);
                     var filePath = Path.Combine(uploadsFolderPath, uniqueFileName);
 
                     // Save the file to the server
                     using (var fileStream = new FileStream(filePath, FileMode.Create))
                     {
-                        await model.UploadedFile.CopyToAsync(fileStream);
+                        await model.UploadedPdfFile.CopyToAsync(fileStream);
                     }
 
                     // Store the relative file path in the database
-                    model.UploadedFilePath = "/uploads/" + uniqueFileName;
+                    model.UploadedPdfFilePath = "/uploads/" + uniqueFileName;
                 }
+
+                // Handle Movie Pictures upload
+
+                // Assume model.UploadedFiles is the property that contains the list of uploaded files
+                var uploadedMoviePicturesFilesPaths = await HandleMoviePicturesFilesUploadAsync(model.UploadedMoviePictures!);
+
+
+                // Check if there were any issues with file uploads
+                if (string.IsNullOrEmpty(uploadedMoviePicturesFilesPaths) && !ModelState.IsValid)
+                {
+                    // Return the view with validation errors if any files failed to upload
+                    ModelState.AddModelError(string.Empty, "Failed to upload movie pictures.");
+                    return View(model);
+                }
+
+                // Continue processing if the files were uploaded successfully
+                model.UploadedMoviePicturesFilePaths = uploadedMoviePicturesFilesPaths;
 
                 var user = new CompetitionApplicationUser
                 {
@@ -198,7 +214,6 @@ namespace BalkanPanoramaFilmFestival.Controllers
 
                     // Direction Section
                     DirectorName = model.DirectorName, // Comes from the page form
-                    DirectorCompany = model.DirectorCompany,
                     //DirectorCountry = model.DirectorCountry,
                     DirectorCountry = directorCountryName!,
                     DirectorPhone = model.DirectorPhone,
@@ -226,7 +241,7 @@ namespace BalkanPanoramaFilmFestival.Controllers
                     ProducerWebsite = model.ProducerWebsite,
 
                     // FILM WORK OPERATION CERTIFICATE
-                    UploadedFilePath = model.UploadedFilePath,
+                    UploadedPdfFilePath = model.UploadedPdfFilePath!,
 
                     // Sinopsis
                     SinopsisTr = model.SinopsisTr,
@@ -240,6 +255,13 @@ namespace BalkanPanoramaFilmFestival.Controllers
                     MovieTechInfoColor = model.MovieTechInfoColor,
                     ScreenSize = model.ScreenSize,
                     MovieTechInfoAudio = model.MovieTechInfoAudio,
+
+                    // MEDIA
+                    UploadedMoviePicturesFilePaths = model.UploadedMoviePicturesFilePaths,
+
+                    UploadedMoviePosterFilePath = model.UploadedMoviePosterFilePath,
+                    UploadedMovieSubtitleFilePath = model.UploadedMovieSubtitleFilePath,
+                    UploadedDirectorPhotoFilePath   = model.UploadedDirectorPhotoFilePath,
 
                     Applicant = $"{signedInUser.FirstName} {signedInUser.LastName}",
                     ApplicantMail = signedInUser.Email,
@@ -352,5 +374,75 @@ namespace BalkanPanoramaFilmFestival.Controllers
 
             return View();
         }
+
+
+        #region Private Implementation
+        #region Private Implementation
+        private async Task<string> HandleMoviePicturesFilesUploadAsync(List<IFormFile> uploadedMoviePicturesFiles)
+        {
+            var uploadedFilePaths = new List<string>();
+
+            // Check if there are any files uploaded
+            if (uploadedMoviePicturesFiles == null || !uploadedMoviePicturesFiles.Any())
+            {
+                ModelState.AddModelError(string.Empty, "Please upload at least one picture.");
+                return string.Empty; // Return empty string
+            }
+
+            // Check the number of uploaded files
+            if (uploadedMoviePicturesFiles.Count > 5)
+            {
+                ModelState.AddModelError(string.Empty, "You can upload a maximum of 5 pictures.");
+                return string.Empty; // Return empty string
+            }
+
+            // Validate total size of the uploaded files (max 10 MB)
+            var totalSize = uploadedMoviePicturesFiles.Sum(f => f.Length);
+            if (totalSize > 10 * 1024 * 1024)
+            {
+                ModelState.AddModelError(string.Empty, "The total size of the uploaded pictures must be less than 10 MB.");
+                return string.Empty; // Return empty string
+            }
+
+            // Directory to save uploaded files
+            var uploadsFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/pictures");
+
+            // Ensure the uploads directory exists
+            if (!Directory.Exists(uploadsFolderPath))
+            {
+                Directory.CreateDirectory(uploadsFolderPath);
+            }
+
+            // Loop through each uploaded file
+            foreach (var file in uploadedMoviePicturesFiles)
+            {
+                // Validate file type
+                if (!file.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
+                {
+                    ModelState.AddModelError(string.Empty, "All uploaded files must be pictures.");
+                    return string.Empty; // Return empty string
+                }
+
+                // Generate a unique file name to prevent overwriting
+                var uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(file.FileName);
+                var filePath = Path.Combine(uploadsFolderPath, uniqueFileName);
+
+                // Save the file to the server
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(fileStream);
+                }
+
+                // Store the relative file path for future use
+                uploadedFilePaths.Add("/pictures/" + uniqueFileName);
+            }
+
+            // Join the file paths into a single string separated by commas
+            return string.Join(",", uploadedFilePaths); // Return a single string containing all file paths
+        }
+        #endregion
+
+
+        #endregion
     }
 }
