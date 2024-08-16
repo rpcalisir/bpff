@@ -68,8 +68,11 @@ namespace BalkanPanoramaFilmFestival.Models.CompetitionApplication
 
         // MEDIA
         public required string UploadedMoviePicturesFilePaths { get; set; }
-        public string? UploadedMoviePosterFilePath { get; set; }
+        public required string UploadedMoviePosterFilePath { get; set; }
         public string? UploadedMovieSubtitleFilePath { get; set; }
-        public string? UploadedDirectorPhotoFilePath { get; set; }
+        public required string UploadedDirectorPhotoFilePath { get; set; }
+        public string? UploadedBestActressPhotoFilePath { get; set; }
+        public string? UploadedBestActorPhotoFilePath { get; set; }
+
     }
 }

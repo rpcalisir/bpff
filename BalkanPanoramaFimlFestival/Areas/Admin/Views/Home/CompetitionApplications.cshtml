@@ -18,6 +18,8 @@
             <th>Director</th>
             <th>Download PDF</th> <!-- Added this column -->
             <th>Download Movie Pictures</th> <!-- Added this column -->
+            <th>Download Best Actress Picture</th> <!-- Added this column -->
+            <th>Download Best Actor Picture</th> <!-- Added this column -->
         </tr>
     </thead>
 
@@ -55,6 +57,30 @@
                     else
                     {
                         <span>No Pictures Uploaded</span>
+                    }
+                </td>
+                <td>
+                    @if (!string.IsNullOrEmpty(item.UploadedBestActressPhotoFilePath))
+                    {
+                        <a href="@Url.Action("DownloadUploadedBestActressPhoto", "Home", 
+                        new { UploadedBestActressPhotoFilePath = item.UploadedBestActressPhotoFilePath })" 
+                        class="btn btn-primary">Download Best Actress Photo</a>
+                    }
+                    else
+                    {
+                        <span>No Best Actress Photo Uploaded</span>
+                    }
+                </td>
+                <td>
+                    @if (!string.IsNullOrEmpty(item.UploadedBestActorPhotoFilePath))
+                    {
+                        <a href="@Url.Action("DownloadUploadedBestActorPhoto", "Home", 
+                        new { UploadedBestActorPhotoFilePath = item.UploadedBestActorPhotoFilePath })" 
+                        class="btn btn-primary">Download Best Actor Photo</a>
+                    }
+                    else
+                    {
+                        <span>No Best Actor Photo Uploaded</span>
                     }
                 </td>
             </tr>

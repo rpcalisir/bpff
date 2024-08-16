@@ -76,6 +76,13 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
 
                 // MEDIA
                 UploadedMoviePicturesFilePaths = x.UploadedMoviePicturesFilePaths,
+                UploadedMoviePosterFilePath = x.UploadedMoviePosterFilePath,
+                
+                UploadedMovieSubtitleFilePath = x.UploadedMovieSubtitleFilePath,
+                UploadedDirectorPhotoFilePath = x.UploadedDirectorPhotoFilePath,
+
+                UploadedBestActressPhotoFilePath = x.UploadedBestActressPhotoFilePath,
+                UploadedBestActorPhotoFilePath = x.UploadedBestActorPhotoFilePath,
 
                 Applicant = x.Applicant,
                 ApplicantMail = x.ApplicantMail,
@@ -167,6 +174,50 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
                 // Return the zip file
                 return File(memoryStream.ToArray(), "application/zip", "movie_pictures.zip");
             }
+        }
+
+        [HttpGet]
+        public IActionResult DownloadUploadedBestActressPhoto(string UploadedBestActressPhotoFilePath)
+        {
+            if (string.IsNullOrEmpty(UploadedBestActressPhotoFilePath))
+            {
+                return NotFound();
+            }
+
+            var cleanedFilePath = UploadedBestActressPhotoFilePath.Trim('\"');
+            var fullFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", cleanedFilePath.TrimStart('/'));
+
+            if (!System.IO.File.Exists(fullFilePath))
+            {
+                return NotFound();
+            }
+
+            var fileName = Path.GetFileName(fullFilePath);
+
+            // Return the file as a download
+            return File(System.IO.File.ReadAllBytes(fullFilePath), "application/octet-stream", fileName);
+        }
+
+        [HttpGet]
+        public IActionResult DownloadUploadedBestActorPhoto(string UploadedBestActorPhotoFilePath)
+        {
+            if (string.IsNullOrEmpty(UploadedBestActorPhotoFilePath))
+            {
+                return NotFound();
+            }
+
+            var cleanedFilePath = UploadedBestActorPhotoFilePath.Trim('\"');
+            var fullFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", cleanedFilePath.TrimStart('/'));
+
+            if (!System.IO.File.Exists(fullFilePath))
+            {
+                return NotFound();
+            }
+
+            var fileName = Path.GetFileName(fullFilePath);
+
+            // Return the file as a download
+            return File(System.IO.File.ReadAllBytes(fullFilePath), "application/octet-stream", fileName);
         }
 
         private string GetContentType(string filePath)

@@ -85,6 +85,14 @@ namespace BalkanPanoramaFilmFestival.Controllers
                 ScreenSize = string.Empty,
                 MovieTechInfoAudio = string.Empty,
 
+                // MEDIA
+                UploadedMoviePicturesFilePaths = string.Empty,
+                UploadedMoviePosterFilePath = string.Empty,
+                UploadedMovieSubtitleFilePath = string.Empty,
+                UploadedDirectorPhotoFilePath = string.Empty,
+                UploadedBestActressPhotoFilePath = string.Empty,
+                UploadedBestActressPhotoName = string.Empty,
+
                 AllCountries = _competitionApplicationFormService.GetAllCountries(), // Fetch the country list
                 AllMovieGenres = _competitionApplicationFormService.GetAllGenres(), // Fetch the genre list
             };
@@ -200,6 +208,44 @@ namespace BalkanPanoramaFilmFestival.Controllers
                 // Continue processing if the files were uploaded successfully
                 model.UploadedMoviePicturesFilePaths = uploadedMoviePicturesFilesPaths;
 
+                // Handle Best Actress Photo upload
+                string UploadedBestActressPhotoFilePath = string.Empty;
+                if (model.UploadedBestActressPhoto != null && model.UploadedBestActressPhotoName != null)
+                {
+                    UploadedBestActressPhotoFilePath = await HandleUploadedBestActressPhotoUploadAsync(
+                        model.UploadedBestActressPhoto, model.UploadedBestActressPhotoName);
+
+                    if (string.IsNullOrEmpty(UploadedBestActressPhotoFilePath))
+                    {
+                        // Handle the case where the file upload failed
+                        ModelState.AddModelError(string.Empty, "Best Actress Photo could not be uploaded.");
+
+                        return View(model); // Assuming you want to redisplay the form with the error messages
+                    }
+                }
+
+                // Continue processing if the files were uploaded successfully
+                model.UploadedBestActressPhotoFilePath = UploadedBestActressPhotoFilePath;
+
+                // Handle Best Actor Photo upload
+                string UploadedBestActorPhotoFilePath = string.Empty;
+                if (model.UploadedBestActorPhoto != null && model.UploadedBestActorPhotoName != null)
+                {
+                    UploadedBestActorPhotoFilePath = await HandleUploadedBestActorPhotoUploadAsync(
+                        model.UploadedBestActorPhoto, model.UploadedBestActorPhotoName);
+
+                    if (string.IsNullOrEmpty(UploadedBestActorPhotoFilePath))
+                    {
+                        // Handle the case where the file upload failed
+                        ModelState.AddModelError(string.Empty, "Best Actor Photo could not be uploaded.");
+
+                        return View(model); // Assuming you want to redisplay the form with the error messages
+                    }
+                }
+
+                // Continue processing if the files were uploaded successfully
+                model.UploadedBestActorPhotoFilePath = UploadedBestActorPhotoFilePath;
+
                 var user = new CompetitionApplicationUser
                 {
                     CompetitionCategory = model.CompetitionCategoryDescription, // Comes from the page form
@@ -258,10 +304,11 @@ namespace BalkanPanoramaFilmFestival.Controllers
 
                     // MEDIA
                     UploadedMoviePicturesFilePaths = model.UploadedMoviePicturesFilePaths,
-
                     UploadedMoviePosterFilePath = model.UploadedMoviePosterFilePath,
                     UploadedMovieSubtitleFilePath = model.UploadedMovieSubtitleFilePath,
                     UploadedDirectorPhotoFilePath   = model.UploadedDirectorPhotoFilePath,
+                    UploadedBestActressPhotoFilePath = model.UploadedBestActressPhotoFilePath,
+                    UploadedBestActorPhotoFilePath = model.UploadedBestActorPhotoFilePath,
 
                     Applicant = $"{signedInUser.FirstName} {signedInUser.LastName}",
                     ApplicantMail = signedInUser.Email,
@@ -377,7 +424,6 @@ namespace BalkanPanoramaFilmFestival.Controllers
 
 
         #region Private Implementation
-        #region Private Implementation
         private async Task<string> HandleMoviePicturesFilesUploadAsync(List<IFormFile> uploadedMoviePicturesFiles)
         {
             var uploadedFilePaths = new List<string>();
@@ -440,9 +486,108 @@ namespace BalkanPanoramaFilmFestival.Controllers
             // Join the file paths into a single string separated by commas
             return string.Join(",", uploadedFilePaths); // Return a single string containing all file paths
         }
+
+        private async Task<string> HandleUploadedBestActressPhotoUploadAsync(IFormFile UploadedBestActressPhoto, string actressName)
+        {
+            if (UploadedBestActressPhoto == null)
+            {
+                ModelState.AddModelError(string.Empty, "Please upload a photo for the Best Actress.");
+                return string.Empty;
+            }
+
+            // Validate file size (max 2 MB)
+            if (UploadedBestActressPhoto.Length > 2 * 1024 * 1024)
+            {
+                ModelState.AddModelError(string.Empty, "The photo size must be less than 2 MB.");
+                return string.Empty;
+            }
+
+            // Validate file type
+            if (!UploadedBestActressPhoto.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
+            {
+                ModelState.AddModelError(string.Empty, "The uploaded file must be a picture.");
+                return string.Empty;
+            }
+
+            // Sanitize the actress name for file naming
+            string sanitizedFileName = Path.GetInvalidFileNameChars()
+                                          .Aggregate(actressName, (current, c) => current.Replace(c, '_'));
+
+            // Generate a unique file name with the actress's name
+            string fileExtension = Path.GetExtension(UploadedBestActressPhoto.FileName);
+            string newFileName = sanitizedFileName + fileExtension;
+
+            // Directory to save uploaded files
+            var uploadsFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/pictures");
+
+            // Ensure the uploads directory exists
+            if (!Directory.Exists(uploadsFolderPath))
+            {
+                Directory.CreateDirectory(uploadsFolderPath);
+            }
+
+            // Save the file to the server
+            var filePath = Path.Combine(uploadsFolderPath, newFileName);
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                await UploadedBestActressPhoto.CopyToAsync(fileStream);
+            }
+
+            // Return the relative file path
+            return "/pictures/" + newFileName;
+        }
+
+        private async Task<string> HandleUploadedBestActorPhotoUploadAsync(IFormFile UploadedBestActorPhoto, string actorName)
+        {
+            if (UploadedBestActorPhoto == null)
+            {
+                ModelState.AddModelError(string.Empty, "Please upload a photo for the Best Actor.");
+                return string.Empty;
+            }
+
+            // Validate file size (max 2 MB)
+            if (UploadedBestActorPhoto.Length > 2 * 1024 * 1024)
+            {
+                ModelState.AddModelError(string.Empty, "The photo size must be less than 2 MB.");
+                return string.Empty;
+            }
+
+            // Validate file type
+            if (!UploadedBestActorPhoto.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
+            {
+                ModelState.AddModelError(string.Empty, "The uploaded file must be a picture.");
+                return string.Empty;
+            }
+
+            // Sanitize the actor name for file naming
+            string sanitizedFileName = Path.GetInvalidFileNameChars()
+                                          .Aggregate(actorName, (current, c) => current.Replace(c, '_'));
+
+            // Generate a unique file name with the actor's name
+            string fileExtension = Path.GetExtension(UploadedBestActorPhoto.FileName);
+            string newFileName = sanitizedFileName + fileExtension;
+
+            // Directory to save uploaded files
+            var uploadsFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/pictures");
+
+            // Ensure the uploads directory exists
+            if (!Directory.Exists(uploadsFolderPath))
+            {
+                Directory.CreateDirectory(uploadsFolderPath);
+            }
+
+            // Save the file to the server
+            var filePath = Path.Combine(uploadsFolderPath, newFileName);
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                await UploadedBestActorPhoto.CopyToAsync(fileStream);
+            }
+
+            // Return the relative file path
+            return "/pictures/" + newFileName;
+        }
+
         #endregion
 
-
-        #endregion
     }
 }
