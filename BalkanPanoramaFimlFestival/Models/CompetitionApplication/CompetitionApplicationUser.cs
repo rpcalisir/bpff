@@ -18,6 +18,7 @@ namespace BalkanPanoramaFilmFestival.Models.CompetitionApplication
 
         // Director Section
         public required string DirectorName { get; set; }
+        public required string DirectorCompany { get; set; }
         public required string DirectorCountry { get; set; }
         public required string DirectorPhone { get; set; }
         public required string DirectorEmail { get; set; }
@@ -40,13 +41,6 @@ namespace BalkanPanoramaFilmFestival.Models.CompetitionApplication
         public required string ProducerCountry { get; set; }
         public required string ProducerPhone { get; set; }
         public required string ProducerEmail { get; set; }
-        public string? ProducerWebsite { get; set; }
-
-
-        // Signed In User
-        public required string Applicant { get; set; }
-        public required string ApplicantMail { get; set; }
-        public required string ApplicantCountry { get; set; }
 
 
         // FILM WORK OPERATION CERTIFICATE
@@ -74,5 +68,23 @@ namespace BalkanPanoramaFilmFestival.Models.CompetitionApplication
         public string? UploadedBestActressPhotoFilePath { get; set; }
         public string? UploadedBestActorPhotoFilePath { get; set; }
 
+        // DOWNLOADABLE SCREENING COPY OF THE FILM
+        public required string MovieLink { get; set; }
+        public required string MovieLinkPassword { get; set; }
+        public required string TrailerLink { get; set; }
+        public required string TrailerLinkPassword { get; set; }
+        public required bool DownloadableCopyCheck { get; set; }
+
+        // APPLICANT
+        public required string ApplicantName { get; set; }
+        public required string ApplicantCompany { get; set; }
+        public required string ApplicantCountry { get; set; }
+        public required string ApplicantPhone { get; set; }
+        public required string ApplicantEmail { get; set; }
+
+        // Signed In User
+        //public required string Applicant { get; set; }
+        //public required string ApplicantMail { get; set; }
+        //public required string ApplicantCountry { get; set; }
     }
 }

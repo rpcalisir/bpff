@@ -16,7 +16,7 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
         private readonly UserManager<RegisteredUser> _userManager;
         private readonly ApplicationDbContext _context;
 
-        public HomeController(UserManager<RegisteredUser> userManager, 
+        public HomeController(UserManager<RegisteredUser> userManager,
             ApplicationDbContext context)
         {
             _userManager = userManager;
@@ -33,7 +33,7 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
             var userList = await _userManager.Users.ToListAsync();
 
             var adminUserViewModelList = userList.Select(x => new UserViewModel()
-                {
+            {
                 Id = x.Id,
                 FirstName = x.FirstName,
                 LastName = x.LastName,
@@ -50,7 +50,7 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
 
             var competitionApplicationUserViewModelList = applicationsList.Select(x => new CompetitionApplicationUserViewModel()
             {
-                Id =x.Id,
+                Id = x.Id,
                 CompetitionCategory = x.CompetitionCategory,
                 OriginalMovieName = x.OriginalMovieName,
                 EnglishMovieName = x.EnglishMovieName,
@@ -63,6 +63,7 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
 
                 // Director Section
                 DirectorName = x.DirectorName,
+                DirectorCompany = x.DirectorCompany,
                 DirectorCountry = x.DirectorCountry,
                 DirectorPhone = x.DirectorPhone,
                 DirectorEmail = x.DirectorEmail,
@@ -77,17 +78,26 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
                 // MEDIA
                 UploadedMoviePicturesFilePaths = x.UploadedMoviePicturesFilePaths,
                 UploadedMoviePosterFilePath = x.UploadedMoviePosterFilePath,
-                
+
                 UploadedMovieSubtitleFilePath = x.UploadedMovieSubtitleFilePath,
                 UploadedDirectorPhotoFilePath = x.UploadedDirectorPhotoFilePath,
 
                 UploadedBestActressPhotoFilePath = x.UploadedBestActressPhotoFilePath,
                 UploadedBestActorPhotoFilePath = x.UploadedBestActorPhotoFilePath,
 
-                Applicant = x.Applicant,
-                ApplicantMail = x.ApplicantMail,
-                ApplicantCountry = x.ApplicantCountry,
+                // DOWNLOADABLE SCREENING COPY OF THE FILM
+                MovieLink = x.MovieLink,
+                MovieLinkPassword = x.MovieLinkPassword,
+                TrailerLink = x.TrailerLink,
+                TrailerLinkPassword = x.TrailerLinkPassword,
+                DownloadableCopyCheck = x.DownloadableCopyCheck,
 
+                // APPLICANT
+                ApplicantName = x.ApplicantName,
+                ApplicantCompany = x.ApplicantCompany,
+                ApplicantCountry = x.ApplicantCountry,
+                ApplicantPhone = x.ApplicantPhone,
+                ApplicantEmail = x.ApplicantEmail,
 
             }).ToList();
 

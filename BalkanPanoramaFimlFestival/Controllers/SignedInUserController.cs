@@ -49,6 +49,7 @@ namespace BalkanPanoramaFilmFestival.Controllers
 
                 // Direction Section
                 DirectorName = string.Empty,
+                DirectorCompany = string.Empty,
                 DirectorCountry = string.Empty,
                 DirectorPhone = string.Empty,
                 DirectorEmail = string.Empty,
@@ -92,6 +93,20 @@ namespace BalkanPanoramaFilmFestival.Controllers
                 UploadedDirectorPhotoFilePath = string.Empty,
                 UploadedBestActressPhotoFilePath = string.Empty,
                 UploadedBestActressPhotoName = string.Empty,
+
+                // DOWNLOADABLE SCREENING COPY OF THE FILM
+                MovieLink = string.Empty,
+                MovieLinkPassword = string.Empty,
+                TrailerLink = string.Empty,
+                TrailerLinkPassword = string.Empty,
+                DownloadableCopyCheck = false,
+
+                // APPLICANT
+                ApplicantName = string.Empty,
+                ApplicantCompany = string.Empty,
+                ApplicantCountry = string.Empty,
+                ApplicantPhone = string.Empty,
+                ApplicantEmail = string.Empty,
 
                 AllCountries = _competitionApplicationFormService.GetAllCountries(), // Fetch the country list
                 AllMovieGenres = _competitionApplicationFormService.GetAllGenres(), // Fetch the genre list
@@ -260,7 +275,7 @@ namespace BalkanPanoramaFilmFestival.Controllers
 
                     // Direction Section
                     DirectorName = model.DirectorName, // Comes from the page form
-                    //DirectorCountry = model.DirectorCountry,
+                    DirectorCompany = model.DirectorCompany,
                     DirectorCountry = directorCountryName!,
                     DirectorPhone = model.DirectorPhone,
                     DirectorEmail = model.DirectorEmail,
@@ -284,7 +299,6 @@ namespace BalkanPanoramaFilmFestival.Controllers
                     ProducerCountry = producerCountryName!,
                     ProducerPhone = model.ProducerPhone,
                     ProducerEmail = model.ProducerEmail,
-                    ProducerWebsite = model.ProducerWebsite,
 
                     // FILM WORK OPERATION CERTIFICATE
                     UploadedPdfFilePath = model.UploadedPdfFilePath!,
@@ -310,9 +324,23 @@ namespace BalkanPanoramaFilmFestival.Controllers
                     UploadedBestActressPhotoFilePath = model.UploadedBestActressPhotoFilePath,
                     UploadedBestActorPhotoFilePath = model.UploadedBestActorPhotoFilePath,
 
-                    Applicant = $"{signedInUser.FirstName} {signedInUser.LastName}",
-                    ApplicantMail = signedInUser.Email,
-                    ApplicantCountry = signedInUser.Country,
+                    // DOWNLOADABLE SCREENING COPY OF THE FILM
+                     MovieLink = model.MovieLink,
+                     MovieLinkPassword  = model.MovieLinkPassword,
+                     TrailerLink = model.MovieLink,
+                     TrailerLinkPassword = model.MovieLinkPassword,
+                     DownloadableCopyCheck = model.DownloadableCopyCheck,
+
+                    // APPLICANT
+                    ApplicantName = model.ApplicantName,
+                    ApplicantCompany = model.ApplicantCompany,
+                    ApplicantCountry = model.ApplicantCountry,
+                    ApplicantPhone = model.ApplicantPhone,
+                    ApplicantEmail = model.ApplicantEmail,
+
+                    //Applicant = $"{signedInUser.FirstName} {signedInUser.LastName}",
+                    //ApplicantMail = signedInUser.Email,
+                    //ApplicantCountry = signedInUser.Country,
                 };
 
                 // Save the form data to the database

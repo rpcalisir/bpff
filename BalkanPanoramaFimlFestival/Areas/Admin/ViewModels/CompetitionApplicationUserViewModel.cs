@@ -16,6 +16,7 @@
 
         // Director Section
         public required string DirectorName { get; set; }
+        public required string DirectorCompany { get; set; }
         public required string DirectorCountry { get; set; }
         public required string DirectorPhone { get; set; }
         public required string DirectorEmail { get; set; }
@@ -23,13 +24,6 @@
         public required string DirectorBiographyEn { get; set; }
         public required string DirectorFilmographyTr { get; set; }
         public required string DirectorFilmographyEn { get; set; }
-
-
-        // Signed In User
-        public required string Applicant { get; set; }
-        public required string ApplicantMail { get; set; }
-        public required string ApplicantCountry { get; set; }
-
 
         // FILM WORK OPERATION CERTIFICATE
         public required string UploadedPdfFilePath { get; set; }
@@ -41,5 +35,24 @@
         public required string UploadedDirectorPhotoFilePath { get; set; }
         public string? UploadedBestActressPhotoFilePath { get; set; }
         public string? UploadedBestActorPhotoFilePath { get; set; }
+
+        // DOWNLOADABLE SCREENING COPY OF THE FILM
+        public required string MovieLink { get; set; }
+        public required string MovieLinkPassword { get; set; }
+        public required string TrailerLink { get; set; }
+        public required string TrailerLinkPassword { get; set; }
+        public required bool DownloadableCopyCheck { get; set; }
+
+        // APPLICANT
+        public required string ApplicantName { get; set; }
+        public required string ApplicantCompany { get; set; }
+        public required string ApplicantCountry { get; set; }
+        public required string ApplicantPhone { get; set; }
+        public required string ApplicantEmail { get; set; }
+
+        //// Signed In User
+        //public required string Applicant { get; set; }
+        //public required string ApplicantMail { get; set; }
+        //public required string ApplicantCountry { get; set; }
     }
 }
