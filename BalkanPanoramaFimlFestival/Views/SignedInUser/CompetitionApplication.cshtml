@@ -1939,10 +1939,159 @@
             }
         });
     </script>
-
     @* ------------------------------------------------------------------------------------------------------------ *@
     @* APPLICANT *@
 
+    @* I HAVE READ AND APPROVE *@
+    @* ------------------------------------------------------------------------------------------------------------ *@
+    <script>
+        document.querySelector('.btn.btn-primary').addEventListener('click', function (event) {
+            var form = event.target.closest('form'); // Get the form element
+            var isValid = form.checkValidity(); // Check if the form is valid without submitting
+
+            if (isValid) {
+                var approveCheckbox = document.getElementById('approveCheckbox');
+                var approveError = document.getElementById('approveError');
+
+                if (!approveCheckbox.checked) {
+                    // Prevent the form from submitting
+                    event.preventDefault();
+                    // Show the error message
+                    approveError.style.display = 'block';
+                    // Set focus on the checkbox
+                    approveCheckbox.focus();
+                } else {
+                    // Hide the error message
+                    approveError.style.display = 'none';
+                }
+            }
+            // Note: Other scripts related to the submit button should still execute normally
+        });
+    </script>
+    @* ------------------------------------------------------------------------------------------------------------ *@
+    @* I HAVE READ AND APPROVE *@
+
+    @* GENERAL RULES *@
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Form submit button logic for General Rules
+            document.querySelector('.btn.btn-primary').addEventListener('click', function (event) {
+                var form = event.target.closest('form'); // Get the form element
+                var isValid = form.checkValidity(); // Check if the form is valid without submitting
+
+                if (isValid) {
+                    var generalRulesCheckbox = document.getElementById('generalRulesCheckbox');
+                    var generalRulesError = document.getElementById('generalRulesError');
+
+                    if (!generalRulesCheckbox.checked) {
+                        // Prevent the form from submitting
+                        event.preventDefault();
+                        // Show the error message
+                        generalRulesError.style.display = 'block';
+                        // Set focus on the checkbox
+                        generalRulesCheckbox.focus();
+                    } else {
+                        // Hide the error message
+                        generalRulesError.style.display = 'none';
+                    }
+                }
+            });
+
+            // General Rules Popup
+            document.getElementById('generalRulesLink').addEventListener('click', function (event) {
+                event.preventDefault(); // Prevent the default link behavior
+                var generalRulesCheckbox = document.getElementById('generalRulesCheckbox');
+                generalRulesCheckbox.checked = true; // Check the checkbox
+                document.getElementById('generalRulesPopup').style.display = 'flex'; // Show the popup
+            });
+
+            document.getElementById('popupClose').addEventListener('click', function () {
+                document.getElementById('generalRulesPopup').style.display = 'none'; // Hide the popup
+            });
+        });
+    </script>
+@*     <script>
+        document.querySelector('.btn.btn-primary').addEventListener('click', function (event) {
+            var form = event.target.closest('form'); // Get the form element
+            var isValid = form.checkValidity(); // Check if the form is valid without submitting
+
+            if (isValid) {
+                var generalRulesCheckbox = document.getElementById('generalRulesCheckbox');
+                var generalRulesError = document.getElementById('generalRulesError');
+
+                if (!generalRulesCheckbox.checked) {
+                    // Prevent the form from submitting
+                    event.preventDefault();
+                    // Show the error message
+                    generalRulesError.style.display = 'block';
+                    // Set focus on the checkbox
+                    generalRulesCheckbox.focus();
+                } else {
+                    // Hide the error message
+                    generalRulesError.style.display = 'none';
+                }
+            }
+        });
+
+        document.getElementById('generalRulesLink').addEventListener('click', function (event) {
+            event.preventDefault(); // Prevent the default link behavior
+            document.getElementById('generalRulesPopup').style.display = 'flex'; // Show the popup
+        });
+
+        document.getElementById('popupClose').addEventListener('click', function () {
+            document.getElementById('generalRulesPopup').style.display = 'none'; // Hide the popup
+        });
+    </script> *@
+    @* GENERAL RULES *@
+
+    @* REGULATIONS *@
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            // Regulations Elements
+            const regulationsCheckbox = document.getElementById('regulationsCheckbox');
+            const regulationsPopup = document.getElementById('regulationsPopup');
+            const regulationsPopupClose = document.getElementById('regulationsPopupClose');
+            const regulationsError = document.getElementById('regulationsError');
+
+            // Function to show popups
+            function showPopup(popup) {
+                popup.style.display = 'flex';
+            }
+
+            // Function to hide popups
+            function hidePopup(popup) {
+                popup.style.display = 'none';
+            }
+
+            // Open Regulations Popup by clicking the text within the label
+            document.getElementById('regulationsLink').addEventListener('click', () => {
+                showPopup(regulationsPopup);
+            });
+
+            // Close Regulations Popup
+            regulationsPopupClose.addEventListener('click', () => {
+                hidePopup(regulationsPopup);
+            });
+
+            // Submit Button Logic
+            document.querySelector('button[type="submit"]').addEventListener('click', function (event) {
+                let isValid = true;
+
+                if (!regulationsCheckbox.checked) {
+                    regulationsError.style.display = 'block';
+                    isValid = false;
+                    regulationsCheckbox.focus();
+                } else {
+                    regulationsError.style.display = 'none';
+                }
+
+                if (!isValid) {
+                    event.preventDefault(); // Prevent form submission if validation fails
+                }
+            });
+        });
+    </script>
+    @* REGULATIONS *@
 }
 
 @* @{
@@ -2700,6 +2849,150 @@
         </div>
         @* <-- --> *@
 
+        @* <-- IMPORTANT NOTE --> *@
+        <div class="col-md-10 offset-md-1 mt-3">
+            <strong>IMPORTANT NOTE:</strong>
+        </div>
+
+        <div class="row mb-3 col-md-10 offset-md-1 mt-3">
+            <p class="col-md-12">
+                All fields in the Application Form must be filled in, please read carefully and fill in.<br><br>
+
+                - Feature Film Competition: Fiction, animation and documentary films of 60 minutes and above can apply.<br>
+                - Short Film Competition: Fiction, animation and documentary films of at least 5 minutes and at most 25 minutes including the credits can apply.<br>
+                - English subtitles are required for the film that is eligible to enter the competition. Therefore, films without English subtitles will not be accepted to the competition.<br>
+                - Director Biography and Filmography must be written in Turkish and English. Applications written in a single language will be considered invalid.<br>
+                - Synopsis must be written in Turkish and English. Only films in MP4 and MKV format will be accepted. All other formats are invalid.<br>
+                - See the General Rules for technical details. If your application is not selected for the competition by the Preliminary Jury, you will be deemed to have accepted that your film will be shown in the non-competition program, at most 3 (three) times during the festival, if deemed appropriate.<br>
+                - Downloadable Screening Copy of the Film MP4 and MKV copies that comply with the technical specifications in the General Rules must have a working download link for at least 7 (seven) days.<br><br>
+
+                Deadline: September 18, 2024<br><br>
+
+                If you have any questions, we will be happy to help you. Please contact us at info@bff.art.
+            </p>
+        </div>
+        @* <-- --> *@
+
+        @* I HAVE READ AND APPROVE *@
+        <div class="row mb-3 col-md-10 offset-md-1">
+            <div class="form-check">
+                <input type="checkbox" id="approveCheckbox" class="form-check-input">
+                <label for="approveCheckbox" class="form-check-label">I HAVE READ AND APPROVE</label>
+            </div>
+            <div id="approveError" class="text-danger" style="display: none;">
+                You must approve the terms before submitting.
+            </div>
+        </div>
+        @* <-- --> *@
+
+        @* I HAVE READ THE GENERAL RULES AND APPROVE THEM *@
+        <div class="row mb-3 col-md-10 offset-md-1">
+            <div class="form-check">
+                <input type="checkbox" id="generalRulesCheckbox" class="form-check-input">
+                <label for="generalRulesCheckbox" class="form-check-label">
+                    I HAVE READ THE <a href="#" id="generalRulesLink" style="color: yellow;">GENERAL RULES</a> AND APPROVE THEM
+                </label>
+            </div>
+            <div id="generalRulesError" class="text-danger" style="display: none;">
+                You must approve the General Rules before submitting.
+            </div>
+        </div>
+
+        <!-- General Rules Popup -->
+        <div id="generalRulesPopup" class="popup-overlay" style="display: none;">
+            <div class="popup-content">
+                <span id="popupClose" class="popup-close">CLOSE</span>
+                <h2>GENERAL RULES</h2>
+                <p>
+                    Feature Length Film Competition<br><br>
+
+                    1. The length of the film must be at least 60 minutes.<br>
+                    2. Fiction, animation, and documentary films can apply.<br>
+                    3. Only MP4 and MKV formats are accepted.<br>
+                    4. Films produced in January 2022 and later can apply.<br>
+                    5. Films that apply must not have been screened in Izmir.<br><br>
+
+                    Short Length Film Competition<br><br>
+
+                    1. The length of the film, including the credits, must be at least 5 minutes and at most 25 minutes.<br>
+                    2. Fiction, animation, and documentary films can apply.<br>
+                    3. Only MP4 and MKV formats are accepted.<br>
+                    4. Films produced in January 2022 and later can apply.<br>
+                    5. Films that apply must not have been screened in Izmir.<br><br>
+
+                    Feature Lenght Film Screening<br><br>
+
+                    1. The length of the film must be at least 60 minutes.<br>
+                    2. Fiction, animation, and documentary films can apply.<br>
+                    3. Only MP4 and MKV formats are accepted.<br>
+                    4. Films produced in January 2022 and later can apply.<br>
+                    5. The films that apply must not have been shown in Izmir.<br><br>
+
+                    Short Length Film Screening<br><br>
+
+                    1. The length of the film, including the credits, must be at least 5 minutes and at most 25 minutes.<br>
+                    2. Fiction, animation, and documentary films can apply.<br>
+                    3. Only MP4 and MKV formats are accepted.<br>
+                    4. Films produced in January 2022 and later can apply.<br>
+                    5. The films that apply must not have been shown in Izmir.<br><br>
+
+                    Competition and screening applications will only be accepted from the following countries:<br><br>
+
+                    Albania, Austria, Bosnia and Herzegovina, Bulgaria, Croatia, Italy, Montenegro, Kosovo, North Macedonia, Hungary, Moldova, Romania, Serbia, Slovenia, Turkey, and Greece.<br><br>
+
+                    NOTE: The country names are listed in alphabetical order.<br><br>
+
+                    MP4 and MKV Copy Specifications:<br>
+                    * Bit Rate: Minimum 25 Mbps, maximum 35 Mbps<br>
+                    * Bit Rate Mode: Constant Bitrate (CBR)<br>
+                    * Video Format: AVC/Advanced Video Codec (H.264 or H.265)<br>
+                    * Width: 1920 pixels<br>
+                    * Height: 1080 pixels<br>
+                    * Display Aspect Ratio: 16:9<br>
+                    * Frame Rate Mode: Constant<br>
+                    * Scan Type: Progressive<br>
+                    * Audio Format: Minimum Advanced Audio Codec (AAC)<br>
+                    * Minimum Bit Rate: 320 kbps<br>
+                    * Channels: Minimum 2 channels<br>
+                    * Sampling Rate Rate: 48.0 kHz<br>
+                    * Subtitles: SRT format, UTF-8 encoding<br><br>
+
+                    IMPORTANT: The download link and password of the movie, if any, are valid for at least 30 (thirty) days from the date of sending.<br><br>
+
+                    If you have any questions, we will be happy to help you. Please contact us at info@bpff.com.tr.
+                </p>
+            </div>
+        </div>
+        @* <-- --> *@
+
+        @* REGULATIONS *@
+        <div class="row mb-3 col-md-10 offset-md-1">
+            <div class="form-check">
+                <input type="checkbox" id="regulationsCheckbox" class="form-check-input">
+                <label for="regulationsCheckbox" class="form-check-label">
+                    I HAVE READ THE <span id="regulationsLink" class="popup-link">REGULATIONS</span> AND APPROVE THEM
+                </label>
+            </div>
+            <div id="regulationsError" class="text-danger" style="display: none;">
+                You must approve the Regulations before submitting.
+            </div>
+        </div>
+
+        <!-- Regulations Popup -->
+        <div id="regulationsPopup" class="popup-overlay" style="display: none;">
+            <div class="popup-content">
+                <span id="regulationsPopupClose" class="popup-close">CLOSE</span>
+                <h2>REGULATIONS</h2>
+                <p>
+                    A) PURPOSE
+
+                    To promote, support and establish a joint fund for collaboration among filmmakers in the Balkan countries within the scope of the Balkan Panorama Film Festival, which aims to promote and support important and innovative works of Turkish and Balkan cinema and to make Izmir a meeting point between filmmakers and audiences.
+                </p>
+            </div>
+        </div>
+        @* <-- --> *@
+
+        <!-- Submit Button -->
         <div class="row">
             <div class="col-md-10 offset-md-1 text-start">
                 <button type="submit" class="btn btn-primary">Submit</button>
@@ -2766,4 +3059,56 @@
         #MovieTimeLength.is-invalid {
             border-color: red; /* Border color stays red when invalid */
         }
+</style>
+
+<!-- Styles for Popup -->
+<style>
+    .popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8); /* Dark overlay */
+        display: flex;
+        justify-content: center;
+        align-items: center; /* Center vertically */
+        z-index: 1000;
+        overflow: hidden; /* Prevent scrolling of background */
+    }
+
+    .popup-content {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        width: 80%;
+        max-width: 600px;
+        position: relative;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        text-align: left; /* Align text to the left */
+        max-height: 80vh; /* Maximum height of the popup */
+        overflow-y: auto; /* Scroll if content overflows */
+    }
+
+    .popup-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 18px;
+        color: #000;
+        background: #f0f0f0;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 10px 20px;
+        cursor: pointer;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    /* Style for clickable text in label */
+    .popup-link {
+        color: yellow; /* Yellow color for visibility */
+        cursor: pointer;
+        text-decoration: underline;
+    }
 </style>
