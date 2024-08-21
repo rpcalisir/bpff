@@ -1944,7 +1944,7 @@
 
     @* I HAVE READ AND APPROVE *@
     @* ------------------------------------------------------------------------------------------------------------ *@
-    <script>
+   @*  <script>
         document.querySelector('.btn.btn-primary').addEventListener('click', function (event) {
             var form = event.target.closest('form'); // Get the form element
             var isValid = form.checkValidity(); // Check if the form is valid without submitting
@@ -1967,12 +1967,12 @@
             }
             // Note: Other scripts related to the submit button should still execute normally
         });
-    </script>
+    </script> *@
     @* ------------------------------------------------------------------------------------------------------------ *@
     @* I HAVE READ AND APPROVE *@
 
     @* GENERAL RULES *@
-    <script>
+   @*  <script>
         document.addEventListener('DOMContentLoaded', function () {
             // Form submit button logic for General Rules
             document.querySelector('.btn.btn-primary').addEventListener('click', function (event) {
@@ -2009,43 +2009,11 @@
                 document.getElementById('generalRulesPopup').style.display = 'none'; // Hide the popup
             });
         });
-    </script>
-@*     <script>
-        document.querySelector('.btn.btn-primary').addEventListener('click', function (event) {
-            var form = event.target.closest('form'); // Get the form element
-            var isValid = form.checkValidity(); // Check if the form is valid without submitting
-
-            if (isValid) {
-                var generalRulesCheckbox = document.getElementById('generalRulesCheckbox');
-                var generalRulesError = document.getElementById('generalRulesError');
-
-                if (!generalRulesCheckbox.checked) {
-                    // Prevent the form from submitting
-                    event.preventDefault();
-                    // Show the error message
-                    generalRulesError.style.display = 'block';
-                    // Set focus on the checkbox
-                    generalRulesCheckbox.focus();
-                } else {
-                    // Hide the error message
-                    generalRulesError.style.display = 'none';
-                }
-            }
-        });
-
-        document.getElementById('generalRulesLink').addEventListener('click', function (event) {
-            event.preventDefault(); // Prevent the default link behavior
-            document.getElementById('generalRulesPopup').style.display = 'flex'; // Show the popup
-        });
-
-        document.getElementById('popupClose').addEventListener('click', function () {
-            document.getElementById('generalRulesPopup').style.display = 'none'; // Hide the popup
-        });
     </script> *@
     @* GENERAL RULES *@
 
     @* REGULATIONS *@
-    <script>
+    @* <script>
         document.addEventListener('DOMContentLoaded', (event) => {
             // Regulations Elements
             const regulationsCheckbox = document.getElementById('regulationsCheckbox');
@@ -2090,7 +2058,7 @@
                 }
             });
         });
-    </script>
+    </script> *@
     @* REGULATIONS *@
 }
 
@@ -2153,7 +2121,7 @@
             <div class="row mb-3 col-md-12">
                 <div class="col-md-6">
                     <label for="OriginalMovieName" class="form-label" asp-for="OriginalMovieName">Original Movie Name</label>
-                    <input class="form-control" asp-for="OriginalMovieName"
+                    <input value="Original Movie Name" class="form-control" asp-for="OriginalMovieName"
                            id="OriginalMovieName" name="OriginalMovieName"
                            maxlength="100" required placeholder="Max 100 characters">
                     <div class="form-text"></div>
@@ -2162,7 +2130,7 @@
 
                 <div class="col-md-6">
                     <label for="EnglishMovieName" class="form-label" asp-for="EnglishMovieName">English Movie Name</label>
-                    <input class="form-control" asp-for="EnglishMovieName"
+                    <input value="English Movie Name" class="form-control" asp-for="EnglishMovieName"
                            id="EnglishMovieName" name="EnglishMovieName"
                            maxlength="100" required placeholder="Max 100 characters">
                     <span class="text-danger" asp-validation-for="EnglishMovieName"></span>
@@ -2292,7 +2260,7 @@
             <div class="row mb-3 col-md-12">
                 <div class="col-md-6">
                     <label for="DirectorCompany" class="form-label" asp-for="DirectorCompany">Director Company</label>
-                    <input class="form-control" asp-for="DirectorCompany"
+                    <input value="Director Company" class="form-control" asp-for="DirectorCompany"
                            id="DirectorCompany" name="DirectorCompany"
                            maxlength="100" required placeholder="Max 100 characters">
                     <span class="text-danger" asp-validation-for="DirectorCompany"></span>
@@ -2641,12 +2609,12 @@
                     <div id="UploadedMoviePicturesErrorMessages" class="text-danger mt-2"></div> <!-- Container for error messages -->
                 </div>
 
-                <!-- UploadedMoviePoster -->
-                <div class="col-md-6">
-                    <label for="UploadedMoviePoster" class="form-label">Movie Poster (MIN: 1 MAX: 1 - TOTAL SIZE MAX 3 MB)</label>
-                    <input type="file" class="form-control" id="UploadedMoviePoster" name="UploadedMoviePoster" required accept="image/*">
-                    <div id="UploadedMoviePosterErrorMessages" class="text-danger mt-2"></div> <!-- Container for custom error messages -->
-                </div>
+                    <!-- UploadedMoviePoster -->
+                    <div class="col-md-6">
+                        <label for="UploadedMoviePoster" class="form-label">Movie Poster (MIN: 1 MAX: 1 - TOTAL SIZE MAX 3 MB)</label>
+                        <input type="file" class="form-control" id="UploadedMoviePoster" name="UploadedMoviePoster" required accept="image/*">
+                        <div id="UploadedMoviePosterErrorMessages" class="text-danger mt-2"></div> <!-- Container for custom error messages -->
+                    </div>
             </div>
 
             <div class="row mb-3 col-md-12">

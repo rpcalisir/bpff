@@ -81,10 +81,5 @@ namespace BalkanPanoramaFilmFestival.Models.CompetitionApplication
         public required string ApplicantCountry { get; set; }
         public required string ApplicantPhone { get; set; }
         public required string ApplicantEmail { get; set; }
-
-        // Signed In User
-        //public required string Applicant { get; set; }
-        //public required string ApplicantMail { get; set; }
-        //public required string ApplicantCountry { get; set; }
     }
 }

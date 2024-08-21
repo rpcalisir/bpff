@@ -164,13 +164,16 @@ namespace BalkanPanoramaFilmFestival.Controllers
                 var directorCountryName = Request.Form["DirectorCountryName"];
                 var producerCountryName = Request.Form["ProducerCountryName"];
 
-                // Handle Pdf file upload
+                #region UploadedPdfFile
+                // Handle Pdf File Upload
                 if (model.UploadedPdfFile != null && model.UploadedPdfFile.Length > 0)
                 {
                     // Validate file type
                     if (!model.UploadedPdfFile.ContentType.Equals("application/pdf", StringComparison.OrdinalIgnoreCase))
                     {
                         ModelState.AddModelError(string.Empty, "The file must be a PDF.");
+                        model.AllCountries = _competitionApplicationFormService.GetAllCountries(); // Re-fetch the country list for view
+                        model.AllMovieGenres = _competitionApplicationFormService.GetAllGenres(); // Re-fetch the country list for view
                         return View(model);
                     }
 
@@ -178,7 +181,8 @@ namespace BalkanPanoramaFilmFestival.Controllers
                     if (model.UploadedPdfFile.Length > 20 * 1024 * 1024)
                     {
                         ModelState.AddModelError(string.Empty, "The file size must be less than 20 MB.");
-
+                        model.AllCountries = _competitionApplicationFormService.GetAllCountries(); // Re-fetch the country list for view
+                        model.AllMovieGenres = _competitionApplicationFormService.GetAllGenres(); // Re-fetch the country list for view
                         return View(model);
                     }
 
@@ -205,24 +209,175 @@ namespace BalkanPanoramaFilmFestival.Controllers
                     // Store the relative file path in the database
                     model.UploadedPdfFilePath = "/uploads/" + uniqueFileName;
                 }
+                #endregion
 
-                // Handle Movie Pictures upload
-
+                #region UploadedMoviePictures
+                // Handle Movie Pictures Files Upload
                 // Assume model.UploadedFiles is the property that contains the list of uploaded files
                 var uploadedMoviePicturesFilesPaths = await HandleMoviePicturesFilesUploadAsync(model.UploadedMoviePictures!);
-
 
                 // Check if there were any issues with file uploads
                 if (string.IsNullOrEmpty(uploadedMoviePicturesFilesPaths) && !ModelState.IsValid)
                 {
                     // Return the view with validation errors if any files failed to upload
                     ModelState.AddModelError(string.Empty, "Failed to upload movie pictures.");
+                    model.AllCountries = _competitionApplicationFormService.GetAllCountries(); // Re-fetch the country list for view
+                    model.AllMovieGenres = _competitionApplicationFormService.GetAllGenres(); // Re-fetch the country list for view
                     return View(model);
                 }
 
                 // Continue processing if the files were uploaded successfully
                 model.UploadedMoviePicturesFilePaths = uploadedMoviePicturesFilesPaths;
+                #endregion
 
+                #region UploadedMoviePoster
+                // Handle Movie Poster File Upload
+                if (model.UploadedMoviePoster != null && model.UploadedMoviePoster.Length > 0)
+                {
+                    // Validate file type
+                    if (!model.UploadedMoviePoster.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
+                    {
+                        ModelState.AddModelError(string.Empty, "The file must be an image.");
+                        model.AllCountries = _competitionApplicationFormService.GetAllCountries(); // Re-fetch the country list for view
+                        model.AllMovieGenres = _competitionApplicationFormService.GetAllGenres(); // Re-fetch the country list for view
+                        return View(model);
+                    }
+
+                    // Validate file size (e.g., max 3 MB)
+                    if (model.UploadedMoviePoster.Length > 3 * 1024 * 1024)
+                    {
+                        ModelState.AddModelError(string.Empty, "The file size must be less than 3 MB.");
+                        model.AllCountries = _competitionApplicationFormService.GetAllCountries(); // Re-fetch the country list for view
+                        model.AllMovieGenres = _competitionApplicationFormService.GetAllGenres(); // Re-fetch the country list for view
+                        return View(model);
+                    }
+
+                    // Define the path to save the file
+                    var uploadsFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/pictures");
+
+                    // Ensure the uploads directory exists
+                    if (!Directory.Exists(uploadsFolderPath))
+                    {
+                        Directory.CreateDirectory(uploadsFolderPath);
+                    }
+
+                    // Generate a unique file name to prevent overwriting
+                    var uniqueFileName = Guid.NewGuid().ToString() + "_" +
+                        Path.GetFileName(model.UploadedMoviePoster.FileName);
+                    var filePath = Path.Combine(uploadsFolderPath, uniqueFileName);
+
+                    // Save the file to the server
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await model.UploadedMoviePoster.CopyToAsync(fileStream);
+                    }
+
+                    // Store the relative file path in the database
+                    model.UploadedMoviePosterFilePath = "/pictures/" + uniqueFileName;
+                }
+                #endregion
+
+                #region UploadedMovieSubtitle
+                // Handle Movie Subtitle File Upload
+                if (model.UploadedMovieSubtitle != null && model.UploadedMovieSubtitle.Length > 0)
+                {
+                    // Check file extension
+                    var allowedExtensions = new[] { ".srt", ".ass", ".sub" };
+                    var fileExtension = Path.GetExtension(model.UploadedMovieSubtitle.FileName).ToLowerInvariant();
+
+                    if (!allowedExtensions.Contains(fileExtension))
+                    {
+                        ModelState.AddModelError(string.Empty, "The file must be a valid subtitle format (.srt, .ass, .sub).");
+                        model.AllCountries = _competitionApplicationFormService.GetAllCountries(); // Re-fetch the country list for view
+                        model.AllMovieGenres = _competitionApplicationFormService.GetAllGenres(); // Re-fetch the country list for view
+                        return View(model);
+                    }
+
+                    // Validate file size (e.g., max 2 MB)
+                    if (model.UploadedMovieSubtitle.Length > 2 * 1024 * 1024)
+                    {
+                        ModelState.AddModelError(string.Empty, "The file size must be less than 2 MB.");
+                        model.AllCountries = _competitionApplicationFormService.GetAllCountries(); // Re-fetch the country list for view
+                        model.AllMovieGenres = _competitionApplicationFormService.GetAllGenres(); // Re-fetch the country list for view
+                        return View(model);
+                    }
+
+                    // Define the path to save the file
+                    var uploadsFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/subtitles");
+
+                    // Ensure the uploads directory exists
+                    if (!Directory.Exists(uploadsFolderPath))
+                    {
+                        Directory.CreateDirectory(uploadsFolderPath);
+                    }
+
+                    // Generate a unique file name to prevent overwriting
+                    var uniqueFileName = Guid.NewGuid().ToString() + "_" +
+                        Path.GetFileName(model.UploadedMovieSubtitle.FileName);
+                    var filePath = Path.Combine(uploadsFolderPath, uniqueFileName);
+
+                    // Save the file to the server
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await model.UploadedMovieSubtitle.CopyToAsync(fileStream);
+                    }
+
+                    // Store the relative file path in the database
+                    model.UploadedMovieSubtitleFilePath = "/subtitles/" + uniqueFileName;
+                }
+                #endregion
+
+                #region UploadedDirectorPhoto
+                // Handle Director Photo File Upload
+                if (model.UploadedDirectorPhoto != null && model.UploadedDirectorPhoto.Length > 0)
+                {
+                    // Check file extension
+                    var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+                    var fileExtension = Path.GetExtension(model.UploadedDirectorPhoto.FileName).ToLowerInvariant();
+
+                    if (!allowedExtensions.Contains(fileExtension))
+                    {
+                        ModelState.AddModelError(string.Empty, "The file must be a valid image format (.jpg, .jpeg, .png, .gif).");
+                        model.AllCountries = _competitionApplicationFormService.GetAllCountries(); // Re-fetch the country list for view
+                        model.AllMovieGenres = _competitionApplicationFormService.GetAllGenres(); // Re-fetch the country list for view
+                        return View(model);
+                    }
+
+                    // Validate file size (e.g., max 3 MB)
+                    if (model.UploadedDirectorPhoto.Length > 3 * 1024 * 1024)
+                    {
+                        ModelState.AddModelError(string.Empty, "The file size must be less than 3 MB.");
+                        model.AllCountries = _competitionApplicationFormService.GetAllCountries(); // Re-fetch the country list for view
+                        model.AllMovieGenres = _competitionApplicationFormService.GetAllGenres(); // Re-fetch the country list for view
+                        return View(model);
+                    }
+
+                    // Define the path to save the file
+                    var uploadsFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/pictures");
+
+                    // Ensure the uploads directory exists
+                    if (!Directory.Exists(uploadsFolderPath))
+                    {
+                        Directory.CreateDirectory(uploadsFolderPath);
+                    }
+
+                    // Generate a unique file name to prevent overwriting
+                    var uniqueFileName = Guid.NewGuid().ToString() + "_" +
+                        Path.GetFileName(model.UploadedDirectorPhoto.FileName);
+                    var filePath = Path.Combine(uploadsFolderPath, uniqueFileName);
+
+                    // Save the file to the server
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await model.UploadedDirectorPhoto.CopyToAsync(fileStream);
+                    }
+
+                    // Store the relative file path in the database
+                    model.UploadedDirectorPhotoFilePath = "/pictures/" + uniqueFileName;
+                }
+                #endregion
+
+                #region UploadedBestActressPhoto
                 // Handle Best Actress Photo upload
                 string UploadedBestActressPhotoFilePath = string.Empty;
                 if (model.UploadedBestActressPhoto != null && model.UploadedBestActressPhotoName != null)
@@ -235,13 +390,17 @@ namespace BalkanPanoramaFilmFestival.Controllers
                         // Handle the case where the file upload failed
                         ModelState.AddModelError(string.Empty, "Best Actress Photo could not be uploaded.");
 
+                        model.AllCountries = _competitionApplicationFormService.GetAllCountries(); // Re-fetch the country list for view
+                        model.AllMovieGenres = _competitionApplicationFormService.GetAllGenres(); // Re-fetch the country list for view
                         return View(model); // Assuming you want to redisplay the form with the error messages
                     }
                 }
 
                 // Continue processing if the files were uploaded successfully
                 model.UploadedBestActressPhotoFilePath = UploadedBestActressPhotoFilePath;
+                #endregion
 
+                #region UploadedBestActorPhoto
                 // Handle Best Actor Photo upload
                 string UploadedBestActorPhotoFilePath = string.Empty;
                 if (model.UploadedBestActorPhoto != null && model.UploadedBestActorPhotoName != null)
@@ -254,12 +413,15 @@ namespace BalkanPanoramaFilmFestival.Controllers
                         // Handle the case where the file upload failed
                         ModelState.AddModelError(string.Empty, "Best Actor Photo could not be uploaded.");
 
+                        model.AllCountries = _competitionApplicationFormService.GetAllCountries(); // Re-fetch the country list for view
+                        model.AllMovieGenres = _competitionApplicationFormService.GetAllGenres(); // Re-fetch the country list for view
                         return View(model); // Assuming you want to redisplay the form with the error messages
                     }
                 }
 
                 // Continue processing if the files were uploaded successfully
                 model.UploadedBestActorPhotoFilePath = UploadedBestActorPhotoFilePath;
+                #endregion
 
                 var user = new CompetitionApplicationUser
                 {
@@ -317,10 +479,10 @@ namespace BalkanPanoramaFilmFestival.Controllers
                     MovieTechInfoAudio = model.MovieTechInfoAudio,
 
                     // MEDIA
-                    UploadedMoviePicturesFilePaths = model.UploadedMoviePicturesFilePaths,
-                    UploadedMoviePosterFilePath = model.UploadedMoviePosterFilePath,
+                    UploadedMoviePicturesFilePaths = model.UploadedMoviePicturesFilePaths!,
+                    UploadedMoviePosterFilePath = model.UploadedMoviePosterFilePath!,
                     UploadedMovieSubtitleFilePath = model.UploadedMovieSubtitleFilePath,
-                    UploadedDirectorPhotoFilePath   = model.UploadedDirectorPhotoFilePath,
+                    UploadedDirectorPhotoFilePath   = model.UploadedDirectorPhotoFilePath!,
                     UploadedBestActressPhotoFilePath = model.UploadedBestActressPhotoFilePath,
                     UploadedBestActorPhotoFilePath = model.UploadedBestActorPhotoFilePath,
 
@@ -337,10 +499,6 @@ namespace BalkanPanoramaFilmFestival.Controllers
                     ApplicantCountry = model.ApplicantCountry,
                     ApplicantPhone = model.ApplicantPhone,
                     ApplicantEmail = model.ApplicantEmail,
-
-                    //Applicant = $"{signedInUser.FirstName} {signedInUser.LastName}",
-                    //ApplicantMail = signedInUser.Email,
-                    //ApplicantCountry = signedInUser.Country,
                 };
 
                 // Save the form data to the database
