@@ -6,84 +6,159 @@
 
 <h1>Competition Applications</h1>
 
-<table class="table table-success table-striped">
-    <thead>
-        <tr>
-            <th>Category</th>
-            <th>Production Year</th>
-            <th>Applicant Name</th>
-            <th>Applicant Email</th>
-            <th>Applicant Country</th>
-            <th>Movie Name</th>
-            <th>Director</th>
-            <th>Download PDF</th> <!-- Added this column -->
-            <th>Download Movie Pictures</th> <!-- Added this column -->
-            <th>Download Best Actress Picture</th> <!-- Added this column -->
-            <th>Download Best Actor Picture</th> <!-- Added this column -->
-        </tr>
-    </thead>
-
-    <tbody>
-        @foreach (var item in Model)
-        {
+<div style="display: flex; justify-content: center; align-items: flex-start; height: 100vh;">
+    <table class="table table-success table-striped">
+        <thead>
             <tr>
-                <td>@item.CompetitionCategory</td>
-                <td>@item.ProductionYear</td>
-                <td>@item.ApplicantName</td>
-                <td>@item.ApplicantEmail</td>
-                <td>@item.ApplicantCountry</td>
-                <td>@item.DirectorName</td>
-                <td>@item.OriginalMovieName</td>
-                <td>
-                    @if (!string.IsNullOrEmpty(item.UploadedPdfFilePath))
-                    {
-                        // Pass the relative file path (excluding leading '/')
-                        <a href="@Url.Action("DownloadPdf", "Home",
-                        new { Area = "Admin", filePath = item.UploadedPdfFilePath.TrimStart('/') })"
-                           class="btn btn-primary">Download PDF</a>
-                    }
-                    else
-                    {
-                        <span>No PDF Uploaded</span>
-                    }
-                </td>
-                <td>
-                    @if (item.UploadedMoviePicturesFilePaths != null && item.UploadedMoviePicturesFilePaths.Any())
-                    {
-                        // Pass the list of file paths as a comma-separated string
-                        var filePaths = string.Join(",", item.UploadedMoviePicturesFilePaths);
-                        <a href="@Url.Action("DownloadMoviePictures", "Home", new { uploadedMoviePicturesFilePaths = filePaths })" class="btn btn-primary">Download All Pictures</a>
-                    }
-                    else
-                    {
-                        <span>No Pictures Uploaded</span>
-                    }
-                </td>
-                <td>
-                    @if (!string.IsNullOrEmpty(item.UploadedBestActressPhotoFilePath))
-                    {
-                        <a href="@Url.Action("DownloadUploadedBestActressPhoto", "Home", 
-                        new { UploadedBestActressPhotoFilePath = item.UploadedBestActressPhotoFilePath })" 
-                        class="btn btn-primary">Download Best Actress Photo</a>
-                    }
-                    else
-                    {
-                        <span>No Best Actress Photo Uploaded</span>
-                    }
-                </td>
-                <td>
-                    @if (!string.IsNullOrEmpty(item.UploadedBestActorPhotoFilePath))
-                    {
-                        <a href="@Url.Action("DownloadUploadedBestActorPhoto", "Home", 
-                        new { UploadedBestActorPhotoFilePath = item.UploadedBestActorPhotoFilePath })" 
-                        class="btn btn-primary">Download Best Actor Photo</a>
-                    }
-                    else
-                    {
-                        <span>No Best Actor Photo Uploaded</span>
-                    }
-                </td>
+                <th>Category</th>
+                <th>Production Year</th>
+                <th>Applicant Name</th>
+                <th>Applicant Email</th>
+                <th>Applicant Country</th>
+                <th>Movie Name</th>
+                <th>Director</th>
+                <th>Download PDF</th>
+                <th>Download Movie Pictures</th>
+                <th>Download Movie Poster</th>
+                <th>Download Movie Subtitle</th>
+                <th>Download Director Photo</th>
+                <th>Download Best Actress Picture</th>
+                <th>Download Best Actor Picture</th>
+                <th>Download ALL MEDIA</th>
+                <th>Download ALL Applicant Data</th> <!-- New Column for CSV Download -->
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.CompetitionCategory</td>
+                    <td>@item.ProductionYear</td>
+                    <td>@item.ApplicantName</td>
+                    <td>@item.ApplicantEmail</td>
+                    <td>@item.ApplicantCountry</td>
+                    <td>@item.DirectorName</td>
+                    <td>@item.OriginalMovieName</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.UploadedPdfFilePath))
+                        {
+                            // Pass the relative file path (excluding leading '/')
+                            <a href="@Url.Action("DownloadPdf", "Home",
+                        new { Area = "Admin", filePath = item.UploadedPdfFilePath.TrimStart('/') })"
+                               class="btn btn-primary">Download PDF</a>
+                        }
+                        else
+                        {
+                            <span>No PDF Uploaded</span>
+                        }
+                    </td>
+                    <td>
+                        @if (item.UploadedMoviePicturesFilePaths != null && item.UploadedMoviePicturesFilePaths.Any())
+                        {
+                            // Pass the list of file paths as a comma-separated string
+                            var filePaths = string.Join(",", item.UploadedMoviePicturesFilePaths);
+                            <a href="@Url.Action("DownloadMoviePictures", "Home", new { uploadedMoviePicturesFilePaths = filePaths })" class="btn btn-primary">Download Movie Pictures</a>
+                        }
+                        else
+                        {
+                            <span>No Pictures Uploaded</span>
+                        }
+                    </td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.UploadedMoviePosterFilePath))
+                        {
+                            <a href="@Url.Action("DownloadUploadedMoviePoster", "Home",
+                        new { UploadedMoviePosterFilePath = item.UploadedMoviePosterFilePath })"
+                               class="btn btn-primary">Download Movie Poster</a>
+                        }
+                        else
+                        {
+                            <span>No Movie Poster Uploaded</span>
+                        }
+                    </td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.UploadedMovieSubtitleFilePath))
+                        {
+                            <a href="@Url.Action("DownloadUploadedMovieSubtitle", "Home",
+                        new { UploadedMovieSubtitleFilePath = item.UploadedMovieSubtitleFilePath })"
+                               class="btn btn-primary">Download Movie Subtitle</a>
+                        }
+                        else
+                        {
+                            <span>No Movie Subtitle Uploaded</span>
+                        }
+                    </td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.UploadedDirectorPhotoFilePath))
+                        {
+                            <a href="@Url.Action("DownloadUploadedDirectorPhoto", "Home",
+                        new { UploadedDirectorPhotoFilePath = item.UploadedDirectorPhotoFilePath })"
+                               class="btn btn-primary">Download Director Photo</a>
+                        }
+                        else
+                        {
+                            <span>No Director Photo Uploaded</span>
+                        }
+                    </td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.UploadedBestActressPhotoFilePath))
+                        {
+                            <a href="@Url.Action("DownloadUploadedBestActressPhoto", "Home",
+                        new { UploadedBestActressPhotoFilePath = item.UploadedBestActressPhotoFilePath })"
+                               class="btn btn-primary">Download Best Actress Photo</a>
+                        }
+                        else
+                        {
+                            <span>No Best Actress Photo Uploaded</span>
+                        }
+                    </td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.UploadedBestActorPhotoFilePath))
+                        {
+                            <a href="@Url.Action("DownloadUploadedBestActorPhoto", "Home",
+                        new { UploadedBestActorPhotoFilePath = item.UploadedBestActorPhotoFilePath })"
+                               class="btn btn-primary">Download Best Actor Photo</a>
+                        }
+                        else
+                        {
+                            <span>No Best Actor Photo Uploaded</span>
+                        }
+                    </td>
+                    <td>
+                        @if (
+                       !string.IsNullOrEmpty(item.UploadedPdfFilePath) &&
+                       !string.IsNullOrEmpty(item.UploadedMoviePicturesFilePaths) &&
+                       !string.IsNullOrEmpty(item.UploadedMoviePosterFilePath) &&
+                       !string.IsNullOrEmpty(item.UploadedMovieSubtitleFilePath) &&
+                       !string.IsNullOrEmpty(item.UploadedDirectorPhotoFilePath) &&
+                       !string.IsNullOrEmpty(item.UploadedBestActressPhotoFilePath) &&
+                       !string.IsNullOrEmpty(item.UploadedBestActorPhotoFilePath)
+                       )
+                        {
+                            <a href="@Url.Action("DownloadAllFiles", "Home", new
+                        {
+                            UploadedPdfFilePath = item.UploadedPdfFilePath,
+                            UploadedMoviePicturesFilePaths = string.Join(",", item.UploadedMoviePicturesFilePaths),
+                            UploadedMoviePosterFilePath = item.UploadedMoviePosterFilePath,
+                            UploadedMovieSubtitleFilePath = item.UploadedMovieSubtitleFilePath,
+                            UploadedDirectorPhotoFilePath = item.UploadedDirectorPhotoFilePath,
+                            UploadedBestActressPhotoFilePath = item.UploadedBestActressPhotoFilePath,
+                            UploadedBestActorPhotoFilePath = item.UploadedBestActorPhotoFilePath
+                        })" class="btn btn-primary">Download All Files</a>
+                        }
+                        else
+                        {
+                            <span>No Best Actor Photo Uploaded</span>
+                        }
+                    </td>
+                    <td>
+                        <a href="@Url.Action("DownloadAllApplicantData", "Home",
+                    new { id = item.Id })" class="btn btn-primary">Download ALL Applicant Data</a> <!-- New Button for CSV Download -->
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+

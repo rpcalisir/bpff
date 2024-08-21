@@ -163,6 +163,7 @@ namespace BalkanPanoramaFilmFestival.Controllers
                 // Access country name from the hidden fields
                 var directorCountryName = Request.Form["DirectorCountryName"];
                 var producerCountryName = Request.Form["ProducerCountryName"];
+                var applicantCountryName = Request.Form["ApplicantCountryName"];
 
                 #region UploadedPdfFile
                 // Handle Pdf File Upload
@@ -496,7 +497,7 @@ namespace BalkanPanoramaFilmFestival.Controllers
                     // APPLICANT
                     ApplicantName = model.ApplicantName,
                     ApplicantCompany = model.ApplicantCompany,
-                    ApplicantCountry = model.ApplicantCountry,
+                    ApplicantCountry = applicantCountryName!,
                     ApplicantPhone = model.ApplicantPhone,
                     ApplicantEmail = model.ApplicantEmail,
                 };

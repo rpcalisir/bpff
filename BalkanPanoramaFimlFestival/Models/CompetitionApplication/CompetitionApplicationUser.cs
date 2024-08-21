@@ -5,7 +5,6 @@ namespace BalkanPanoramaFilmFestival.Models.CompetitionApplication
     {
         public int Id { get; set; } // Primary key
         public required string CompetitionCategory { get; set; }
-
         public required string OriginalMovieName { get; set; }
         public required string EnglishMovieName { get; set; }
         public string? MovieWebsite { get; set; }
