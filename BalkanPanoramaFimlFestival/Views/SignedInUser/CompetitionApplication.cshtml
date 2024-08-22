@@ -299,27 +299,37 @@
             const movieTimeLength = document.getElementById('MovieTimeLength');
             const movieTimeLengthError = document.getElementById('MovieTimeLengthError');
             const competitionCategoryRadios = document.querySelectorAll('input[name="CompetitionCategory"]');
+            const selectedCategory = document.querySelector('input[name="CompetitionCategory"]:checked');
+
+            function generateOptions(min, max) {
+                let options = [];
+                for (let i = min; i <= max; i++) {
+                    options.push(new Option(i + ' minutes', i));
+                }
+                return options;
+            }
+
+            function populateMovieTimeLengthOptions(categoryValue) {
+                movieTimeLength.innerHTML = ''; // Clear previous options
+                movieTimeLength.append(new Option("Select Time Length", "")); // Add placeholder option
+
+                let options = [];
+                if (categoryValue === 'Option1' || categoryValue === 'Option3') {
+                    options = generateOptions(60, 240);
+                } else if (categoryValue === 'Option2') {
+                    options = generateOptions(5, 25);
+                }
+                options.forEach(option => movieTimeLength.append(option));
+
+                movieTimeLength.classList.remove('is-invalid', 'is-valid');
+            }
 
             // Radio button change event listener
             competitionCategoryRadios.forEach(radio => {
                 radio.addEventListener('change', function () {
                     if (this.checked) {
                         movieTimeLength.removeAttribute('disabled'); // Enable the selector
-                        movieTimeLength.innerHTML = ''; // Clear previous options
-                        movieTimeLength.append(new Option("Select Time Length", "")); // Add placeholder option
-                        movieTimeLengthError.textContent = ''; // Clear any existing error message
-
-                        // Populate the selector based on selected radio button
-                        let options = [];
-                        if (this.value === 'Option1' || this.value === 'Option3') {
-                            options = generateOptions(60, 240);
-                        } else if (this.value === 'Option2') {
-                            options = generateOptions(5, 25);
-                        }
-                        options.forEach(option => movieTimeLength.append(option));
-
-                        // Add initial invalid state to the selector
-                        movieTimeLength.classList.add('is-invalid');
+                        populateMovieTimeLengthOptions(this.value);
                     }
                 });
             });
@@ -337,26 +347,30 @@
                 }
             });
 
-            function generateOptions(min, max) {
-                let options = [];
-                for (let i = min; i <= max; i++) {
-                    options.push(new Option(i + ' minutes', i));
+            // On page load, check the selected category and populate the movieTimeLength options
+            if (selectedCategory) {
+                movieTimeLength.removeAttribute('disabled');
+                populateMovieTimeLengthOptions(selectedCategory.value);
+            }
+
+            // On form submission, ensure the selector is enabled if a category is selected
+            document.querySelector('form').addEventListener('submit', function (event) {
+                const selectedCategory = document.querySelector('input[name="CompetitionCategory"]:checked');
+
+                if (selectedCategory) {
+                    movieTimeLength.removeAttribute('disabled');
+                } else {
+                    movieTimeLength.setAttribute('disabled', 'disabled');
                 }
-                return options;
-            }
-        });
 
-        document.querySelector('form').addEventListener('submit', function (event) {
-            const movieTimeLength = document.getElementById('MovieTimeLength');
-            const movieTimeLengthError = document.getElementById('MovieTimeLengthError');
-
-            if (movieTimeLength.disabled || !movieTimeLength.value) {
-                movieTimeLength.focus(); // Bring focus to the selector
-                movieTimeLength.classList.remove('is-valid');
-                movieTimeLength.classList.add('is-invalid');
-                movieTimeLengthError.textContent = 'Please select a time length.'; // Show error message
-                event.preventDefault(); // Prevent form submission
-            }
+                if (movieTimeLength.disabled || !movieTimeLength.value) {
+                    movieTimeLength.focus(); // Bring focus to the selector
+                    movieTimeLength.classList.remove('is-valid');
+                    movieTimeLength.classList.add('is-invalid');
+                    movieTimeLengthError.textContent = 'Please select a time length.'; // Show error message
+                    event.preventDefault(); // Prevent form submission
+                }
+            });
         });
     </script>
 

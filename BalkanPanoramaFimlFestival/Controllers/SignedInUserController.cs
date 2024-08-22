@@ -153,6 +153,8 @@ namespace BalkanPanoramaFilmFestival.Controllers
 
                 model.AllCountries = _competitionApplicationFormService.GetAllCountries(); // Re-fetch the country list for view
                 model.AllMovieGenres = _competitionApplicationFormService.GetAllGenres(); // Re-fetch the country list for view
+                model.CompetitionCategory = Request.Form["CompetitionCategory"]!;
+                model.MovieTimeLength = Request.Form["MovieTimeLength"]!;
                 return View(model);
             }
 
