@@ -77,14 +77,17 @@
             var selectedCountries = document.querySelectorAll('input[name="SelectedCountries"]:checked');
             var validationMessageCountry = document.getElementById('validation-message-country');
             var hasError = false;
+            var firstInvalidElement;
 
             // Validate countries
             if (selectedCountries.length === 0) {
                 validationMessageCountry.textContent = "Please select at least one country!";
                 hasError = true;
+                firstInvalidElement = document.querySelector('input[name="SelectedCountries"]');
             } else if (selectedCountries.length > 5) {
                 validationMessageCountry.textContent = "Max 5 countries can be selected!";
                 hasError = true;
+                firstInvalidElement = document.querySelector('input[name="SelectedCountries"]');
             } else {
                 validationMessageCountry.textContent = "";
             }
@@ -97,10 +100,14 @@
             } else if (selectedCountries.length > 5) {
                 countryContainer.classList.add('border-danger');
                 countryContainer.classList.remove('border-success');
-            }
-            else {
+            } else {
                 countryContainer.classList.add('border-success');
                 countryContainer.classList.remove('border-danger');
+            }
+
+            // Focus the first invalid element if there is an error
+            if (hasError && firstInvalidElement) {
+                firstInvalidElement.focus();
             }
 
             return !hasError; // Return whether there are errors
@@ -131,14 +138,17 @@
             var selectedMovieGenres = document.querySelectorAll('input[name="SelectedMovieGenres"]:checked');
             var validationMessageGenre = document.getElementById('validation-message-genre');
             var hasError = false;
+            var firstInvalidElement;
 
             // Validate genres
             if (selectedMovieGenres.length === 0) {
                 validationMessageGenre.textContent = "Please select at least one movie genre!";
                 hasError = true;
+                firstInvalidElement = document.querySelector('input[name="SelectedMovieGenres"]');
             } else if (selectedMovieGenres.length > 3) {
                 validationMessageGenre.textContent = "Max 3 movie genres can be selected!";
                 hasError = true;
+                firstInvalidElement = document.querySelector('input[name="SelectedMovieGenres"]');
             } else {
                 validationMessageGenre.textContent = "";
             }
@@ -151,10 +161,14 @@
             } else if (selectedMovieGenres.length > 3) {
                 movieGenresContainer.classList.add('border-danger');
                 movieGenresContainer.classList.remove('border-success');
-            }
-            else {
+            } else {
                 movieGenresContainer.classList.add('border-success');
                 movieGenresContainer.classList.remove('border-danger');
+            }
+
+            // Focus the first invalid element if there is an error
+            if (hasError && firstInvalidElement) {
+                firstInvalidElement.focus();
             }
 
             return !hasError; // Return whether there are errors
@@ -501,7 +515,6 @@
 
 
     @* SPECIAL *@
-
     @* ------------------------------------------------------------------------------------------------------------ *@
 
     @* Country Selector Script *@
@@ -620,7 +633,7 @@
         });
     </script>
 
-    @* Phone Number Script *@
+    @* Phone Number "Generate Numbers" Script *@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             var directorPhoneInput = document.querySelector("#director-phone");
@@ -653,6 +666,73 @@
         });
     </script>
 
+    @* Phone Number "Only Numbers Input" Script *@
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var phoneInputs = ["#director-phone", "#producer-phone", "#applicant-phone"];
+
+            // Function to validate phone number input
+            function validatePhoneNumber(inputElement) {
+                const phoneNumberPattern = /^[0-9 ]*$/; // Regex to allow only numbers and spaces
+
+                // Create or select the error message element for the specific input field
+                let errorMessageElement = inputElement.parentElement.querySelector(".phone-error");
+                if (!errorMessageElement) {
+                    errorMessageElement = document.createElement("span");
+                    errorMessageElement.classList.add("text-danger", "phone-error");
+                    errorMessageElement.style.display = "block";
+                    inputElement.parentElement.appendChild(errorMessageElement);
+                }
+
+                // Remove previous border classes
+                inputElement.classList.remove("border-success", "border-danger");
+
+                if (inputElement.value.trim() === "") {
+                    // If input is empty, apply error styles and show error
+                    inputElement.classList.add("border-danger");
+                    errorMessageElement.textContent = "Phone number cannot be empty";
+                    errorMessageElement.style.display = "block";
+                    inputElement.setCustomValidity("Phone number cannot be empty");
+                } else if (!phoneNumberPattern.test(inputElement.value.trim())) {
+                    // If input contains non-numeric characters, apply error styles and show error
+                    inputElement.classList.add("border-danger");
+                    errorMessageElement.textContent = "Please enter only numbers and spaces";
+                    errorMessageElement.style.display = "block";
+                    inputElement.setCustomValidity("Please enter only numbers and spaces");
+                } else {
+                    // If input is valid, apply success styles and hide the error
+                    inputElement.classList.add("border-success");
+                    errorMessageElement.style.display = "none";
+                    inputElement.setCustomValidity("");
+                }
+            }
+
+            phoneInputs.forEach(function (selector) {
+                var inputElement = document.querySelector(selector);
+
+                if (inputElement) {
+                    // Attach the validation to the input event
+                    inputElement.addEventListener("input", function () {
+                        validatePhoneNumber(inputElement);
+                    });
+
+                    // Attach the validation to the blur event
+                    inputElement.addEventListener("blur", function () {
+                        validatePhoneNumber(inputElement);
+                    });
+
+                    // Validate on form submission
+                    inputElement.form.addEventListener("submit", function (event) {
+                        validatePhoneNumber(inputElement);
+                        if (!inputElement.checkValidity()) {
+                            event.preventDefault();
+                            inputElement.focus();
+                        }
+                    });
+                }
+            });
+        });
+    </script>
 
     @* Character Left on Textbox Script *@
     <script>
@@ -757,6 +837,44 @@
             });
         });
     </script>
+
+    @* Email Address Validation Check *@
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const emailInputs = ["#DirectorEmail", "#ProducerEmail", "#ApplicantEmail"];
+
+            // Function to update input border based on validation state
+            function updateInputBorder(inputElement) {
+                if (inputElement.checkValidity()) {
+                    inputElement.classList.remove("border-danger");
+                    inputElement.classList.add("border-success");
+                } else {
+                    inputElement.classList.remove("border-success");
+                    inputElement.classList.add("border-danger");
+                }
+            }
+
+            emailInputs.forEach(function (selector) {
+                const inputElement = document.querySelector(selector);
+
+                if (inputElement) {
+                    // Attach the input event to update the border color as the user types
+                    inputElement.addEventListener("input", function () {
+                        updateInputBorder(inputElement);
+                    });
+
+                    // Attach the blur event to ensure the border stays correct when focus is lost
+                    inputElement.addEventListener("blur", function () {
+                        updateInputBorder(inputElement);
+                    });
+
+                    // Initial validation check
+                    updateInputBorder(inputElement);
+                }
+            });
+        });
+    </script>
+
     @* ------------------------------------------------------------------------------------------------------------ *@
     @* SPECIAL *@
 
@@ -1944,7 +2062,7 @@
 
     @* I HAVE READ AND APPROVE *@
     @* ------------------------------------------------------------------------------------------------------------ *@
-   @*  <script>
+    <script>
         document.querySelector('.btn.btn-primary').addEventListener('click', function (event) {
             var form = event.target.closest('form'); // Get the form element
             var isValid = form.checkValidity(); // Check if the form is valid without submitting
@@ -1967,12 +2085,12 @@
             }
             // Note: Other scripts related to the submit button should still execute normally
         });
-    </script> *@
+    </script>
     @* ------------------------------------------------------------------------------------------------------------ *@
     @* I HAVE READ AND APPROVE *@
 
     @* GENERAL RULES *@
-   @*  <script>
+    <script>
         document.addEventListener('DOMContentLoaded', function () {
             // Form submit button logic for General Rules
             document.querySelector('.btn.btn-primary').addEventListener('click', function (event) {
@@ -2009,11 +2127,11 @@
                 document.getElementById('generalRulesPopup').style.display = 'none'; // Hide the popup
             });
         });
-    </script> *@
+    </script>
     @* GENERAL RULES *@
 
     @* REGULATIONS *@
-    @* <script>
+    <script>
         document.addEventListener('DOMContentLoaded', (event) => {
             // Regulations Elements
             const regulationsCheckbox = document.getElementById('regulationsCheckbox');
@@ -2043,22 +2161,27 @@
 
             // Submit Button Logic
             document.querySelector('button[type="submit"]').addEventListener('click', function (event) {
-                let isValid = true;
+                const form = event.target.closest('form'); // Get the form element
+                const isFormValid = form.checkValidity(); // Check if the form is valid without submitting
 
-                if (!regulationsCheckbox.checked) {
-                    regulationsError.style.display = 'block';
-                    isValid = false;
-                    regulationsCheckbox.focus();
-                } else {
-                    regulationsError.style.display = 'none';
-                }
+                if (isFormValid) {
+                    let isValid = true;
 
-                if (!isValid) {
-                    event.preventDefault(); // Prevent form submission if validation fails
+                    if (!regulationsCheckbox.checked) {
+                        regulationsError.style.display = 'block';
+                        isValid = false;
+                    } else {
+                        regulationsError.style.display = 'none';
+                    }
+
+                    if (!isValid) {
+                        event.preventDefault(); // Prevent form submission if validation fails
+                        regulationsCheckbox.focus(); // Set focus on the checkbox after validation
+                    }
                 }
             });
         });
-    </script> *@
+    </script>
     @* REGULATIONS *@
 }
 
@@ -2267,7 +2390,7 @@
                 </div>
                 <div class="col-md-6">
                     <label for="DirectorEmail" class="form-label" asp-for="DirectorEmail">Director Email Address</label>
-                    <input value="Director Email Address" class="form-control" asp-for="DirectorEmail"
+                    <input class="form-control" asp-for="DirectorEmail"
                            id="DirectorEmail" name="DirectorEmail"
                            maxlength="100" required placeholder="Max 100 characters">
                     <div class="form-text"></div>
@@ -2281,9 +2404,9 @@
                     <div class="input-group">
                         @* id attribute makes it possible to run phone scripts, it must be unique *@
                         @* type="tel" attribute makes it possible to enter only numbers *@
-                        <input value="0542 123 45 78" id="director-phone" type="tel" asp-for="DirectorPhone" class="form-control"
+                        <input id="director-phone" type="tel" asp-for="DirectorPhone" class="form-control"
                                name="DirectorPhone"
-                               maxlength="25" required placeholder="Max 25 characters">
+                               maxlength="25" required>
                     </div>
                     <span class="text-danger" asp-validation-for="DirectorPhone"></span>
                 </div>
@@ -2452,7 +2575,7 @@
                     <div class="input-group">
                         <input id="producer-phone" type="tel" asp-for="ProducerPhone" class="form-control"
                                name="ProducerPhone"
-                               maxlength="25" required placeholder="Max 25 characters">
+                               maxlength="25" required>
                     </div>
                     <span class="text-danger" asp-validation-for="ProducerPhone"></span>
                 </div>
@@ -2609,12 +2732,12 @@
                     <div id="UploadedMoviePicturesErrorMessages" class="text-danger mt-2"></div> <!-- Container for error messages -->
                 </div>
 
-                    <!-- UploadedMoviePoster -->
-                    <div class="col-md-6">
-                        <label for="UploadedMoviePoster" class="form-label">Movie Poster (MIN: 1 MAX: 1 - TOTAL SIZE MAX 3 MB)</label>
-                        <input type="file" class="form-control" id="UploadedMoviePoster" name="UploadedMoviePoster" required accept="image/*">
-                        <div id="UploadedMoviePosterErrorMessages" class="text-danger mt-2"></div> <!-- Container for custom error messages -->
-                    </div>
+                <!-- UploadedMoviePoster -->
+                <div class="col-md-6">
+                    <label for="UploadedMoviePoster" class="form-label">Movie Poster (MIN: 1 MAX: 1 - TOTAL SIZE MAX 3 MB)</label>
+                    <input type="file" class="form-control" id="UploadedMoviePoster" name="UploadedMoviePoster" required accept="image/*">
+                    <div id="UploadedMoviePosterErrorMessages" class="text-danger mt-2"></div> <!-- Container for custom error messages -->
+                </div>
             </div>
 
             <div class="row mb-3 col-md-12">
@@ -2798,7 +2921,7 @@
                     <div class="input-group">
                         <input id="applicant-phone" type="tel" asp-for="ApplicantPhone" class="form-control"
                                name="ApplicantPhone"
-                               maxlength="25" required placeholder="Max 25 characters"
+                               maxlength="25" required
                                data-val-required="The Applicant Phone is required">
                     </div>
                     <span class="text-danger" asp-validation-for="ApplicantPhone"></span>

@@ -49,6 +49,8 @@ namespace BalkanPanoramaFilmFestival.ViewModels.CompetitionApplication
         public required string DirectorCompany { get; set; }
         public required string DirectorCountry { get; set; }
         public required string DirectorPhone { get; set; }
+
+        [EmailAddress(ErrorMessage = "Please enter a valid email address!")]
         public required string DirectorEmail { get; set; }
         public required string DirectorBiographyTr { get; set; }
         public required string DirectorBiographyEn { get; set; }
@@ -71,6 +73,8 @@ namespace BalkanPanoramaFilmFestival.ViewModels.CompetitionApplication
         public required string ProducerCompany { get; set; }
         public required string ProducerCountry { get; set; }
         public required string ProducerPhone { get; set; }
+
+        [EmailAddress(ErrorMessage = "Please enter a valid email address!")]
         public required string ProducerEmail { get; set; }
 
         // FILM WORK OPERATION CERTIFICATE
@@ -123,6 +127,8 @@ namespace BalkanPanoramaFilmFestival.ViewModels.CompetitionApplication
         public required string ApplicantCompany { get; set; }
         public required string ApplicantCountry { get; set; }
         public required string ApplicantPhone { get; set; }
+
+        [EmailAddress(ErrorMessage = "Please enter a valid email address!")]
         public required string ApplicantEmail { get; set; }
     }
 }
