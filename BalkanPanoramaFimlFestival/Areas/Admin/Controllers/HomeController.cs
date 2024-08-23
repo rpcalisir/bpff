@@ -132,44 +132,47 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public IActionResult DownloadPdf(string filePath, string applicantEmail)
+        public IActionResult DownloadPdf(string uploadedPdfFilePath, string applicantEmail)
         {
-            if (string.IsNullOrEmpty(filePath))
+            if (string.IsNullOrEmpty(uploadedPdfFilePath))
             {
-                return BadRequest("Pdf File Path is required.");
+                return BadRequest("Uploaded Pdf File Path is required.");
             }
 
             if (string.IsNullOrEmpty(applicantEmail))
-            { 
+            {
                 return BadRequest("Applicant Email is required.");
             }
-
-            // Decode the URL-encoded file path to get the relative path
-            var decodedFilePath = Uri.UnescapeDataString(filePath);
 
             // Sanitize applicant email for safe use in the file path
             var sanitizedEmail = applicantEmail.Replace('@', '_').Replace('.', '_');
 
-            // Extract the file name from the path
-            var originalFileName = Path.GetFileName(decodedFilePath);
+            // Define the path to the folder where the pdf file is stored
+            var uploadsFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
 
-            // Reconstruct the expected file name format with sanitized email
-            var fileNameWithEmail = $"FilmCertificatePdf_{sanitizedEmail}_{originalFileName}";
+            // Remove any leading slashes or unwanted characters from the file path
+            var cleanedFilePath = uploadedPdfFilePath.Trim('\"').TrimStart('/');
 
-            // Combine the root directory with the constructed file name
-            var fullFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", fileNameWithEmail);
+            // Ensure the file path does not contain extra directories and get the file name
+            var fileName = Path.GetFileName(cleanedFilePath);
+
+            // Create a search pattern based on the sanitized email
+            var searchPattern = $"FilmCertificatePdf_{sanitizedEmail}_*{Path.GetExtension(fileName)}";
+
+            // Find the file that matches the search pattern
+            var filePath = Directory.GetFiles(uploadsFolderPath, searchPattern).FirstOrDefault();
 
             // Check if the file exists
-            if (!System.IO.File.Exists(fullFilePath))
+            if (string.IsNullOrEmpty(filePath) || !System.IO.File.Exists(filePath))
             {
-                return BadRequest("Pdf File Path could not found.");
+                return BadRequest("Pdf file could not be found.");
             }
 
-            // Read the file bytes
-            var fileBytes = System.IO.File.ReadAllBytes(fullFilePath);
+            // Read the file bytes from the correct full file path
+            var fileBytes = System.IO.File.ReadAllBytes(filePath);
 
-            // Return the file as a download
-            return File(fileBytes, "application/pdf", fileNameWithEmail);
+            // Return the file as a download with the correct file name
+            return File(fileBytes, "application/pdf", fileName);
         }
 
         [HttpGet]
@@ -283,6 +286,7 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
             // Return the file as a download
             return File(System.IO.File.ReadAllBytes(filePath), "application/octet-stream", fileName);
         }
+
         [HttpGet]
         public IActionResult DownloadUploadedMovieSubtitle(string UploadedMovieSubtitleFilePath, string applicantEmail)
         {

@@ -45,7 +45,7 @@
                         {
                             // Pass the relative file path (excluding leading '/') and encode it for URL safety
                             <a href="@Url.Action("DownloadPdf", "Home",
-                            new { Area = "Admin", filePath = item.UploadedPdfFilePath.TrimStart('/'), applicantEmail = item.ApplicantEmail })"
+                            new { uploadedPdfFilePath = item.UploadedPdfFilePath, applicantEmail = item.ApplicantEmail })"
                                class="btn btn-primary">Download PDF</a>
                         }
                         else
