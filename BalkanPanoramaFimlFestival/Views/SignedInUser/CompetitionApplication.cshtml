@@ -1044,10 +1044,11 @@
             };
 
             // Get error message element
+            const countryErrorDirector = document.getElementById('CountryErrorDirector');
+            const countryErrorProducer = document.getElementById('CountryErrorProducer');
             const producerSameAsDirectorError = document.getElementById('producerSameAsDirectorError');
 
             function copyValuesFromDirectorToProducer() {
-                // Copy values from Director fields to Producer fields
                 producerFields.name.value = directorFields.name.value;
                 producerFields.company.value = directorFields.company.value;
                 producerFields.email.value = directorFields.email.value;
@@ -1057,16 +1058,15 @@
                 // Handle country name input if applicable
                 document.getElementById('ProducerCountryName').value = document.getElementById('DirectorCountryName').value;
 
-                // Manually trigger change event to make country field green
-                const event = new Event('change');
-                producerFields.country.dispatchEvent(event);
+                // Trigger validation update
+                updateValidation(producerFields);
 
-                // Remove red color from Producer fields
                 Object.values(producerFields).forEach(field => field.classList.remove('is-invalid'));
+                clearErrorsIfFilled();
             }
 
-            function validateDirectorFields() {
-                return Object.values(directorFields).every(field => {
+            function validateFields(fields) {
+                return Object.values(fields).every(field => {
                     if (field.tagName === 'SELECT') {
                         return field.value !== '';
                     }
@@ -1074,35 +1074,87 @@
                 });
             }
 
-            copyFromDirectorToProducerCheckbox.addEventListener('change', function () {
+            function clearProducerFields() {
+                Object.values(producerFields).forEach(field => {
+                    if (field.tagName === 'SELECT') {
+                        field.value = '';
+                    } else {
+                        field.value = '';
+                    }
+                });
+                document.getElementById('ProducerCountryName').value = '';
+            }
+
+            function clearErrorsIfFilled() {
+                if (validateFields(producerFields)) {
+                    countryErrorProducer.style.display = 'none';
+                    producerSameAsDirectorError.style.display = 'none';
+                }
+            }
+
+            function updateValidation(fields) {
+                Object.values(fields).forEach(field => {
+                    if (field.tagName === 'INPUT' || field.tagName === 'TEXTAREA') {
+                        const event = new Event('input', { bubbles: true });
+                        field.dispatchEvent(event);
+                    } else if (field.tagName === 'SELECT') {
+                        const event = new Event('change', { bubbles: true });
+                        field.dispatchEvent(event);
+                    }
+                    // Force update validation for associated error messages
+                    const errorElement = document.querySelector(`[data-valmsg-for="${field.name}"]`);
+                    if (errorElement) {
+                        errorElement.style.display = 'none';
+                    }
+                });
+            }
+
+            function handleCopyFromDirectorToProducer() {
                 if (copyFromDirectorToProducerCheckbox.checked) {
-                    if (!validateDirectorFields()) {
+                    if (!validateFields(directorFields)) {
                         producerSameAsDirectorError.textContent = 'Please fill all fields in the Director section.';
                         producerSameAsDirectorError.style.display = 'block';
-                        copyFromDirectorToProducerCheckbox.checked = false; // Uncheck if validation fails
+                        copyFromDirectorToProducerCheckbox.checked = false;
                     } else {
                         producerSameAsDirectorError.style.display = 'none';
-                        // Clear Producer fields before copying
-                        Object.values(producerFields).forEach(field => {
-                            if (field.tagName === 'SELECT') {
-                                field.value = '';
-                            } else {
-                                field.value = '';
-                            }
-                        });
                         copyValuesFromDirectorToProducer();
                     }
                 } else {
-                    // Clear Producer fields if unchecked
-                    Object.values(producerFields).forEach(field => {
-                        if (field.tagName === 'SELECT') {
-                            field.value = '';
-                        } else {
-                            field.value = '';
-                        }
-                    });
+                    clearProducerFields();
+                    if (validateFields(directorFields)) {
+                        countryErrorDirector.style.display = 'none';
+                    }
                 }
-            });
+            }
+
+            function handleCheckboxChange() {
+                if (this === copyFromDirectorToProducerCheckbox) {
+                    if (copyFromDirectorToProducerCheckbox.checked) {
+                        handleCopyFromDirectorToProducer();
+                    } else {
+                        clearProducerFields();
+                        if (validateFields(directorFields)) {
+                            countryErrorDirector.style.display = 'none';
+                        }
+                    }
+                }
+            }
+
+            function handleSubmit() {
+                if (validateFields(producerFields)) {
+                    // Clear any existing errors related to the Director section
+                    countryErrorDirector.style.display = 'none';
+                    producerSameAsDirectorError.style.display = 'none';
+                }
+            }
+
+            copyFromDirectorToProducerCheckbox.addEventListener('change', handleCheckboxChange);
+
+            // Add an event listener for the submit button
+            const submitButton = document.getElementById('submitButton'); // Replace with the actual ID of your submit button
+            if (submitButton) {
+                submitButton.addEventListener('click', handleSubmit);
+            }
         });
     </script>
 
@@ -1273,6 +1325,52 @@
 
     @* MEDIA *@
     @* ------------------------------------------------------------------------------------------------------------ *@
+
+    @* Container Border Color Script *@
+    <!-- Container Border Color Script for Media -->
+    @*  <script>
+        function validateMediaContainer() {
+            var mediaContainer = document.getElementById('media-container');
+            var requiredInputs = mediaContainer.querySelectorAll('input[required]');
+            var allValid = true;
+
+            // Check each required input
+            requiredInputs.forEach(function (input) {
+                if (!input.value.trim()) {
+                    allValid = false;
+                    input.classList.add('border-danger');
+                    input.classList.remove('border-success');
+                } else {
+                    input.classList.add('border-success');
+                    input.classList.remove('border-danger');
+                }
+            });
+
+            // Update container border color based on the validity of inputs
+            if (allValid) {
+                mediaContainer.classList.add('border-success');
+                mediaContainer.classList.remove('border-danger');
+            } else {
+                mediaContainer.classList.add('border-danger');
+                mediaContainer.classList.remove('border-success');
+            }
+
+            return allValid; // Return whether the media is valid
+        }
+
+        // Attach the validation function to the form submit event
+        document.querySelector('form').addEventListener('submit', function (event) {
+            if (!validateMediaContainer()) {
+                event.preventDefault(); // Prevent form submission if there are errors
+            }
+        });
+
+        // Attach the validation function to each required input's input event
+        document.querySelectorAll('#media-container input[required]').forEach(function (input) {
+            input.addEventListener('input', validateMediaContainer);
+        });
+    </script> *@
+
     @* UploadedMoviePictures Upload Check Script *@
     <script>
         function validateMoviePicturesUpload() {
@@ -1935,10 +2033,11 @@
 
                 document.getElementById('ApplicantCountryName').value = document.getElementById('DirectorCountryName').value;
 
-                const event = new Event('change');
-                applicantFields.country.dispatchEvent(event);
+                // Trigger validation update
+                updateValidation(applicantFields);
 
                 Object.values(applicantFields).forEach(field => field.classList.remove('is-invalid'));
+                clearErrorsIfFilled();
             }
 
             function copyValuesFromProducerToApplicant() {
@@ -1950,10 +2049,11 @@
 
                 document.getElementById('ApplicantCountryName').value = document.getElementById('ProducerCountryName').value;
 
-                const event = new Event('change');
-                applicantFields.country.dispatchEvent(event);
+                // Trigger validation update
+                updateValidation(applicantFields);
 
                 Object.values(applicantFields).forEach(field => field.classList.remove('is-invalid'));
+                clearErrorsIfFilled();
             }
 
             function validateFields(fields) {
@@ -1978,11 +2078,27 @@
 
             function clearErrorsIfFilled() {
                 if (validateFields(applicantFields)) {
-                    countryErrorDirector.style.display = 'none';
+                    countryErrorApplicant.style.display = 'none';
                     applicantSameAsDirectorError.style.display = 'none';
-                    countryErrorProducer.style.display = 'none';
                     applicantSameAsProducerError.style.display = 'none';
                 }
+            }
+
+            function updateValidation(fields) {
+                Object.values(fields).forEach(field => {
+                    if (field.tagName === 'INPUT' || field.tagName === 'TEXTAREA') {
+                        const event = new Event('input', { bubbles: true });
+                        field.dispatchEvent(event);
+                    } else if (field.tagName === 'SELECT') {
+                        const event = new Event('change', { bubbles: true });
+                        field.dispatchEvent(event);
+                    }
+                    // Force update validation for associated error messages
+                    const errorElement = document.querySelector(`[data-valmsg-for="${field.name}"]`);
+                    if (errorElement) {
+                        errorElement.style.display = 'none';
+                    }
+                });
             }
 
             function handleCopyFromDirectorToApplicant() {
@@ -1994,7 +2110,6 @@
                     } else {
                         applicantSameAsDirectorError.style.display = 'none';
                         copyValuesFromDirectorToApplicant();
-                        clearErrorsIfFilled();
                     }
                 } else {
                     clearApplicantFields();
@@ -2014,7 +2129,6 @@
                     } else {
                         applicantSameAsProducerError.style.display = 'none';
                         copyValuesFromProducerToApplicant();
-                        clearErrorsIfFilled();
                     }
                 } else {
                     clearApplicantFields();
@@ -2903,7 +3017,7 @@
                     <input class="form-control" asp-for="ApplicantName"
                            id="ApplicantName" name="ApplicantName"
                            maxlength="100" required placeholder="Max 100 characters"
-                           data-val-required="The Applicant Name is required">
+                           data-val-required="Application Name is required!">
                     <div class="form-text"></div>
                     <span class="text-danger" asp-validation-for="ApplicantName"></span>
                 </div>
@@ -2914,16 +3028,14 @@
                     <label for="ApplicantCompany" class="form-label" asp-for="ApplicantCompany">Applicant Company</label>
                     <input class="form-control" asp-for="ApplicantCompany"
                            id="ApplicantCompany" name="ApplicantCompany"
-                           maxlength="100" required placeholder="Max 100 characters"
-                           data-val-required="The Applicant Company is required">
+                           maxlength="100" required placeholder="Max 100 characters">
                     <span class="text-danger" asp-validation-for="ApplicantCompany"></span>
                 </div>
                 <div class="col-md-6">
                     <label for="ApplicantEmail" class="form-label" asp-for="ApplicantEmail">Applicant Email Address</label>
                     <input class="form-control" asp-for="ApplicantEmail"
                            id="ApplicantEmail" name="ApplicantEmail"
-                           maxlength="100" required placeholder="Max 100 characters"
-                           data-val-required="The Applicant Email is required">
+                           maxlength="100" required placeholder="Max 100 characters">
                     <div class="form-text"></div>
                     <span class="text-danger" asp-validation-for="ApplicantEmail"></span>
                 </div>
@@ -2935,8 +3047,7 @@
                     <div class="input-group">
                         <input id="applicant-phone" type="tel" asp-for="ApplicantPhone" class="form-control"
                                name="ApplicantPhone"
-                               maxlength="25" required
-                               data-val-required="The Applicant Phone is required">
+                               maxlength="25" required>
                     </div>
                     <span class="text-danger" asp-validation-for="ApplicantPhone"></span>
                 </div>
@@ -2947,7 +3058,7 @@
                         <!-- Populate countries here -->
                     </select>
                     <input type="hidden" id="ApplicantCountryName" name="ApplicantCountryName"
-                           data-val-required="The Applicant Country is required" />
+                           data-val-required="Application Country is required" />
                     <span id="CountryErrorApplicant" class="text-danger" style="display: none;">Please select a country.</span>
                 </div>
             </div>

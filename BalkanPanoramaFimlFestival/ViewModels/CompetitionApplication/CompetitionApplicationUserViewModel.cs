@@ -123,12 +123,20 @@ namespace BalkanPanoramaFilmFestival.ViewModels.CompetitionApplication
         public required bool DownloadableCopyCheck { get; set; }
 
         // APPLICANT
+        [Required(ErrorMessage = "Applicant Name is required!")]
         public required string ApplicantName { get; set; }
+
+        [Required(ErrorMessage = "Applicant Company is required!")]
         public required string ApplicantCompany { get; set; }
+
+        [Required(ErrorMessage = "Applicant Country is required!")]
         public required string ApplicantCountry { get; set; }
+
+        [Required(ErrorMessage = "Applicant Phone is required!")]
         public required string ApplicantPhone { get; set; }
 
         [EmailAddress(ErrorMessage = "Please enter a valid email address!")]
+        [Required(ErrorMessage = "Applicant Email is required!")]
         public required string ApplicantEmail { get; set; }
     }
 }
