@@ -132,39 +132,63 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public IActionResult DownloadPdf(string filePath)
+        public IActionResult DownloadPdf(string filePath, string applicantEmail)
         {
             if (string.IsNullOrEmpty(filePath))
             {
-                return NotFound();
+                return BadRequest("Pdf File Path is required.");
             }
 
-            // Decode the URL-encoded file path
+            if (string.IsNullOrEmpty(applicantEmail))
+            { 
+                return BadRequest("Applicant Email is required.");
+            }
+
+            // Decode the URL-encoded file path to get the relative path
             var decodedFilePath = Uri.UnescapeDataString(filePath);
 
-            // Log or debug the decoded file path
-            Console.WriteLine($"Decoded file path: {decodedFilePath}");
+            // Sanitize applicant email for safe use in the file path
+            var sanitizedEmail = applicantEmail.Replace('@', '_').Replace('.', '_');
 
-            // Combine the root directory with the relative file path
-            var fullFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", decodedFilePath.TrimStart('/'));
+            // Extract the file name from the path
+            var originalFileName = Path.GetFileName(decodedFilePath);
 
-            // Log or debug the full file path
-            Console.WriteLine($"Full file path: {fullFilePath}");
+            // Reconstruct the expected file name format with sanitized email
+            var fileNameWithEmail = $"FilmCertificatePdf_{sanitizedEmail}_{originalFileName}";
 
+            // Combine the root directory with the constructed file name
+            var fullFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", fileNameWithEmail);
+
+            // Check if the file exists
             if (!System.IO.File.Exists(fullFilePath))
             {
-                return NotFound();
+                return BadRequest("Pdf File Path could not found.");
             }
 
+            // Read the file bytes
             var fileBytes = System.IO.File.ReadAllBytes(fullFilePath);
-            var fileName = Path.GetFileName(fullFilePath);
 
-            return File(fileBytes, "application/pdf", fileName);
+            // Return the file as a download
+            return File(fileBytes, "application/pdf", fileNameWithEmail);
         }
 
         [HttpGet]
-        public IActionResult DownloadMoviePictures(string uploadedMoviePicturesFilePaths)
+        public IActionResult DownloadMoviePictures(string applicantEmail, string uploadedMoviePicturesFilePaths)
         {
+            // Validate the parameters
+            if (string.IsNullOrEmpty(applicantEmail))
+            {
+                return BadRequest("Applicant email is required.");
+            }
+
+            if (string.IsNullOrEmpty(uploadedMoviePicturesFilePaths))
+            {
+                return BadRequest("Uploaded Movie Pictures File Paths is required.");
+            }
+
+            // Sanitize the applicantEmail to be safe for file naming
+            var sanitizedEmail = applicantEmail.Replace('@', '_').Replace('.', '_');
+
             // Split the string into individual file paths
             var filePaths = uploadedMoviePicturesFilePaths
                 .Trim('[', ']', '\"') // Trim brackets and quotes
@@ -174,15 +198,16 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
 
             if (filePaths == null || !filePaths.Any())
             {
-                return NotFound();
+                return BadRequest("Uploaded Movie Pictures File could not be found!");
             }
 
             using (var memoryStream = new MemoryStream())
             {
                 using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
                 {
-                    foreach (var filePath in filePaths)
+                    for (int i = 0; i < filePaths.Count; i++)
                     {
+                        var filePath = filePaths[i];
                         if (string.IsNullOrEmpty(filePath)) continue;
 
                         // Remove any trailing quotes or other unwanted characters
@@ -193,7 +218,9 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
 
                         if (System.IO.File.Exists(fullFilePath))
                         {
-                            var fileName = Path.GetFileName(fullFilePath);
+                            // Use a standardized name like MoviePicture1, MoviePicture2, etc.
+                            var fileExtension = Path.GetExtension(fullFilePath).ToLowerInvariant();
+                            var fileName = $"MoviePicture{i + 1}{fileExtension}";
                             var fileEntry = archive.CreateEntry(fileName);
 
                             using (var fileStream = new FileStream(fullFilePath, FileMode.Open, FileAccess.Read))
@@ -208,47 +235,88 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
                 // Reset the position of the memory stream
                 memoryStream.Position = 0;
 
-                // Return the zip file
-                return File(memoryStream.ToArray(), "application/zip", "movie_pictures.zip");
+                // Return the zip file with applicant's email in the name
+                var zipFileName = $"movie_pictures_{sanitizedEmail}.zip";
+                return File(memoryStream.ToArray(), "application/zip", zipFileName);
             }
         }
 
         [HttpGet]
-        public IActionResult DownloadUploadedMoviePoster(string UploadedMoviePosterFilePath)
+        public IActionResult DownloadUploadedMoviePoster(string UploadedMoviePosterFilePath, string applicantEmail)
         {
+            if (string.IsNullOrEmpty(applicantEmail))
+            {
+                return BadRequest("Applicant email is required.");
+            }
+
             if (string.IsNullOrEmpty(UploadedMoviePosterFilePath))
             {
-                return NotFound();
+                return BadRequest("Movie poster file path is required.");
             }
 
-            var cleanedFilePath = UploadedMoviePosterFilePath.Trim('\"');
-            var fullFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", cleanedFilePath.TrimStart('/'));
+            // Sanitize the applicantEmail to be safe for file naming
+            var sanitizedEmail = applicantEmail.Replace('@', '_').Replace('.', '_');
 
-            if (!System.IO.File.Exists(fullFilePath))
+            // Define the path to the folder where the movie poster is stored
+            var uploadsFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/pictures");
+
+            // Remove any leading slashes or unwanted characters from the file path
+            var cleanedFilePath = UploadedMoviePosterFilePath.Trim('\"').TrimStart('/');
+
+            // Ensure the file path does not contain extra directories
+            var fileName = Path.GetFileName(cleanedFilePath);
+
+            // Create a search pattern based on the sanitized email
+            var searchPattern = $"MoviePoster_{sanitizedEmail}_*{Path.GetExtension(fileName)}";
+
+            // Find the file that matches the search pattern
+            var filePath = Directory.GetFiles(uploadsFolderPath, searchPattern).FirstOrDefault();
+
+            if (string.IsNullOrEmpty(filePath) || !System.IO.File.Exists(filePath))
             {
-                return NotFound();
+                return BadRequest("Movie poster file not found!");
             }
 
-            var fileName = Path.GetFileName(fullFilePath);
+            // Get the file name from the full file path
+            fileName = Path.GetFileName(filePath);
 
             // Return the file as a download
-            return File(System.IO.File.ReadAllBytes(fullFilePath), "application/octet-stream", fileName);
+            return File(System.IO.File.ReadAllBytes(filePath), "application/octet-stream", fileName);
         }
-
         [HttpGet]
-        public IActionResult DownloadUploadedMovieSubtitle(string UploadedMovieSubtitleFilePath)
+        public IActionResult DownloadUploadedMovieSubtitle(string UploadedMovieSubtitleFilePath, string applicantEmail)
         {
+            if (string.IsNullOrEmpty(applicantEmail))
+            {
+                return BadRequest("Applicant email is required.");
+            }
+
             if (string.IsNullOrEmpty(UploadedMovieSubtitleFilePath))
             {
-                return NotFound();
+                return BadRequest("Movie subtitle file path is required.");
             }
 
-            var cleanedFilePath = UploadedMovieSubtitleFilePath.Trim('\"');
-            var fullFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", cleanedFilePath.TrimStart('/'));
+            // Sanitize the applicantEmail to be safe for file naming
+            var sanitizedEmail = applicantEmail.Replace('@', '_').Replace('.', '_');
+
+            // Define the path to the folder where the movie subtitles are stored
+            var uploadsFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "subtitles");
+
+            // Clean the file path, remove any leading slashes
+            var cleanedFilePath = UploadedMovieSubtitleFilePath.Trim('\"').TrimStart('/');
+
+            // Ensure the file path does not include the 'subtitles' directory if it's already included
+            if (cleanedFilePath.StartsWith("subtitles/", StringComparison.OrdinalIgnoreCase))
+            {
+                cleanedFilePath = cleanedFilePath.Substring("subtitles/".Length);
+            }
+
+            // Combine the folder path with the file name
+            var fullFilePath = Path.Combine(uploadsFolderPath, cleanedFilePath);
 
             if (!System.IO.File.Exists(fullFilePath))
             {
-                return NotFound();
+                return BadRequest("Movie subtitle file not found!");
             }
 
             var fileName = Path.GetFileName(fullFilePath);
@@ -258,77 +326,135 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public IActionResult DownloadUploadedDirectorPhoto(string UploadedDirectorPhotoFilePath)
+        public IActionResult DownloadUploadedDirectorPhoto(string uploadedDirectorPhotoFilePath, string applicantEmail)
         {
-            if (string.IsNullOrEmpty(UploadedDirectorPhotoFilePath))
+            // Validate the applicantEmail
+            if (string.IsNullOrEmpty(applicantEmail))
             {
-                return NotFound();
+                return BadRequest("Applicant email is required.");
             }
 
-            var cleanedFilePath = UploadedDirectorPhotoFilePath.Trim('\"');
-            var fullFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", cleanedFilePath.TrimStart('/'));
+            // Validate the uploadedDirectorPhotoFilePath
+            if (string.IsNullOrEmpty(uploadedDirectorPhotoFilePath))
+            {
+                return BadRequest("Uploaded Director Photo File Path is required.");
+            }
 
+            // Clean the file path
+            var cleanedFilePath = uploadedDirectorPhotoFilePath.Trim('\"').TrimStart('/');
+
+            // Ensure the file path does not include the 'pictures' directory as it is already part of the file path
+            var fileName = Path.GetFileName(cleanedFilePath);
+
+            // Define the path to the folder where the director photos are stored
+            var uploadsFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "pictures");
+
+            // Combine the folder path with the cleaned file name
+            var fullFilePath = Path.Combine(uploadsFolderPath, fileName);
+
+            // Check if the file exists
             if (!System.IO.File.Exists(fullFilePath))
             {
-                return NotFound();
+                return BadRequest("Director photo file not found.");
             }
-
-            var fileName = Path.GetFileName(fullFilePath);
 
             // Return the file as a download
             return File(System.IO.File.ReadAllBytes(fullFilePath), "application/octet-stream", fileName);
         }
 
         [HttpGet]
-        public IActionResult DownloadUploadedBestActressPhoto(string UploadedBestActressPhotoFilePath)
+        public IActionResult DownloadUploadedBestActressPhoto(string uploadedBestActressPhotoFilePath, string applicantEmail)
         {
-            if (string.IsNullOrEmpty(UploadedBestActressPhotoFilePath))
+            if (string.IsNullOrEmpty(uploadedBestActressPhotoFilePath))
             {
-                return NotFound();
+                return BadRequest("Uploaded Best Actress Photo File Path is required.");
             }
 
-            var cleanedFilePath = UploadedBestActressPhotoFilePath.Trim('\"');
-            var fullFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", cleanedFilePath.TrimStart('/'));
+            if (string.IsNullOrEmpty(applicantEmail))
+            {
+                return BadRequest("Applicant email is required.");
+            }
 
+            // Clean the file path
+            var cleanedFilePath = uploadedBestActressPhotoFilePath.Trim('\"');
+
+            // Ensure the path is relative to the wwwroot folder by removing "pictures/" prefix
+            var relativeFilePath = cleanedFilePath.StartsWith("/pictures/")
+                ? cleanedFilePath.Substring("/pictures/".Length)
+                : cleanedFilePath.TrimStart('/');
+
+            // Construct the full file path to the specific directory
+            var uploadsFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "pictures");
+            var fullFilePath = Path.Combine(uploadsFolderPath, relativeFilePath);
+
+            // Check if the file exists
             if (!System.IO.File.Exists(fullFilePath))
             {
-                return NotFound();
+                return BadRequest("Uploaded Best Actress Photo File could not be found!");
             }
 
+            // Extract the file name
             var fileName = Path.GetFileName(fullFilePath);
+
+            // Return the file as a download
+            var fileBytes = System.IO.File.ReadAllBytes(fullFilePath);
+            return File(fileBytes, "application/octet-stream", fileName);
+        }
+
+
+        [HttpGet]
+        public IActionResult DownloadUploadedBestActorPhoto(string uploadedBestActorPhotoFilePath, string applicantEmail)
+        {
+            if (string.IsNullOrEmpty(uploadedBestActorPhotoFilePath))
+            {
+                return BadRequest("Uploaded Best Actor Photo File Path is required.");
+            }
+
+            if (string.IsNullOrEmpty(applicantEmail))
+            {
+                return BadRequest("Applicant email is required.");
+            }
+
+            // Sanitize inputs to prevent path traversal attacks
+            var cleanedFilePath = uploadedBestActorPhotoFilePath.Trim('\"');
+
+            // Sanitize applicant email for safe file path use
+            var sanitizedEmail = applicantEmail.Replace('@', '_').Replace('.', '_');
+
+            // Extract the original file name from the cleaned file path
+            var fileName = Path.GetFileName(cleanedFilePath);
+
+            // Construct the file name exactly as it was saved (assuming it already includes the sanitized email)
+            // We should not add the email again if it is already part of the file name
+            var fullFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "pictures", fileName);
+
+            // Verify if the constructed path points to an existing file
+            if (!System.IO.File.Exists(fullFilePath))
+            {
+                return BadRequest("Uploaded Best Actor Photo File could not be found!");
+            }
 
             // Return the file as a download
             return File(System.IO.File.ReadAllBytes(fullFilePath), "application/octet-stream", fileName);
         }
 
-        [HttpGet]
-        public IActionResult DownloadUploadedBestActorPhoto(string UploadedBestActorPhotoFilePath)
-        {
-            if (string.IsNullOrEmpty(UploadedBestActorPhotoFilePath))
-            {
-                return NotFound();
-            }
 
-            var cleanedFilePath = UploadedBestActorPhotoFilePath.Trim('\"');
-            var fullFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", cleanedFilePath.TrimStart('/'));
-
-            if (!System.IO.File.Exists(fullFilePath))
-            {
-                return NotFound();
-            }
-
-            var fileName = Path.GetFileName(fullFilePath);
-
-            // Return the file as a download
-            return File(System.IO.File.ReadAllBytes(fullFilePath), "application/octet-stream", fileName);
-        }
 
         [HttpGet]
-        public IActionResult DownloadAllFiles(string uploadedPdfFilePath, string uploadedMoviePicturesFilePaths,
-                                      string uploadedMoviePosterFilePath, string uploadedMovieSubtitleFilePath,
-                                      string uploadedDirectorPhotoFilePath, string uploadedBestActressPhotoFilePath,
-                                      string uploadedBestActorPhotoFilePath)
+        public IActionResult DownloadAllFiles(string applicantEmail,
+                                        string uploadedPdfFilePath,
+                                        string uploadedMoviePicturesFilePaths,
+                                        string uploadedMoviePosterFilePath,
+                                        string uploadedMovieSubtitleFilePath,
+                                        string uploadedDirectorPhotoFilePath,
+                                        string uploadedBestActressPhotoFilePath,
+                                        string uploadedBestActorPhotoFilePath)
         {
+            if (string.IsNullOrEmpty(applicantEmail))
+            {
+                return BadRequest("Applicant email is required.");
+            }
+
             // List to hold all file paths
             var filePaths = new List<string>();
 
@@ -362,7 +488,7 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
 
             if (filePaths.Count == 0)
             {
-                return NotFound("No files to download.");
+                return BadRequest("No files to download.");
             }
 
             using (var memoryStream = new MemoryStream())
@@ -390,7 +516,11 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
                 }
 
                 memoryStream.Position = 0;
-                return File(memoryStream.ToArray(), "application/zip", "all_files.zip");
+
+                // Create zip file name using applicantEmail
+                var zipFileName = $"all_files_{applicantEmail}.zip";
+
+                return File(memoryStream.ToArray(), "application/zip", zipFileName);
             }
         }
 
@@ -401,7 +531,7 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
 
             if (application == null)
             {
-                return NotFound();
+                return BadRequest("User could not be found!");
             }
 
             var csvData = new StringBuilder();
@@ -452,23 +582,6 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
             var fileName = $"CompetitionApplication_{application.ApplicantEmail}.csv";
 
             return File(csvContent, "text/csv", fileName);
-        }
-
-
-        private string GetContentType(string filePath)
-        {
-            var extension = Path.GetExtension(filePath).ToLowerInvariant();
-
-            return extension switch
-            {
-                ".jpg" or ".jpeg" => "image/jpeg",
-                ".png" => "image/png",
-                ".gif" => "image/gif",
-                ".bmp" => "image/bmp",
-                ".webp" => "image/webp",
-                ".svg" => "image/svg+xml",
-                _ => "application/octet-stream" // Default value for unknown file types
-            };
         }
     }
 }
