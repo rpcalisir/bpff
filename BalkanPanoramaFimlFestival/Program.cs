@@ -26,11 +26,10 @@ namespace BalkanPanoramaFilmFestival
 
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
-                new MySqlServerVersion(ServerVersion.AutoDetect(connectionString))));
-
-            // Register the AppUrl configuration
-            builder.Services.Configure<ApplicationSettings>(builder.Configuration.GetSection("ApplicationSettings"));
+            options.UseSqlServer(connectionString));
+            //builder.Services.AddDbContext<ApplicationDbContext>(options =>
+            //options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
+            //    new MySqlServerVersion(ServerVersion.AutoDetect(connectionString))));
 
             // If IEmailService exists in any class, give an instance of EmailService to there.
             // Scoped means, after request returns the response, EmailService instance will be deleted from memory,

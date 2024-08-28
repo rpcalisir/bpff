@@ -1,4 +1,6 @@
 ﻿@model List<UserViewModel>
+@using BalkanPanoramaFilmFestival.Models.Enums
+
 @{
     ViewData["Title"] = "UserList";
 }
@@ -14,6 +16,10 @@
             <th>Phone Number</th>
             <th>Roles</th>
             <th>Role Operations</th>
+            @if (User.IsInRole("developer"))
+            {
+                <th>Delete User</th>
+            }
         </tr>
     </thead>
 
@@ -31,7 +37,33 @@
                 <td>
                     <a asp-controller="Roles" asp-action="AssignRoleToUser" asp-route-userId="@item.Id">Assign Role</a>
                 </td>
+                @if (User.IsInRole("developer"))
+                {
+                    <td>
+                        <!-- Delete button form -->
+                        <form asp-controller="Home" asp-action="DeleteUser" asp-route-id="@item.Id" method="post"
+                              onsubmit="return confirm('Are you sure you want to delete this user?');">
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                    </td>
+                }
             </tr>
         }
     </tbody>
 </table>
+@if (User.IsInRole("admin"))
+{
+    <form asp-controller="Home" asp-action="DownloadUserList" method="get">
+        <button type="submit" class="btn btn-primary mb-3">Download User List as CSV</button>
+    </form>
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}

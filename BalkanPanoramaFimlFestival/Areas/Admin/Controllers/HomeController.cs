@@ -45,6 +45,56 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
             return View(adminUserViewModelList);
         }
 
+        [Authorize(Roles = "developer")] // Only the users with admin role can access to admin panel
+        [HttpPost]
+        public async Task<IActionResult> DeleteUser(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return BadRequest("Invalid user ID.");
+            }
+
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return BadRequest("User not found.");
+            }
+
+            var result = await _userManager.DeleteAsync(user);
+            if (!result.Succeeded)
+            {
+                // Optionally handle the error here (e.g., logging or returning a user-friendly message)
+                TempData["ErrorMessage"] = "There was an error deleting the user.";
+                return RedirectToAction("UserList");
+            }
+
+            // Optionally set a success message
+            TempData["SuccessMessage"] = "User deleted successfully.";
+
+            // Redirect back to the UserList view after deletion
+            return RedirectToAction("UserList");
+        }
+
+        [Authorize(Roles = "admin")] // Only the users with admin role can access to admin panel
+        [HttpGet]
+        public async Task<IActionResult> DownloadUserList()
+        {
+            var users = await _userManager.Users.ToListAsync();
+
+            // Create a CSV string
+            var csvBuilder = new StringBuilder();
+            csvBuilder.AppendLine("FirstName,LastName,Email,PhoneNumber");
+
+            foreach (var user in users)
+            {
+                csvBuilder.AppendLine($"{user.FirstName},{user.LastName},{user.Email},{user.PhoneNumber}");
+            }
+
+            var csvBytes = Encoding.UTF8.GetBytes(csvBuilder.ToString());
+
+            return File(csvBytes, "text/csv", "UserList.csv");
+        }
+
         public async Task<IActionResult> CompetitionApplications()
         {
             var applicationsList = await _context.CompetitionApplications.ToListAsync();
@@ -405,7 +455,6 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
             return File(fileBytes, "application/octet-stream", fileName);
         }
 
-
         [HttpGet]
         public IActionResult DownloadUploadedBestActorPhoto(string uploadedBestActorPhotoFilePath, string applicantEmail)
         {
@@ -441,8 +490,6 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
             // Return the file as a download
             return File(System.IO.File.ReadAllBytes(fullFilePath), "application/octet-stream", fileName);
         }
-
-
 
         [HttpGet]
         public IActionResult DownloadAllFiles(string applicantEmail,

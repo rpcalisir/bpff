@@ -17,19 +17,14 @@ namespace BalkanPanoramaFilmFestival.Controllers
         // Used for sign in, third party authentication and cookie management
         private readonly SignInManager<RegisteredUser> _signInManager;
 
-        // Used for url redirection for development and release
-        private readonly ApplicationSettings _appSettings;
-
         private readonly IEmailService _emailService;
 
         public HomeController(UserManager<RegisteredUser> userManager,
             SignInManager<RegisteredUser> signInManager,
-            IOptions<ApplicationSettings> appSettings,
             IEmailService emailService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _appSettings = appSettings.Value;
             _emailService = emailService;
         }
 
