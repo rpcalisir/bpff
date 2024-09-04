@@ -7,9 +7,7 @@
 @* Client side validation script *@
 @section Scripts
 {
-    <script>
-        @await Html.PartialAsync("PartialScripts/_ValidationScriptsPartial")
-    </script>
+    @await Html.PartialAsync("PartialScripts/_ValidationScriptsPartial")
 
     @* COMPETITION CATEGORY*@
     @* ------------------------------------------------------------------------------------------------------------ *@
@@ -23,34 +21,34 @@
 
     @* Container Border Color Script *@
     <script>
-            function validateGeneralInfo() {
-                var generalInfoContainer = document.getElementById('general-info-container');
-                var requiredInputs = generalInfoContainer.querySelectorAll('input[required]');
-                var allValid = true;
+        function validateGeneralInfo() {
+            var generalInfoContainer = document.getElementById('general-info-container');
+            var requiredInputs = generalInfoContainer.querySelectorAll('input[required]');
+            var allValid = true;
 
-                // Check each required input
-                requiredInputs.forEach(function (input) {
-                    if (!input.value.trim()) {
-                        allValid = false;
-                        input.classList.add('border-danger');
-                        input.classList.remove('border-success');
-                    } else {
-                        input.classList.add('border-success');
-                        input.classList.remove('border-danger');
-                    }
-                });
-
-                // Update container border color based on the validity of inputs
-                if (allValid) {
-                    generalInfoContainer.classList.add('border-success');
-                    generalInfoContainer.classList.remove('border-danger');
+            // Check each required input
+            requiredInputs.forEach(function (input) {
+                if (!input.value.trim()) {
+                    allValid = false;
+                    input.classList.add('border-danger');
+                    input.classList.remove('border-success');
                 } else {
-                    generalInfoContainer.classList.add('border-danger');
-                    generalInfoContainer.classList.remove('border-success');
+                    input.classList.add('border-success');
+                    input.classList.remove('border-danger');
                 }
+            });
 
-                return allValid; // Return whether the general info is valid
+            // Update container border color based on the validity of inputs
+            if (allValid) {
+                generalInfoContainer.classList.add('border-success');
+                generalInfoContainer.classList.remove('border-danger');
+            } else {
+                generalInfoContainer.classList.add('border-danger');
+                generalInfoContainer.classList.remove('border-success');
             }
+
+            return allValid; // Return whether the general info is valid
+        }
 
         // Attach the validation function to the form submit event
         document.querySelector('form').addEventListener('submit', function (event) {
@@ -787,31 +785,49 @@
                 charCountDirectorFilmographyEn.textContent = remaining;
             });
 
-            // Character limit handling for MovieScript
-            var textareaMovieScript = document.getElementById('MovieScript');
-            var charCountMovieScript = document.getElementById('charCountMovieScript');
+            // Character limit handling for ScreenWriters
 
-            textareaMovieScript.addEventListener('input', function () {
-                var remaining = 1000 - this.value.length;
-                charCountMovieScript.textContent = remaining;
+
+            var textareaScreenWriter1 = document.getElementById('ScreenWriter1');
+            var charCountScreenWriter1 = document.getElementById('charCountScreenWriter1');
+
+            textareaScreenWriter1.addEventListener('input', function () {
+                var remaining = 100 - this.value.length;
+                charCountScreenWriter1.textContent = remaining;
+            });
+
+            var textareaScreenWriter2 = document.getElementById('ScreenWriter2');
+            var charCountScreenWriter2 = document.getElementById('charCountScreenWriter2');
+
+            textareaScreenWriter2.addEventListener('input', function () {
+                var remaining = 100 - this.value.length;
+                charCountScreenWriter2.textContent = remaining;
+            });
+
+            var textareaScreenWriter3 = document.getElementById('ScreenWriter3');
+            var charCountScreenWriter3 = document.getElementById('charCountScreenWriter3');
+
+            textareaScreenWriter3.addEventListener('input', function () {
+                var remaining = 100 - this.value.length;
+                charCountScreenWriter3.textContent = remaining;
             });
 
             // Character limit handling for MovieFiction
-            var textareaMovieFiction = document.getElementById('MovieFiction');
-            var charCountMovieFictions = document.getElementById('charCountMovieFiction');
 
-            textareaMovieFiction.addEventListener('input', function () {
-                var remaining = 1000 - this.value.length;
-                charCountMovieFictions.textContent = remaining;
+            var textareaMovieFiction1 = document.getElementById('MovieFiction1');
+            var charCountMovieFiction1 = document.getElementById('charCountMovieFiction1');
+
+            textareaMovieFiction1.addEventListener('input', function () {
+                var remaining = 100 - this.value.length;
+                charCountMovieFiction1.textContent = remaining;
             });
 
-            // Character limit handling for MovieActors
-            var textareaMovieActors = document.getElementById('MovieActors');
-            var charCountMovieActors = document.getElementById('charCountMovieActors');
+            var textareaMovieFiction2 = document.getElementById('MovieFiction2');
+            var charCountMovieFiction2 = document.getElementById('charCountMovieFiction2');
 
-            textareaMovieActors.addEventListener('input', function () {
-                var remaining = 1000 - this.value.length;
-                charCountMovieActors.textContent = remaining;
+            textareaMovieFiction2.addEventListener('input', function () {
+                var remaining = 100 - this.value.length;
+                charCountMovieFiction2.textContent = remaining;
             });
 
             // Character limit handling for SinopsisTr
@@ -936,6 +952,60 @@
         document.querySelectorAll('#movie-tag-container input[required], #movie-tag-container textarea[required]').forEach(function (input) {
             input.addEventListener('input', validateMovieTagInfo);
             input.addEventListener('change', validateMovieTagInfo); // for select elements if any
+        });
+    </script>
+
+    @* First Screen Writer Required Message Script *@
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var form = document.querySelector('form'); // Select the form
+            var screenWriterInput = document.getElementById('ScreenWriter1');
+            var errorSpan = document.querySelector('[data-valmsg-for="ScreenWriter1"]');
+
+            form.addEventListener('submit', function (event) {
+                var isValid = true;
+
+                if (screenWriterInput.value.trim() === '') {
+                    errorSpan.innerText = screenWriterInput.getAttribute('data-val-required'); // Set the error message
+                    errorSpan.style.display = 'inline'; // Show the error message
+                    screenWriterInput.focus(); // Set focus to the input field
+                    isValid = false; // Mark the form as invalid
+                } else {
+                    errorSpan.innerText = ''; // Clear the error message
+                    errorSpan.style.display = 'none'; // Hide the error message
+                }
+
+                if (!isValid) {
+                    event.preventDefault(); // Prevent form submission
+                }
+            });
+        });
+    </script>
+
+    @* First Movie Fiction Required Message Script *@
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var form = document.querySelector('form'); // Select the form
+            var movieFictionInput = document.getElementById('MovieFiction1');
+            var errorSpan = document.querySelector('[data-valmsg-for="MovieFiction1"]');
+
+            form.addEventListener('submit', function (event) {
+                var isValid = true;
+
+                if (movieFictionInput.value.trim() === '') {
+                    errorSpan.innerText = movieFictionInput.getAttribute('data-val-required'); // Set the error message
+                    errorSpan.style.display = 'inline'; // Show the error message
+                    movieFictionInput.focus(); // Set focus to the input field
+                    isValid = false; // Mark the form as invalid
+                } else {
+                    errorSpan.innerText = ''; // Clear the error message
+                    errorSpan.style.display = 'none'; // Hide the error message
+                }
+
+                if (!isValid) {
+                    event.preventDefault(); // Prevent form submission
+                }
+            });
         });
     </script>
     @* ------------------------------------------------------------------------------------------------------------ *@
@@ -1163,7 +1233,9 @@
 
     @* FILM WORK OPERATION CERTIFICATE *@
     @* ------------------------------------------------------------------------------------------------------------ *@
-    <script>
+
+    @* Upload Pdf Border Color Handle Script *@
+    @* <script>
         function validatePdfFileUpload() {
             var container = document.getElementById('film-work-operation-container');
             var uploadedPdfFileInput = document.getElementById('UploadedPdfFile');
@@ -1189,6 +1261,148 @@
                 event.preventDefault(); // Prevent form submission if no file is uploaded
                 document.getElementById('UploadedPdfFile').focus(); // Add focus to the file input
             }
+        });
+    </script> *@
+
+    @* Upload Pdf Optional Handle Script *@
+   @*  <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const uploadedPdfFileInput = document.getElementById('UploadedPdfFile');
+            const pdfFileOptionalCheckbox = document.getElementById('PdfFileOptional');
+            const uploadedPdfFileErrorMessages = document.getElementById('UploadedPdfFileErrorMessages');
+
+            const maxPdfSizeInMB = 2; // Set your desired max size for PDF file
+            const maxPdfSizeInBytes = maxPdfSizeInMB * 1024 * 1024;
+
+            function validatePdfFileUpload() {
+                const files = uploadedPdfFileInput.files;
+                let errorMessages = [];
+                let totalSize = 0;
+
+                if (pdfFileOptionalCheckbox.checked) {
+                    // Checkbox is checked, disable file input, clear files, and clear errors
+                    uploadedPdfFileInput.disabled = true;
+                    uploadedPdfFileInput.value = ''; // Clear the file input
+                    uploadedPdfFileErrorMessages.textContent = '';
+                    uploadedPdfFileInput.style.borderColor = 'green'; // Set border color to green
+                    return true;
+                } else {
+                    // Enable file input if checkbox is not checked
+                    uploadedPdfFileInput.disabled = false;
+                }
+
+                // Validate file
+                if (files.length === 0) {
+                    errorMessages.push('A PDF file must be uploaded.');
+                } else if (files.length > 1) {
+                    errorMessages.push('You can upload only one PDF file.');
+                } else {
+                    // Calculate total size of uploaded file
+                    totalSize = files[0].size;
+
+                    if (totalSize > maxPdfSizeInBytes) {
+                        errorMessages.push(`The total size of the uploaded PDF file must be less than ${maxPdfSizeInMB} MB.`);
+                    }
+                }
+
+                // Update border color and error messages
+                if (errorMessages.length > 0) {
+                    uploadedPdfFileErrorMessages.textContent = errorMessages.join(' ');
+                    uploadedPdfFileInput.style.borderColor = 'red'; // Set border color to red on error
+                } else {
+                    uploadedPdfFileErrorMessages.textContent = '';
+                    uploadedPdfFileInput.style.borderColor = 'green'; // Set border color to green if no error
+                }
+            }
+
+            // Attach event listeners
+            pdfFileOptionalCheckbox.addEventListener('change', validatePdfFileUpload);
+            uploadedPdfFileInput.addEventListener('change', validatePdfFileUpload);
+
+            // Validate on form submission
+            document.querySelector('form').addEventListener('submit', function (event) {
+                const files = uploadedPdfFileInput.files;
+                if (!pdfFileOptionalCheckbox.checked && (files.length === 0 || files.length > 1)) {
+                    validatePdfFileUpload();
+                    event.preventDefault(); // Prevent form submission if validation fails
+                    uploadedPdfFileInput.focus(); // Add focus to the file input
+                }
+            });
+        });
+    </script> *@
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const uploadedPdfFileInput = document.getElementById('UploadedPdfFile');
+            const pdfFileOptionalCheckbox = document.getElementById('PdfFileOptional');
+            const uploadedPdfFileErrorMessages = document.getElementById('UploadedPdfFileErrorMessages');
+            const container = document.getElementById('film-work-operation-container');
+
+            const maxPdfSizeInMB = 2; // Set your desired max size for PDF file
+            const maxPdfSizeInBytes = maxPdfSizeInMB * 1024 * 1024;
+
+            function validatePdfFileUpload() {
+                const files = uploadedPdfFileInput.files;
+                let errorMessages = [];
+                let totalSize = 0;
+                let pdfFileUploaded = files.length > 0;
+
+                if (pdfFileOptionalCheckbox.checked) {
+                    // Checkbox is checked, disable file input, clear files, and clear errors
+                    uploadedPdfFileInput.disabled = true;
+                    uploadedPdfFileInput.value = ''; // Clear the file input
+                    uploadedPdfFileErrorMessages.textContent = '';
+                    uploadedPdfFileInput.style.borderColor = 'green'; // Set border color to green
+                    container.classList.add('border-success');
+                    container.classList.remove('border-danger');
+                    return true;
+                } else {
+                    // Enable file input if checkbox is not checked
+                    uploadedPdfFileInput.disabled = false;
+                }
+
+                // Validate file
+                if (files.length === 0) {
+                    errorMessages.push('A PDF file must be uploaded.');
+                    pdfFileUploaded = false;
+                } else if (files.length > 1) {
+                    errorMessages.push('You can upload only one PDF file.');
+                    pdfFileUploaded = false;
+                } else {
+                    // Calculate total size of uploaded file
+                    totalSize = files[0].size;
+
+                    if (totalSize > maxPdfSizeInBytes) {
+                        errorMessages.push(`The total size of the uploaded PDF file must be less than ${maxPdfSizeInMB} MB.`);
+                        pdfFileUploaded = false;
+                    }
+                }
+
+                // Update border color and error messages
+                if (errorMessages.length > 0) {
+                    uploadedPdfFileErrorMessages.textContent = errorMessages.join(' ');
+                    uploadedPdfFileInput.style.borderColor = 'red'; // Set border color to red on error
+                    container.classList.add('border-danger');
+                    container.classList.remove('border-success');
+                } else {
+                    uploadedPdfFileErrorMessages.textContent = '';
+                    uploadedPdfFileInput.style.borderColor = 'green'; // Set border color to green if no error
+                    container.classList.add('border-success');
+                    container.classList.remove('border-danger');
+                }
+            }
+
+            // Attach event listeners
+            pdfFileOptionalCheckbox.addEventListener('change', validatePdfFileUpload);
+            uploadedPdfFileInput.addEventListener('change', validatePdfFileUpload);
+
+            // Validate on form submission
+            document.querySelector('form').addEventListener('submit', function (event) {
+                if (!pdfFileOptionalCheckbox.checked && (uploadedPdfFileInput.files.length === 0 || uploadedPdfFileInput.files.length > 1)) {
+                    validatePdfFileUpload();
+                    event.preventDefault(); // Prevent form submission if validation fails
+                    uploadedPdfFileInput.focus(); // Add focus to the file input
+                }
+            });
         });
     </script>
 
@@ -2484,7 +2698,7 @@
                 <div class="text-danger" id="MovieTimeLengthError"></div> <!-- To show validation message -->
             </div>
             <div class="col-md-4">
-                <label for="MovieLanguage" class="form-label" asp-for="MovieLanguage">Movie Language</label>
+                <label for="LanguageSelectMovie" class="form-label" asp-for="MovieLanguage">Movie Language</label>
                 <select id="LanguageSelectMovie" name="MovieLanguage" class="form-control" required>
                     <option value="">Select Movie Language</option>
                     <!-- Populate countries here -->
@@ -2527,7 +2741,7 @@
             </div>
             <div class="row mb-3 col-md-12">
                 <div class="col-md-6">
-                    <label for="DirectorPhone" class="col-md-4 col-form-label" asp-for="DirectorPhone">Director Phone</label>
+                    <label for="director-phone" class="col-md-4 col-form-label" asp-for="DirectorPhone">Director Phone</label>
 
                     <div class="input-group">
                         @* id attribute makes it possible to run phone scripts, it must be unique *@
@@ -2539,7 +2753,7 @@
                     <span class="text-danger" asp-validation-for="DirectorPhone"></span>
                 </div>
                 <div class="col-md-6">
-                    <label for="DirectorCountry" class="form-label" asp-for="DirectorCountry">Director Country</label>
+                    <label for="CountrySelectDirector" class="form-label" asp-for="DirectorCountry">Director Country</label>
                     <select id="CountrySelectDirector" name="DirectorCountry" class="form-control" required>
                         <option value="">Select Country</option>
                         <!-- Populate countries here -->
@@ -2592,14 +2806,29 @@
         <b2 class="col-md-10 offset-md-1"><strong>MOVIE TAG</strong></b2>
 
         <div id="movie-tag-container" class="row mb-3 col-md-10 offset-md-1 border border-secondary rounded p-3">
-            <div class="row mb-3 col-md-12 ">
+            <div class="row mb-3 col-md-12">
                 <div class="col-md-12">
-                    <label for="MovieScript" class="form-label" asp-for="MovieScript">Movie Script</label>
-                    <textarea class="form-control" asp-for="MovieScript" id="MovieScript" rows="10" maxlength="1000" required style="resize: none;"></textarea>
-                    <div class="form-text"><span id="charCountMovieScript">1000</span> characters remaining</div>
-                    <span class="text-danger" asp-validation-for="MovieScript"></span>
+                    <label for="ScreenWriter1" class="form-label">First Screen Writer</label>
+                    <input type="text" class="form-control" id="ScreenWriter1" name="ScreenWriter1" maxlength="100"
+                           required placeholder="Max 100 characters" 
+                           data-val="true"
+                           data-val-required="First Screen Writer is required." />
+                    <span class="text-danger" asp-validation-for="ScreenWriter1"></span>
+                </div>
+                <div class="col-md-12 mt-3">
+                    <label for="ScreenWriter2" class="form-label">Second Screen Writer</label>
+                    <input type="text" class="form-control" id="ScreenWriter2" name="ScreenWriter2" maxlength="100"
+                           placeholder="Max 100 characters" />
+                    <span class="text-danger" asp-validation-for="ScreenWriter2"></span>
+                </div>
+                <div class="col-md-12 mt-3">
+                    <label for="ScreenWriter3" class="form-label">Third Screen Writer</label>
+                    <input type="text" class="form-control" id="ScreenWriter3" name="ScreenWriter3" maxlength="100"
+                           placeholder="Max 100 characters" />
+                    <span class="text-danger" asp-validation-for="ScreenWriter3"></span>
                 </div>
             </div>
+
             <div class="row mb-3 col-md-12 ">
                 <div class="col-md-12">
                     <label for="Cinematographer" class="form-label" asp-for="Cinematographer">Cinematographer</label>
@@ -2612,36 +2841,18 @@
             </div>
             <div class="row mb-3 col-md-12 ">
                 <div class="col-md-12">
-                    <label for="MovieFiction" class="form-label" asp-for="MovieFiction">Movie Fiction</label>
-                    <textarea class="form-control" asp-for="MovieFiction" id="MovieFiction" rows="10" maxlength="1000" required style="resize: none;"></textarea>
-                    <div class="form-text"><span id="charCountMovieFiction">1000</span> characters remaining</div>
-                    <span class="text-danger" asp-validation-for="MovieFiction"></span>
+                    <label for="MovieFiction1" class="form-label">First Movie Fiction</label>
+                    <input type="text" class="form-control" id="MovieFiction1" name="MovieFiction1" maxlength="100"
+                           required placeholder="Max 100 characters" 
+                           data-val="true"
+                           data-val-required="First Movie Fiction is required." />
+                    <span class="text-danger" asp-validation-for="MovieFiction1"></span>
                 </div>
-            </div>
-            <div class="row mb-3 col-md-12 ">
-                <div class="col-md-12">
-                    <label for="MovieActors" class="form-label" asp-for="MovieActors">Movie Actors</label>
-                    <textarea class="form-control" asp-for="MovieActors" id="MovieActors" rows="10" maxlength="1000" required style="resize: none;"></textarea>
-                    <div class="form-text"><span id="charCountMovieActors">1000</span> characters remaining</div>
-                    <span class="text-danger" asp-validation-for="MovieActors"></span>
-                </div>
-            </div>
-            <div class="row mb-3 col-md-12">
-                <div class="col-md-6">
-                    <label for="BestActress" class="form-label" asp-for="BestActress">Best Actress</label>
-                    <input class="form-control" asp-for="BestActress"
-                           id="BestActress" name="BestActress"
-                           maxlength="100" required placeholder="Max 100 characters">
-                    <div class="form-text"></div>
-                    <span class="text-danger" asp-validation-for="BestActress"></span>
-                </div>
-                <div class="col-md-6">
-                    <label for="BestActor" class="form-label" asp-for="BestActor">Best Actor</label>
-                    <input class="form-control" asp-for="BestActor"
-                           id="BestActor" name="BestActor"
-                           maxlength="100" required placeholder="Max 100 characters">
-                    <div class="form-text"></div>
-                    <span class="text-danger" asp-validation-for="BestActor"></span>
+                <div class="col-md-12 mt-3">
+                    <label for="MovieFiction2" class="form-label">Second Movie Fiction</label>
+                    <input type="text" class="form-control" id="MovieFiction2" name="MovieFiction2" maxlength="100"
+                           placeholder="Max 100 characters" />
+                    <span class="text-danger" asp-validation-for="MovieFiction2"></span>
                 </div>
             </div>
         </div>
@@ -2698,7 +2909,7 @@
             </div>
             <div class="row mb-3 col-md-12">
                 <div class="col-md-6">
-                    <label for="ProducerPhone" class="col-md-4 col-form-label" asp-for="ProducerPhone">Producer Phone</label>
+                    <label for="producer-phone" class="col-md-4 col-form-label" asp-for="ProducerPhone">Producer Phone</label>
 
                     <div class="input-group">
                         <input id="producer-phone" type="tel" asp-for="ProducerPhone" class="form-control"
@@ -2708,7 +2919,7 @@
                     <span class="text-danger" asp-validation-for="ProducerPhone"></span>
                 </div>
                 <div class="col-md-6">
-                    <label for="ProducerCountry" class="form-label" asp-for="ProducerCountry">Producer Country</label>
+                    <label for="CountrySelectProducer" class="form-label" asp-for="ProducerCountry">Producer Country</label>
                     <select id="CountrySelectProducer" name="ProducerCountry" class="form-control" required>
                         <option value="">Select Country</option>
                         <!-- Populate countries here -->
@@ -2727,9 +2938,18 @@
             <div class="col-md-12">
                 <label for="UploadedPdfFile" class="form-label">Upload PDF</label>
                 <input type="file" class="form-control" id="UploadedPdfFile" name="UploadedPdfFile" accept=".pdf">
-                <span class="text-danger" asp-validation-for="UploadedPdfFile"></span>
+                <span class="text-danger" id="UploadedPdfFileErrorMessages"></span> <!-- Error message container -->
+            </div>
+            <div class="col-md-12">
+                <div class="form-check mt-2">
+                    <input class="form-check-input" type="checkbox" id="PdfFileOptional" name="PdfFileOptional">
+                    <label class="form-check-label" for="PdfFileOptional">
+                        Optional - No need to upload PDF file
+                    </label>
+                </div>
             </div>
         </div>
+
         @* <-- --> *@
 
         @* <-- SINOPSIS --> *@
@@ -2778,8 +2998,10 @@
                     <label for="PremierStatus" class="form-label" asp-for="PremierStatus">Premier Status</label>
                     <select class="form-control" id="PremierStatus" name="PremierStatus" required>
                         <option value="">Select Premier Status</option>
-                        <option value="Valid">Valid</option>
-                        <option value="Invalid">Invalid</option>
+                        <option value="World">World</option>
+                        <option value="Europe">Europe</option>
+                        <option value="Turkiye">Turkiye</option>
+                        <option value="İzmir">İzmir</option>
                     </select>
                     <div class="form-text"></div>
                     <span class="text-danger" id="PremierStatus" asp-validation-for="PremierStatus"></span>
@@ -3042,7 +3264,7 @@
             </div>
             <div class="row mb-3 col-md-12">
                 <div class="col-md-6">
-                    <label for="ApplicantPhone" class="col-md-4 col-form-label" asp-for="ApplicantPhone">Applicant Phone</label>
+                    <label for="applicant-phone" class="col-md-4 col-form-label" asp-for="ApplicantPhone">Applicant Phone</label>
 
                     <div class="input-group">
                         <input id="applicant-phone" type="tel" asp-for="ApplicantPhone" class="form-control"
@@ -3052,7 +3274,7 @@
                     <span class="text-danger" asp-validation-for="ApplicantPhone"></span>
                 </div>
                 <div class="col-md-6">
-                    <label for="ApplicantCountry" class="form-label" asp-for="ApplicantCountry">Applicant Country</label>
+                    <label for="CountrySelectApplicant" class="form-label" asp-for="ApplicantCountry">Applicant Country</label>
                     <select id="CountrySelectApplicant" name="ApplicantCountry" class="form-control" required>
                         <option value="">Select Country</option>
                         <!-- Populate countries here -->

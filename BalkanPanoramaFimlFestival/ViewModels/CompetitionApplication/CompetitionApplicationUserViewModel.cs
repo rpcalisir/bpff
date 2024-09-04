@@ -60,12 +60,14 @@ namespace BalkanPanoramaFilmFestival.ViewModels.CompetitionApplication
 
 
         // Movie Tag
+        public string? ScreenWriter1 { get; set; }
+        public string? ScreenWriter2 { get; set; }
+        public string? ScreenWriter3 { get; set; }
         public required string MovieScript { get; set; }
         public required string Cinematographer { get; set; }
+        public string? MovieFiction1 { get; set; }
+        public string? MovieFiction2 { get; set; }
         public required string MovieFiction { get; set; }
-        public required string MovieActors { get; set; }
-        public required string BestActress { get; set; }
-        public required string BestActor { get; set; }
 
 
         // Producer

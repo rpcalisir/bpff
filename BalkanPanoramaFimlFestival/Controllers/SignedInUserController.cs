@@ -62,9 +62,6 @@ namespace BalkanPanoramaFilmFestival.Controllers
                 MovieScript = string.Empty,
                 Cinematographer = string.Empty,
                 MovieFiction = string.Empty,
-                MovieActors = string.Empty,
-                BestActress = string.Empty,
-                BestActor = string.Empty,
 
                 // Producer
                 ProducerName = string.Empty,
@@ -457,12 +454,9 @@ namespace BalkanPanoramaFilmFestival.Controllers
                     DirectorFilmographyEn = model.DirectorFilmographyEn,
 
                     // Movie Tag
-                    MovieScript = model.MovieScript,
+                    MovieScript = $"{model.ScreenWriter1};{model.ScreenWriter2 ?? string.Empty};{model.ScreenWriter3 ?? string.Empty}",
                     Cinematographer = model.Cinematographer,
-                    MovieFiction = model.MovieFiction,
-                    MovieActors = model.MovieActors,
-                    BestActress = model.BestActress,
-                    BestActor = model.BestActor,
+                    MovieFiction = $"{model.MovieFiction1};{model.MovieFiction2 ?? string.Empty}",
 
                     // Producer
                     ProducerName = model.ProducerName,

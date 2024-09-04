@@ -70,7 +70,7 @@ namespace BalkanPanoramaFilmFestival.Controllers
 
             // If lockoutOnFailure is true, system will be locked after three unsuccessful signin attempts.
             // RememberMe is being handled here with isPersistent
-            var signInResult = await _signInManager.PasswordSignInAsync(foundUser, model.Password, model.RememberMe, true);
+            var signInResult = await _signInManager.PasswordSignInAsync(foundUser, model.Password, true, true);
 
             if (signInResult.Succeeded)
             {

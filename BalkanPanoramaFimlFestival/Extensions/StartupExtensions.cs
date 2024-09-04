@@ -23,7 +23,7 @@ namespace BalkanPanoramaFilmFestival.Extensions
             // SecurityStamp is not called by itself, it is called explicitly like here.
             services.Configure<SecurityStampValidatorOptions>(options =>
             {
-                options.ValidationInterval = TimeSpan.FromMinutes(30);
+                options.ValidationInterval = TimeSpan.FromHours(2);
             });
 
             services.AddIdentity<RegisteredUser, RegisteredUserRole>(options =>

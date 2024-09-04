@@ -29,9 +29,6 @@
         public required string MovieScript { get; set; }
         public required string Cinematographer { get; set; }
         public required string MovieFiction { get; set; }
-        public required string MovieActors { get; set; }
-        public required string BestActress { get; set; }
-        public required string BestActor { get; set; }
 
         // Producer
         public required string ProducerName { get; set; }
@@ -42,7 +39,7 @@
 
 
         // FILM WORK OPERATION CERTIFICATE
-        public required string UploadedPdfFilePath { get; set; }
+        public string? UploadedPdfFilePath { get; set; }
 
         // Sinopsis
         public required string SinopsisTr { get; set; }

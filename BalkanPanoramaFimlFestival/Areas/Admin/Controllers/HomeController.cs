@@ -127,9 +127,6 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
                 MovieScript = x.MovieScript,
                 Cinematographer = x.Cinematographer,
                 MovieFiction = x.MovieFiction,
-                MovieActors = x.MovieActors,
-                BestActress = x.BestActress,
-                BestActor = x.BestActor,
 
                 // Producer
                 ProducerName = x.ProducerName,
@@ -610,8 +607,7 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
                     $"{application.DirectorBiographyEn},{application.DirectorFilmographyTr}," +
                     $"{application.DirectorFilmographyEn},{application.MovieScript}," +
                     $"{application.Cinematographer},{application.MovieFiction}," +
-                    $"{application.MovieActors},{application.BestActress}," +
-                    $"{application.BestActor},{application.ProducerName}," +
+                    $"{application.ProducerName}," +
                     $"{application.ProducerCompany},{application.ProducerCountry}," +
                     $"{application.ProducerPhone},{application.ProducerEmail}," +
                     $"{application.SinopsisTr},{application.SinopsisEn}," +

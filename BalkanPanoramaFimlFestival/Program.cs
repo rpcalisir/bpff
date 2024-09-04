@@ -11,7 +11,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using BalkanPanoramaFilmFestival.Extensions;
 using Microsoft.Extensions.Options;
 using BalkanPanoramaFilmFestival.Models.OptionsModels;
-using BalkanPanoramaFilmFestival.Services; // Add the appropriate namespace
+using BalkanPanoramaFilmFestival.Services;
+using Serilog; // Add the appropriate namespace
 
 namespace BalkanPanoramaFilmFestival
 {
@@ -47,7 +48,7 @@ namespace BalkanPanoramaFilmFestival
 
             builder.Services.ConfigureApplicationCookie(options =>
             {
-                // To prevent users to go "film contest application" page without siging in,
+                // To prevent users to go "film contest application" page without signing in,
                 // we define a login path here to redirect them to signin page.
                 // So, if User is not Authorized, direct them to login page.
                 options.LoginPath = new PathString("/Home/SignIn");
@@ -71,6 +72,16 @@ namespace BalkanPanoramaFilmFestival
 
             // Register CountryService
             builder.Services.AddSingleton<ICompetitionApplicationFormService, CompetitionApplicationFormService>();
+
+            // Configure Serilog
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.Console() // To also log to console
+                .WriteTo.File("logs/app-.txt", rollingInterval: RollingInterval.Day) // Logs to a file with daily rolling
+                .CreateLogger();
+
+            // Clear default logging providers and use Serilog
+            builder.Logging.ClearProviders();
+            builder.Logging.AddSerilog();
 
             var app = builder.Build();
 
