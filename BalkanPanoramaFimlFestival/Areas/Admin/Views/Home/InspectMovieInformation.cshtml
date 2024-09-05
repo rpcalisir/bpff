@@ -1,0 +1,344 @@
+﻿@{
+    ViewData["Title"] = "Inspect Movie Information";
+}
+
+<div class="container">
+    <h2>@ViewData["Title"]</h2>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <!-- Define headers for each section -->
+                <th style="font-weight: bold;">COMPETITION CATEGORY</th>
+                <th style="font-weight: bold;">GENERAL INFORMATION</th>
+                <th style="font-weight: bold;">SELECTED COUNTRIES</th>
+                <th style="font-weight: bold;">MOVIE GENRES</th>
+                <th style="font-weight: bold;">MOVIE FEATURES</th>
+                <th style="font-weight: bold;">DIRECTOR</th>
+                <th style="font-weight: bold;">MOVIE TAG</th>
+                <th style="font-weight: bold;">PRODUCER</th>
+                <th style="font-weight: bold;">SINOPSIS</th>
+                <th style="font-weight: bold;">MOVIE TECHNICAL INFORMATION</th>
+                <th style="font-weight: bold;">DOWNLOADABLE SCREENING COPY OF THE FILM</th>
+                <th style="font-weight: bold;">APPLICANT</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <!-- Define columns for each section -->
+                <td>
+                    <div class="section">
+                        <table class="inner-table">
+                            <tr>
+                                <td><strong>Competition Category</strong></td>
+                                <td>@Model.CompetitionCategory</td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+                <td>
+                    <div class="section">
+                        <table class="inner-table">
+                            <tr>
+                                <td><strong>Original Movie Name</strong></td>
+                                <td>@Model.OriginalMovieName</td>
+                            </tr>
+                            <tr>
+                                <td><strong>English Movie Name</strong></td>
+                                <td>@Model.EnglishMovieName</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Movie Website</strong></td>
+                                <td>@Model.MovieWebsite</td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+                <td>
+                    <div class="section">
+                        <table class="inner-table">
+                            <tr>
+                                <td><strong>Selected Countries</strong></td>
+                                <td>@Model.SelectedCountries</td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+                <td>
+                    <div class="section">
+                        <table class="inner-table">
+                            <tr>
+                                <td><strong>Selected Movie Genres</strong></td>
+                                <td>@Model.SelectedMovieGenres</td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+                <td>
+                    <div class="section">
+                        <table class="inner-table">
+                            <tr>
+                                <td><strong>Production Year</strong></td>
+                                <td>@Model.ProductionYear</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Movie Time Length</strong></td>
+                                <td>@Model.MovieTimeLength</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Movie Language</strong></td>
+                                <td>@Model.MovieLanguage</td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+                <td>
+                    <div class="section">
+                        <table class="inner-table">
+                            <tr>
+                                <td><strong>Director Name</strong></td>
+                                <td>@Model.DirectorName</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Director Company</strong></td>
+                                <td>@Model.DirectorCompany</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Director Country</strong></td>
+                                <td>@Model.DirectorCountry</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Director Phone</strong></td>
+                                <td>@Model.DirectorPhone</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Director Email</strong></td>
+                                <td>@Model.DirectorEmail</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Director Biography (TR)</strong></td>
+                                <td>@Model.DirectorBiographyTr</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Director Biography (EN)</strong></td>
+                                <td>@Model.DirectorBiographyEn</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Director Filmography (TR)</strong></td>
+                                <td>@Model.DirectorFilmographyTr</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Director Filmography (EN)</strong></td>
+                                <td>@Model.DirectorFilmographyEn</td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+                <td>
+                    <div class="section">
+                        <table class="inner-table">
+                            <tr>
+                                <td><strong>Movie Script</strong></td>
+                                <td>@Model.MovieScript</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Cinematographer</strong></td>
+                                <td>@Model.Cinematographer</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Movie Fiction</strong></td>
+                                <td>@Model.MovieFiction</td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+                <td>
+                    <div class="section">
+                        <table class="inner-table">
+                            <tr>
+                                <td><strong>Producer Name</strong></td>
+                                <td>@Model.ProducerName</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Producer Company</strong></td>
+                                <td>@Model.ProducerCompany</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Producer Country</strong></td>
+                                <td>@Model.ProducerCountry</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Producer Phone</strong></td>
+                                <td>@Model.ProducerPhone</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Producer Email</strong></td>
+                                <td>@Model.ProducerEmail</td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+                <td>
+                    <div class="section">
+                        <table class="inner-table">
+                            <tr>
+                                <td><strong>Sinopsis (TR)</strong></td>
+                                <td>@Model.SinopsisTr</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Sinopsis (EN)</strong></td>
+                                <td>@Model.SinopsisEn</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Festivals Attended</strong></td>
+                                <td>@Model.FestivalsAttended</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Awards Received</strong></td>
+                                <td>@Model.AwardsReceived</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Premier Status</strong></td>
+                                <td>@Model.PremierStatus</td>
+                            </tr>
+                            <tr>
+                                <td><strong>First Screening</strong></td>
+                                <td>@Model.FirstScreening</td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+                <td>
+                    <div class="section">
+                        <table class="inner-table">
+                            <tr>
+                                <td><strong>Color</strong></td>
+                                <td>@Model.MovieTechInfoColor</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Screen Size</strong></td>
+                                <td>@Model.ScreenSize</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Audio</strong></td>
+                                <td>@Model.MovieTechInfoAudio</td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+                <td>
+                    <div class="section">
+                        <table class="inner-table">
+                            <tr>
+                                <td><strong>Movie Link</strong></td>
+                                <td>@Model.MovieLink</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Movie Link Password</strong></td>
+                                <td>@Model.MovieLinkPassword</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Trailer Link</strong></td>
+                                <td>@Model.TrailerLink</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Trailer Link Password</strong></td>
+                                <td>@Model.TrailerLinkPassword</td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+                <td>
+                    <div class="section">
+                        <table class="inner-table">
+                            <tr>
+                                <td><strong>Applicant Name</strong></td>
+                                <td>@Model.ApplicantName</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Applicant Company</strong></td>
+                                <td>@Model.ApplicantCompany</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Applicant Country</strong></td>
+                                <td>@Model.ApplicantCountry</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Applicant Phone</strong></td>
+                                <td>@Model.ApplicantPhone</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Applicant Email</strong></td>
+                                <td>@Model.ApplicantEmail</td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<style>
+    /* Main Table */
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .table th, .table td {
+            border: 1px solid black; /* Border around each cell */
+            padding: 8px;
+            text-align: left;
+        }
+
+        /* Add border between rows */
+        .table tbody tr {
+            border-bottom: 1px solid black; /* Border between rows */
+        }
+
+            /* Striped Rows */
+            .table tbody tr:nth-child(odd) {
+                background-color: #f9f9f9; /* Light grey background for odd rows */
+            }
+
+            .table tbody tr:nth-child(even) {
+                background-color: #fff; /* White background for even rows */
+            }
+
+    /* Section Styling */
+    .section {
+        border: 2px solid black;
+        padding: 8px;
+        margin-bottom: 6px; /* Adjust margin for space between sections */
+    }
+
+    /* Inner Table */
+    .inner-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .inner-table td {
+            padding: 4px;
+            border-right: 1px solid black; /* Border between columns */
+            border-bottom: 1px solid #ddd; /* Light grey bottom border for properties */
+        }
+
+            /* Remove border for the last cell in inner table row */
+            .inner-table td:last-child {
+                border-right: 0;
+            }
+
+        /* Remove border for the last row in inner table */
+        .inner-table tr:last-child td {
+            border-bottom: 0;
+        }
+
+    /* Styling for section borders */
+    .table td {
+        border-bottom: 2px solid black; /* Bold line between sections */
+    }
+</style>
+
+

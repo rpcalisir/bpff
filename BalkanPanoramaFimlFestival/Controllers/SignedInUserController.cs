@@ -616,6 +616,12 @@ namespace BalkanPanoramaFilmFestival.Controllers
         #region Private Implementation
         private CompetitionApplicationUserViewModel PopulateModelAndViewData(CompetitionApplicationUserViewModel model)
         {
+            model.CompetitionCategory = Request.Form["CompetitionCategory"]!;
+
+            model.OriginalMovieName = Request.Form["OriginalMovieName"]!;
+            model.EnglishMovieName = Request.Form["EnglishMovieName"]!;
+
+
             // Ensure the form retains the selected values
             var selectedCountriesList = Request.Form["SelectedCountries"].ToList();
             var selectedMovieGenres = Request.Form["SelectedMovieGenres"].ToList();
@@ -631,8 +637,14 @@ namespace BalkanPanoramaFilmFestival.Controllers
             model.AllMovieGenres = _competitionApplicationFormService.GetAllGenres();
 
             // Retain other form values
-            model.CompetitionCategory = Request.Form["CompetitionCategory"]!;
-            model.MovieTimeLength = Request.Form["MovieTimeLength"]!;
+            //model.ProductionYear = Request.Form["ProductionYear"]!;
+            model.MovieTimeLength = Request.Form["MovieTimeLengthName"]!;
+            //model.MovieLanguage = Request.Form["MovieLanguageName"]!;
+
+            //model.DirectorCountry = Request.Form["DirectorCountryName"]!;
+            //model.ProducerCountry = Request.Form["ProducerCountryName"]!;
+            //model.ApplicantCountry = Request.Form["ApplicantCountryName"]!;
+
 
             // Add a model error if necessary
             ModelState.AddModelError(string.Empty, "One of the inputs is not correct!");

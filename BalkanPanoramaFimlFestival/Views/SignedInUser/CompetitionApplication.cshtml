@@ -372,6 +372,20 @@
         });
     </script>
 
+    @* MovieTimeLength Update Hidden Field *@
+@*     <script>
+        function updateHiddenFieldMovieTimeLength() {
+            var movieTimeLengthSelect = document.getElementById('MovieTimeLengthSelect');
+            var MovieTimeLengthName = document.getElementById('MovieTimeLengthName');
+
+            if (movieTimeLengthSelect && MovieTimeLengthName) {
+                var selectedMovieTimeLengthText = movieTimeLengthSelect.options[movieTimeLengthSelect.selectedIndex].text;
+                MovieTimeLengthName.value = selectedMovieTimeLengthText;
+            }
+        }
+    </script> *@
+
+
     @* Movie Language Selector *@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -1265,7 +1279,7 @@
     </script> *@
 
     @* Upload Pdf Optional Handle Script *@
-   @*  <script>
+    @*  <script>
         document.addEventListener('DOMContentLoaded', function () {
             const uploadedPdfFileInput = document.getElementById('UploadedPdfFile');
             const pdfFileOptionalCheckbox = document.getElementById('PdfFileOptional');
@@ -2680,7 +2694,7 @@
         <div id="movie-features-container" class="row mb-3 col-md-10 offset-md-1 border border-secondary rounded p-3">
             <div class="col-md-4">
                 <label for="ProductionYear" class="form-label" asp-for="ProductionYear">Production Year</label>
-                <select class="form-control" id="ProductionYear" name="ProductionYear" required>
+                <select class="form-control" id="ProductionYear" asp-for="ProductionYear" name="ProductionYear" required>
                     <option value="">Select Production Year</option>
                     <option value="2022">2022</option>
                     <option value="2023">2023</option>
@@ -2689,17 +2703,18 @@
                 <div class="form-text"></div>
                 <span class="text-danger" id="ProductionYearError" asp-validation-for="ProductionYear"></span>
             </div>
-
             <div class="col-md-4">
-                <label for="MovieTimeLength" class="form-label">Time Length(Select Category First)</label>
-                <select class="form-control" id="MovieTimeLength" name="MovieTimeLength" required>
+                <label for="MovieTimeLength" class="form-label" asp-for="MovieTimeLength">Time Length(Select Category First)</label>
+                <select class="form-control" id="MovieTimeLength" asp-for="MovieTimeLength" name="MovieTimeLength" required>
                     <!-- Options will be populated by JavaScript -->
                 </select>
+                @* <input type="hidden" id="MovieTimeLengthName" name="MovieTimeLengthName" /> *@
+                @* <span id="MovieTimeLengthError" class="text-danger" style="display: none;">Please select time length!</span> *@
                 <div class="text-danger" id="MovieTimeLengthError"></div> <!-- To show validation message -->
             </div>
             <div class="col-md-4">
                 <label for="LanguageSelectMovie" class="form-label" asp-for="MovieLanguage">Movie Language</label>
-                <select id="LanguageSelectMovie" name="MovieLanguage" class="form-control" required>
+                <select class="form-control" id="LanguageSelectMovie" asp-for="MovieLanguage" name="MovieLanguage" required>
                     <option value="">Select Movie Language</option>
                     <!-- Populate countries here -->
                 </select>
@@ -2754,7 +2769,7 @@
                 </div>
                 <div class="col-md-6">
                     <label for="CountrySelectDirector" class="form-label" asp-for="DirectorCountry">Director Country</label>
-                    <select id="CountrySelectDirector" name="DirectorCountry" class="form-control" required>
+                    <select id="CountrySelectDirector" name="DirectorCountry" asp-for="DirectorCountry" class="form-control" required>
                         <option value="">Select Country</option>
                         <!-- Populate countries here -->
                     </select>
@@ -2810,7 +2825,7 @@
                 <div class="col-md-12">
                     <label for="ScreenWriter1" class="form-label">First Screen Writer</label>
                     <input type="text" class="form-control" id="ScreenWriter1" name="ScreenWriter1" maxlength="100"
-                           required placeholder="Max 100 characters" 
+                           required placeholder="Max 100 characters"
                            data-val="true"
                            data-val-required="First Screen Writer is required." />
                     <span class="text-danger" asp-validation-for="ScreenWriter1"></span>
@@ -2843,7 +2858,7 @@
                 <div class="col-md-12">
                     <label for="MovieFiction1" class="form-label">First Movie Fiction</label>
                     <input type="text" class="form-control" id="MovieFiction1" name="MovieFiction1" maxlength="100"
-                           required placeholder="Max 100 characters" 
+                           required placeholder="Max 100 characters"
                            data-val="true"
                            data-val-required="First Movie Fiction is required." />
                     <span class="text-danger" asp-validation-for="MovieFiction1"></span>
@@ -2920,7 +2935,7 @@
                 </div>
                 <div class="col-md-6">
                     <label for="CountrySelectProducer" class="form-label" asp-for="ProducerCountry">Producer Country</label>
-                    <select id="CountrySelectProducer" name="ProducerCountry" class="form-control" required>
+                    <select id="CountrySelectProducer" name="ProducerCountry" asp-for="ProducerCountry" class="form-control" required>
                         <option value="">Select Country</option>
                         <!-- Populate countries here -->
                     </select>
@@ -3275,7 +3290,7 @@
                 </div>
                 <div class="col-md-6">
                     <label for="CountrySelectApplicant" class="form-label" asp-for="ApplicantCountry">Applicant Country</label>
-                    <select id="CountrySelectApplicant" name="ApplicantCountry" class="form-control" required>
+                    <select id="CountrySelectApplicant" name="ApplicantCountry" asp-for="ApplicantCountry" class="form-control" required>
                         <option value="">Select Country</option>
                         <!-- Populate countries here -->
                     </select>

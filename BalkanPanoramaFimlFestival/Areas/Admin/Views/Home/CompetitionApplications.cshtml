@@ -1,131 +1,49 @@
-﻿@model List<CompetitionApplicationUserViewModel>
-
-@{
-    ViewData["Title"] = "CompetitionApplications";
-}
-
-<h1>Competition Applications</h1>
-
-<div style="display: flex; justify-content: center; align-items: flex-start; height: 100vh;">
-    <table class="table table-success table-striped">
+﻿<div style="display: flex; justify-content: center; align-items: flex-start; height: 100vh;">
+    <table class="table table-striped" style="width: 100%;">
         <thead>
             <tr>
-                <th>Category</th>
-                <th>Production Year</th>
-                <th>Applicant Name</th>
-                <th>Applicant Email</th>
-                <th>Applicant Country</th>
-                <th>Movie Name</th>
-                <th>Director</th>
-                <th>Download PDF</th>
-                <th>Download Movie Pictures</th>
-                <th>Download Movie Poster</th>
-                <th>Download Movie Subtitle</th>
-                <th>Download Director Photo</th>
-                <th>Download Best Actress Picture</th>
-                <th>Download Best Actor Picture</th>
-                <th>Download ALL MEDIA</th>
-                <th>Download ALL Applicant Data</th> <!-- New Column for CSV Download -->
+                <th>ORDER</th>
+                <th style="min-width: 200px;">CATEGORY</th>
+                <th>PRODUCTION YEAR</th>
+                <th>APPLICANT NAME</th>
+                <th>APPLICANT EMAIL</th>
+                <th>APPLICANT COUNTRY</th>
+                <th>MOVIE NAME</th>
+                <th>DIRECTOR</th>
+                <th>ALL MEDIA</th>
+                <th>INSPECT</th>
+                <th>MOVIE INFORMATION</th>
+                <th>DELETE</th>
             </tr>
         </thead>
 
         <tbody>
             @foreach (var item in Model)
             {
+                var categoryStyle = "";
+
+                if (item.CompetitionCategory == "SARI ŞEMSİYE ULUSAL UZUN METRAJ FİLM YARIŞMASI")
+                {
+                    categoryStyle = "background-color: yellow; color: black;";
+                }
+                else if (item.CompetitionCategory == "SARI ŞEMSİYE ULUSAL KISA METRAJ FİLM YARIŞMASI")
+                {
+                    categoryStyle = "background-color: red; color: white;";
+                }
+                else if (item.CompetitionCategory == "DARIO MORENO")
+                {
+                    categoryStyle = "background-color: blue; color: white;";
+                }
+
                 <tr>
-                    <td>@item.CompetitionCategory</td>
+                    <td>@item.Id</td>
+                    <td style="@categoryStyle !important">@item.CompetitionCategory</td>
                     <td>@item.ProductionYear</td>
                     <td>@item.ApplicantName</td>
                     <td>@item.ApplicantEmail</td>
                     <td>@item.ApplicantCountry</td>
-                    <td>@item.DirectorName</td>
                     <td>@item.OriginalMovieName</td>
-                    <td>
-                        @if (!string.IsNullOrEmpty(item.UploadedPdfFilePath))
-                        {
-                            // Pass the relative file path (excluding leading '/') and encode it for URL safety
-                            <a href="@Url.Action("DownloadPdf", "Home",
-                            new { uploadedPdfFilePath = item.UploadedPdfFilePath, applicantEmail = item.ApplicantEmail })"
-                               class="btn btn-primary">Download PDF</a>
-                        }
-                        else
-                        {
-                            <span>No PDF Uploaded</span>
-                        }
-                    </td>
-                    <td>
-                        @if (item.UploadedMoviePicturesFilePaths != null && item.UploadedMoviePicturesFilePaths.Any())
-                        {
-                            // Pass the list of file paths and applicantEmail as parameters
-                            var filePaths = string.Join(",", item.UploadedMoviePicturesFilePaths);
-                            <a href="@Url.Action("DownloadMoviePictures", "Home", 
-                            new { applicantEmail = item.ApplicantEmail, uploadedMoviePicturesFilePaths = filePaths })" class="btn btn-primary">Download Movie Pictures</a>
-                        }
-                        else
-                        {
-                            <span>No Pictures Uploaded</span>
-                        }
-                    </td>
-                    <td>
-                        @if (!string.IsNullOrEmpty(item.UploadedMoviePosterFilePath))
-                        {
-                            <a href="@Url.Action("DownloadUploadedMoviePoster", "Home",
-                            new { UploadedMoviePosterFilePath = item.UploadedMoviePosterFilePath, applicantEmail = item.ApplicantEmail })"
-                               class="btn btn-primary">Download Movie Poster</a>
-                        }
-                        else
-                        {
-                            <span>No Movie Poster Uploaded</span>
-                        }
-                    </td>
-                    <td>
-                        @if (!string.IsNullOrEmpty(item.UploadedMovieSubtitleFilePath))
-                        {
-                            <a href="@Url.Action("DownloadUploadedMovieSubtitle", "Home",
-                        new { UploadedMovieSubtitleFilePath = item.UploadedMovieSubtitleFilePath, applicantEmail = item.ApplicantEmail  })"
-                               class="btn btn-primary">Download Movie Subtitle</a>
-                        }
-                        else
-                        {
-                            <span>No Movie Subtitle Uploaded</span>
-                        }
-                    </td>
-                    <td>
-                        @if (!string.IsNullOrEmpty(item.UploadedDirectorPhotoFilePath))
-                        {
-                            <a href="@Url.Action("DownloadUploadedDirectorPhoto", "Home",
-                        new { UploadedDirectorPhotoFilePath = item.UploadedDirectorPhotoFilePath, applicantEmail = item.ApplicantEmail })"
-                               class="btn btn-primary">Download Director Photo</a>
-                        }
-                        else
-                        {
-                            <span>No Director Photo Uploaded</span>
-                        }
-                    </td>
-                    <td>
-                        @if (!string.IsNullOrEmpty(item.UploadedBestActressPhotoFilePath))
-                        {
-                            <a href="@Url.Action("DownloadUploadedBestActressPhoto", "Home",
-                        new { UploadedBestActressPhotoFilePath = item.UploadedBestActressPhotoFilePath, applicantEmail = item.ApplicantEmail })"
-                               class="btn btn-primary">Download Best Actress Photo</a>
-                        }
-                        else
-                        {
-                            <span>No Best Actress Photo Uploaded</span>
-                        }
-                    </td>
-                    <td>
-                        @if (!string.IsNullOrEmpty(item.UploadedBestActorPhotoFilePath))
-                        {
-                            <a href="@Url.Action("DownloadUploadedBestActorPhoto", "Home",
-                        new { UploadedBestActorPhotoFilePath = item.UploadedBestActorPhotoFilePath, applicantEmail = item.ApplicantEmail })"
-                               class="btn btn-primary">Download Best Actor Photo</a>
-                        }
-                        else
-                        {
-                            <span>No Best Actor Photo Uploaded</span>
-                        }
-                    </td>
+                    <td>@item.DirectorName</td>
                     <td>
                         @if (
                        !string.IsNullOrEmpty(item.UploadedPdfFilePath) &&
@@ -147,20 +65,28 @@
                             UploadedDirectorPhotoFilePath = item.UploadedDirectorPhotoFilePath,
                             UploadedBestActressPhotoFilePath = item.UploadedBestActressPhotoFilePath,
                             UploadedBestActorPhotoFilePath = item.UploadedBestActorPhotoFilePath
-                        })" class="btn btn-primary">Download All Files</a>
+                        })" class="btn btn-primary">Download All Media Files</a>
                         }
                         else
                         {
-                            <span>No Best Actor Photo Uploaded</span>
+                            <span>No Media File Uploaded</span>
                         }
                     </td>
                     <td>
-                        <a href="@Url.Action("DownloadAllApplicantData", "Home",
-                    new { id = item.Id })" class="btn btn-primary">Download ALL Applicant Data</a> <!-- New Button for CSV Download -->
+                        <a href="@Url.Action("DownloadMovieInformation", "Home",
+                    new { id = item.Id })" class="btn btn-primary">Download Movie Information</a>
+                    </td>
+                    <td>
+                        <a href="@Url.Action("InspectMovieInformation", "Home", new { id = item.Id })" class="btn btn-info">Inspect</a> <!-- Inspect button -->
+                    </td>
+                    <td>
+                        <form asp-action="DeleteCompetitionApplication" method="post" onsubmit="return confirm('Are you sure you want to delete this item?');">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
                     </td>
                 </tr>
             }
         </tbody>
     </table>
 </div>
-

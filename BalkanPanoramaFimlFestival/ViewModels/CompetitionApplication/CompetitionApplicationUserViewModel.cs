@@ -63,11 +63,11 @@ namespace BalkanPanoramaFilmFestival.ViewModels.CompetitionApplication
         public string? ScreenWriter1 { get; set; }
         public string? ScreenWriter2 { get; set; }
         public string? ScreenWriter3 { get; set; }
-        public required string MovieScript { get; set; }
+        public string? MovieScript { get; set; }
         public required string Cinematographer { get; set; }
         public string? MovieFiction1 { get; set; }
         public string? MovieFiction2 { get; set; }
-        public required string MovieFiction { get; set; }
+        public string? MovieFiction { get; set; }
 
 
         // Producer

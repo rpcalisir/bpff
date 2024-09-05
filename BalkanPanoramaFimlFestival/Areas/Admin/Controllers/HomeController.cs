@@ -1,6 +1,7 @@
 ﻿using BalkanPanoramaFilmFestival.Areas.Admin.ViewModels;
 using BalkanPanoramaFilmFestival.Models;
 using BalkanPanoramaFilmFestival.Models.Account;
+using ClosedXML.Excel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -572,9 +573,23 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
             }
         }
 
-        public IActionResult DownloadAllApplicantData(int id)
+        public IActionResult InspectMovieInformation(int id)
         {
-            //Retrieve the specific record from the database using the id
+            // Retrieve the specific record from the database using the id
+            var application = _context.CompetitionApplications.Find(id);
+
+            if (application == null)
+            {
+                return BadRequest("Application not found!");
+            }
+
+            // Pass the application data to the view
+            return View(application);
+        }
+
+        public IActionResult DownloadMovieInformation(int id)
+        {
+            // Retrieve the specific record from the database using the id
             var application = _context.CompetitionApplications.Find(id);
 
             if (application == null)
@@ -582,53 +597,113 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
                 return BadRequest("User could not be found!");
             }
 
-            var csvData = new StringBuilder();
-            csvData.AppendLine("Id,CompetitionCategory,OriginalMovieName,EnglishMovieName,MovieWebsite," +
-                             "SelectedCountries,SelectedMovieGenres,ProductionYear,MovieTimeLength, " +
-                             "MovieLanguage,DirectorName,DirectorCompany,DirectorCountry,DirectorPhone, " +
-                             "DirectorEmail,DirectorBiographyTr,DirectorBiographyEn,DirectorFilmographyTr, " +
-                             "DirectorFilmographyEn,MovieScript,Cinematographer,MovieFiction,MovieActors, " +
-                             "BestActress,BestActor,ProducerName,ProducerCompany,ProducerCountry,ProducerPhone, " +
-                             "ProducerEmail,SinopsisTr,SinopsisEn,FestivalsAttended, " +
-                             "AwardsReceived,PremierStatus,FirstScreening,MovieTechInfoColor,ScreenSize, " +
-                             "MovieTechInfoAudio, " +
-                             "MovieLink, " +
-                             "MovieLinkPassword,TrailerLink,TrailerLinkPassword,DownloadableCopyCheck, " +
-                             "ApplicantName,ApplicantCompany,ApplicantCountry,ApplicantPhone,ApplicantEmail");
+            using (var workbook = new XLWorkbook())
+            {
+                var worksheet = workbook.Worksheets.Add("Competition Application");
 
-            csvData.AppendLine($"{application.Id},{application.CompetitionCategory}," +
-                    $"{application.OriginalMovieName},{application.EnglishMovieName}," +
-                    $"{application.MovieWebsite},{application.SelectedCountries}," +
-                    $"{application.SelectedMovieGenres},{application.ProductionYear}," +
-                    $"{application.MovieTimeLength},{application.MovieLanguage}," +
-                    $"{application.DirectorName},{application.DirectorCompany}," +
-                    $"{application.DirectorCountry},{application.DirectorPhone}," +
-                    $"{application.DirectorEmail},{application.DirectorBiographyTr}," +
-                    $"{application.DirectorBiographyEn},{application.DirectorFilmographyTr}," +
-                    $"{application.DirectorFilmographyEn},{application.MovieScript}," +
-                    $"{application.Cinematographer},{application.MovieFiction}," +
-                    $"{application.ProducerName}," +
-                    $"{application.ProducerCompany},{application.ProducerCountry}," +
-                    $"{application.ProducerPhone},{application.ProducerEmail}," +
-                    $"{application.SinopsisTr},{application.SinopsisEn}," +
-                    $"{application.FestivalsAttended},{application.AwardsReceived}," +
-                    $"{application.PremierStatus},{application.FirstScreening}," +
-                    $"{application.MovieTechInfoColor},{application.ScreenSize}," +
-                    $"{application.MovieTechInfoAudio},{application.MovieLink}," +
-                    $"{application.MovieLinkPassword},{application.TrailerLink}," +
-                    $"{application.TrailerLinkPassword},{application.DownloadableCopyCheck}," +
-                    $"{application.ApplicantName},{application.ApplicantCompany}," +
-                    $"{application.ApplicantCountry},{application.ApplicantPhone}," +
-                    $"{application.ApplicantEmail}");
+                // Define sections and their properties with database column names
+                var sections = new[]
+                {
+            new { Name = "COMPETITION CATEGORY", Properties = new[] { ("CompetitionCategory", "CompetitionCategory") } },
+            new { Name = "GENERAL INFORMATION", Properties = new[] { ("OriginalMovieName", "OriginalMovieName"), ("EnglishMovieName", "EnglishMovieName"), ("MovieWebsite", "MovieWebsite") } },
+            new { Name = "SELECTED COUNTRIES", Properties = new[] { ("SelectedCountries", "SelectedCountries") } },
+            new { Name = "MOVIE GENRES", Properties = new[] { ("SelectedMovieGenres", "SelectedMovieGenres") } },
+            new { Name = "MOVIE FEATURES", Properties = new[] { ("ProductionYear", "ProductionYear"), ("MovieTimeLength", "MovieTimeLength"), ("MovieLanguage", "MovieLanguage") } },
+            new { Name = "DIRECTOR", Properties = new[] { ("DirectorName", "DirectorName"), ("DirectorCompany", "DirectorCompany"), ("DirectorCountry", "DirectorCountry"), ("DirectorPhone", "DirectorPhone"), ("DirectorEmail", "DirectorEmail"), ("DirectorBiographyTr", "DirectorBiographyTr"), ("DirectorBiographyEn", "DirectorBiographyEn"), ("DirectorFilmographyTr", "DirectorFilmographyTr"), ("DirectorFilmographyEn", "DirectorFilmographyEn") } },
+            new { Name = "MOVIE TAG", Properties = new[] { ("MovieScript", "MovieScript"), ("Cinematographer", "Cinematographer"), ("MovieFiction", "MovieFiction") } },
+            new { Name = "PRODUCER", Properties = new[] { ("ProducerName", "ProducerName"), ("ProducerCompany", "ProducerCompany"), ("ProducerCountry", "ProducerCountry"), ("ProducerPhone", "ProducerPhone"), ("ProducerEmail", "ProducerEmail") } },
+            new { Name = "SINOPSIS", Properties = new[] { ("SinopsisTr", "SinopsisTr"), ("SinopsisEn", "SinopsisEn"), ("FestivalsAttended", "FestivalsAttended"), ("AwardsReceived", "AwardsReceived"), ("PremierStatus", "PremierStatus"), ("FirstScreening", "FirstScreening") } },
+            new { Name = "MOVIE TECHNICAL INFORMATION", Properties = new[] { ("MovieTechInfoColor", "MovieTechInfoColor"), ("ScreenSize", "ScreenSize"), ("MovieTechInfoAudio", "MovieTechInfoAudio") } },
+            new { Name = "DOWNLOADABLE SCREENING COPY OF THE FILM", Properties = new[] { ("MovieLink", "MovieLink"), ("MovieLinkPassword", "MovieLinkPassword"), ("TrailerLink", "TrailerLink"), ("TrailerLinkPassword", "TrailerLinkPassword") } },
+            new { Name = "APPLICANT", Properties = new[] { ("ApplicantName", "ApplicantName"), ("ApplicantCompany", "ApplicantCompany"), ("ApplicantCountry", "ApplicantCountry"), ("ApplicantPhone", "ApplicantPhone"), ("ApplicantEmail", "ApplicantEmail") } }
+        };
 
-            // Add BOM for UTF-8
-            var bom = Encoding.UTF8.GetBytes("\uFEFF");
+                int startCol = 1;
 
-            //var csvContent = Encoding.UTF8.GetBytes(csvData.ToString());
-            var csvContent = bom.Concat(Encoding.UTF8.GetBytes(csvData.ToString())).ToArray();
-            var fileName = $"CompetitionApplication_{application.ApplicantEmail}.csv";
+                foreach (var section in sections)
+                {
+                    int startRow = 1;
 
-            return File(csvContent, "text/csv", fileName);
+                    // Merge cells for section header
+                    var headerRange = worksheet.Range(startRow, startCol, startRow, startCol + 1);
+                    headerRange.Merge();
+                    headerRange.Value = section.Name;
+                    headerRange.Style.Font.Bold = true;
+                    headerRange.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center; // Center alignment
+                    headerRange.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center; // Vertical center alignment
+                    headerRange.Style.Border.BottomBorder = XLBorderStyleValues.Thick;
+                    headerRange.Style.Border.RightBorder = XLBorderStyleValues.Thick;
+                    headerRange.Style.Border.LeftBorder = XLBorderStyleValues.Thick;
+                    headerRange.Style.Border.TopBorder = XLBorderStyleValues.Thick;
+
+                    // Add property names and values
+                    for (int i = 0; i < section.Properties.Length; i++)
+                    {
+                        var (displayName, columnName) = section.Properties[i];
+
+                        // Left column for property name
+                        var propertyNameCell = worksheet.Cell(startRow + 1 + i, startCol);
+                        propertyNameCell.Value = displayName;
+                        propertyNameCell.Style.Border.RightBorder = XLBorderStyleValues.Thin;
+                        propertyNameCell.Style.Border.BottomBorder = XLBorderStyleValues.Thin;
+                        propertyNameCell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Left;
+
+                        // Right column for property value
+                        var propertyValueCell = worksheet.Cell(startRow + 1 + i, startCol + 1);
+                        var propertyValue = application.GetType().GetProperty(columnName)?.GetValue(application)?.ToString() ?? "";
+                        propertyValueCell.Value = propertyValue;
+                        propertyValueCell.Style.Border.LeftBorder = XLBorderStyleValues.Thin;
+                        propertyValueCell.Style.Border.BottomBorder = XLBorderStyleValues.Thin;
+                        propertyValueCell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Left;
+
+                        // Adjust column widths based on content
+                        worksheet.Column(startCol).AdjustToContents();
+                        worksheet.Column(startCol + 1).AdjustToContents();
+                    }
+
+                    // Add a thick border around the section
+                    int endRow = startRow + section.Properties.Length; // The end row of the current section
+                    int endCol = startCol + 1; // The end column of the current section (right column of the section)
+                    if (endRow > startRow)
+                    {
+                        var range = worksheet.Range(startRow, startCol, endRow, endCol);
+                        range.Style.Border.OutsideBorder = XLBorderStyleValues.Thick;
+                        range.Style.Border.InsideBorder = XLBorderStyleValues.Thin;
+                        range.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Left;
+                    }
+
+                    // Move to the next column for the next section
+                    startCol += 3; // Adjust the gap between sections as needed (2 columns for each section plus 1 for gap)
+                }
+
+                // Save to a memory stream
+                using (var stream = new MemoryStream())
+                {
+                    workbook.SaveAs(stream);
+                    stream.Position = 0;
+                    var fileName = $"CompetitionApplication_{application.ApplicantEmail}.xlsx";
+                    return File(stream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+            }
         }
+
+
+        [HttpPost]
+        public IActionResult DeleteCompetitionApplication(int id)
+        {
+            // Retrieve the item from the database using the provided id
+            var itemToDelete = _context.CompetitionApplications.Find(id);
+
+            if (itemToDelete != null)
+            {
+                // Remove the item from the database
+                _context.CompetitionApplications.Remove(itemToDelete);
+                _context.SaveChanges();
+            }
+
+            // Redirect back to the CompetitionApplications view after deletion
+            return RedirectToAction("CompetitionApplications");
+        }
+
     }
 }
