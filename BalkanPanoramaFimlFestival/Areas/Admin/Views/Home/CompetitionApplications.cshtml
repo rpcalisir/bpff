@@ -46,31 +46,28 @@
                     <td>@item.DirectorName</td>
                     <td>
                         @if (
-                       !string.IsNullOrEmpty(item.UploadedPdfFilePath) &&
                        !string.IsNullOrEmpty(item.UploadedMoviePicturesFilePaths) &&
                        !string.IsNullOrEmpty(item.UploadedMoviePosterFilePath) &&
-                       !string.IsNullOrEmpty(item.UploadedMovieSubtitleFilePath) &&
-                       !string.IsNullOrEmpty(item.UploadedDirectorPhotoFilePath) &&
-                       !string.IsNullOrEmpty(item.UploadedBestActressPhotoFilePath) &&
-                       !string.IsNullOrEmpty(item.UploadedBestActorPhotoFilePath)
+                       !string.IsNullOrEmpty(item.UploadedDirectorPhotoFilePath)
                        )
                         {
                             <a href="@Url.Action("DownloadAllFiles", "Home", new
-                        {
-                            applicantEmail = item.ApplicantEmail,
-                            UploadedPdfFilePath = item.UploadedPdfFilePath,
-                            UploadedMoviePicturesFilePaths = string.Join(",", item.UploadedMoviePicturesFilePaths),
-                            UploadedMoviePosterFilePath = item.UploadedMoviePosterFilePath,
-                            UploadedMovieSubtitleFilePath = item.UploadedMovieSubtitleFilePath,
-                            UploadedDirectorPhotoFilePath = item.UploadedDirectorPhotoFilePath,
-                            UploadedBestActressPhotoFilePath = item.UploadedBestActressPhotoFilePath,
-                            UploadedBestActorPhotoFilePath = item.UploadedBestActorPhotoFilePath
-                        })" class="btn btn-primary">Download All Media Files</a>
+                            {
+                                applicantEmail = item.ApplicantEmail,
+                                UploadedPdfFilePath = item.UploadedPdfFilePath ?? string.Empty,
+                                UploadedMoviePicturesFilePaths = string.Join(",", item.UploadedMoviePicturesFilePaths),
+                                UploadedMoviePosterFilePath = item.UploadedMoviePosterFilePath ?? string.Empty,
+                                UploadedMovieSubtitleFilePath = item.UploadedMovieSubtitleFilePath ?? string.Empty,
+                                UploadedDirectorPhotoFilePath = item.UploadedDirectorPhotoFilePath ?? string.Empty,
+                                UploadedBestActressPhotoFilePath = item.UploadedBestActressPhotoFilePath ?? string.Empty,
+                                UploadedBestActorPhotoFilePath = item.UploadedBestActorPhotoFilePath ?? string.Empty
+                            })" class="btn btn-primary">Download All Media Files</a>
                         }
                         else
                         {
                             <span>No Media File Uploaded</span>
                         }
+
                     </td>
                     <td>
                         <a href="@Url.Action("DownloadMovieInformation", "Home",

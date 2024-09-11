@@ -1,0 +1,125 @@
+﻿<script>
+    window.onload = function () {
+        // Set the initial language to EN
+        setLanguage('EN');
+    };
+
+    function setLanguage(lang) {
+        // Fields, labels, and character counts related to the TR language
+        var trFields = ['DirectorBiographyTr', 'DirectorFilmographyTr', 'SinopsisTr'];
+        var charCounts = ['charCountDirectorBiographyTr', 'charCountDirectorFilmographyTr', 'charCountSinopsisTr'];
+
+        if (lang === 'EN') {
+            // Set the EN button as active and TR button as inactive
+            document.getElementById('btn-en').classList.remove('btn-outline-secondary');
+            document.getElementById('btn-en').classList.add('btn-primary');
+            document.getElementById('btn-tr').classList.remove('btn-primary');
+            document.getElementById('btn-tr').classList.add('btn-outline-secondary');
+
+            // Hide TR fields and remove required attribute
+            trFields.forEach(function (fieldId) {
+                var field = document.getElementById(fieldId);
+                if (field) {
+                    field.removeAttribute('required'); // Make field optional
+                    field.parentElement.style.display = 'none'; // Hide field and its container
+                    field.classList.remove('input-validation-error', 'border-danger', 'border-success'); // Remove validation and styling
+                }
+
+                // Hide associated error messages and character count
+                var errorSpan = document.querySelector(`span[data-valmsg-for="${fieldId}"]`);
+                if (errorSpan) errorSpan.textContent = ''; // Clear error message
+            });
+
+            charCounts.forEach(function (charCountId) {
+                var charCount = document.getElementById(charCountId);
+                if (charCount) {
+                    charCount.parentElement.style.display = 'none'; // Hide the character count container
+                }
+            });
+
+        } else if (lang === 'TR') {
+            // Set the TR button as active and EN button as inactive
+            document.getElementById('btn-tr').classList.remove('btn-outline-secondary');
+            document.getElementById('btn-tr').classList.add('btn-primary');
+            document.getElementById('btn-en').classList.remove('btn-primary');
+            document.getElementById('btn-en').classList.add('btn-outline-secondary');
+
+            // Show TR fields and make them required
+            trFields.forEach(function (fieldId) {
+                var field = document.getElementById(fieldId);
+                if (field) {
+                    field.setAttribute('required', 'required'); // Make field required
+                    field.parentElement.style.display = 'block'; // Show field and its container
+                }
+            });
+
+            // Show character count containers
+            charCounts.forEach(function (charCountId) {
+                var charCount = document.getElementById(charCountId);
+                if (charCount) {
+                    charCount.parentElement.style.display = 'block'; // Show the character count container
+                }
+            });
+
+            // Re-enable validation for TR fields
+            revalidateFields(trFields);
+        }
+    }
+
+    function revalidateFields(trFields) {
+        // Remove previous validation data
+        $('form').removeData('validator').removeData('unobtrusiveValidation');
+        $.validator.unobtrusive.parse('form'); // Re-parse the form for validation rules
+
+        // Attach 'input' event listeners to TR fields for real-time validation feedback
+        trFields.forEach(function (fieldId) {
+            var field = document.getElementById(fieldId);
+            if (field) {
+                field.addEventListener('input', function () {
+                    if (field.value.trim() === '') {
+                        // If the field is empty, show the red border and error message
+                        field.classList.add('border-danger');
+                        field.classList.remove('border-success');
+                    } else {
+                        // If the field has input, show the green border and hide the error message
+                        field.classList.remove('border-danger');
+                        field.classList.add('border-success');
+                        var errorSpan = document.querySelector(`span[data-valmsg-for="${fieldId}"]`);
+                        if (errorSpan) errorSpan.textContent = ''; // Clear the error message
+                    }
+                });
+            }
+        });
+    }
+
+    // Manually validate the form on submit
+    document.querySelector('form').addEventListener('submit', function (event) {
+        var isValid = true;
+        var trFields = ['DirectorBiographyTr', 'DirectorFilmographyTr', 'SinopsisTr'];
+
+        // Custom error messages
+        var errorMessages = {
+            DirectorBiographyTr: 'Lütfen Director Biography TR alanını doldurunuz',
+            DirectorFilmographyTr: 'Lütfen Director Filmography TR alanını doldurunuz',
+            SinopsisTr: 'Lütfen Sinopsis TR alanını doldurunuz'
+        };
+
+        // Check each TR field if it's required and visible
+        trFields.forEach(function (fieldId) {
+            var field = document.getElementById(fieldId);
+            if (field && field.getAttribute('required') && field.parentElement.style.display !== 'none') {
+                if (field.value.trim() === '') {
+                    // If a required field is empty, prevent form submission and show custom error
+                    isValid = false;
+                    field.classList.add('border-danger');
+                    var errorSpan = document.querySelector(`span[data-valmsg-for="${fieldId}"]`);
+                    if (errorSpan) errorSpan.textContent = errorMessages[fieldId]; // Show custom error message
+                }
+            }
+        });
+
+        if (!isValid) {
+            event.preventDefault(); // Prevent form submission if fields are invalid
+        }
+    });
+</script>

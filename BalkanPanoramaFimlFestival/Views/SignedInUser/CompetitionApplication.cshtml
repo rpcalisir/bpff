@@ -8,17 +8,63 @@
 @section Scripts
 {
     @await Html.PartialAsync("PartialScripts/_ValidationScriptsPartial")
+    @await Html.PartialAsync("PartialScripts/_SetLanguageScriptsPartial")
 
     @* COMPETITION CATEGORY*@
     @* ------------------------------------------------------------------------------------------------------------ *@
+    @* Container Border Color Script *@
+    <script>
+        function validateCompetitionCategory() {
+            var categoryContainer = document.getElementById('movie-category-container');
+            var categoryInputs = categoryContainer.querySelectorAll('input[type="radio"]');
+            var categorySelected = false;
 
+            // Check if any radio button is selected
+            categoryInputs.forEach(function (input) {
+                if (input.checked) {
+                    categorySelected = true;
+                }
+            });
+
+            // Update container border color based on the selection
+            if (categorySelected) {
+                categoryContainer.classList.add('border-success');
+                categoryContainer.classList.remove('border-danger');
+            } else {
+                categoryContainer.classList.add('border-danger');
+                categoryContainer.classList.remove('border-success');
+            }
+
+            return categorySelected; // Return whether the category is selected
+        }
+
+        // Attach the validation function to the form submit event
+        document.querySelector('form').addEventListener('submit', function (event) {
+            if (!validateCompetitionCategory()) {
+                event.preventDefault(); // Prevent form submission if no category is selected
+
+                // Scroll to and focus on the competition category container
+                var categoryContainer = document.getElementById('movie-category-container');
+                categoryContainer.scrollIntoView({ behavior: 'smooth' });
+
+                // Wait for the scroll to complete before focusing
+                setTimeout(function () {
+                    categoryContainer.focus(); // Make sure to have tabindex="0" or a focusable element inside
+                }, 500); // Adjust timing if needed
+            }
+        });
+
+        // Attach the validation function to each radio button's change event
+        document.querySelectorAll('#movie-category-container input[type="radio"]').forEach(function (input) {
+            input.addEventListener('change', validateCompetitionCategory);
+        });
+    </script>
     @* ------------------------------------------------------------------------------------------------------------ *@
     @* COMPETITION CATEGORY*@
 
 
     @* GENERAL INFORMATION *@
     @* ------------------------------------------------------------------------------------------------------------ *@
-
     @* Container Border Color Script *@
     <script>
         function validateGeneralInfo() {
@@ -54,6 +100,15 @@
         document.querySelector('form').addEventListener('submit', function (event) {
             if (!validateGeneralInfo()) {
                 event.preventDefault(); // Prevent form submission if there are errors
+
+                // Scroll to and focus on the general info container
+                var generalInfoContainer = document.getElementById('general-info-container');
+                generalInfoContainer.scrollIntoView({ behavior: 'smooth' });
+
+                // Wait for the scroll to complete before focusing
+                setTimeout(function () {
+                    generalInfoContainer.focus(); // Focus the container if it is focusable
+                }, 500); // Adjust timing if needed
             }
         });
 
@@ -62,14 +117,13 @@
             input.addEventListener('input', validateGeneralInfo);
         });
     </script>
-
     @* ------------------------------------------------------------------------------------------------------------ *@
     @* GENERAL INFORMATION *@
 
 
     @* SELECT COUNTRIES *@
     @* ------------------------------------------------------------------------------------------------------------ *@
-
+    @* Container Border Color Script *@
     <script>
         function validateCountries() {
             var selectedCountries = document.querySelectorAll('input[name="SelectedCountries"]:checked');
@@ -127,7 +181,6 @@
 
     @* ------------------------------------------------------------------------------------------------------------ *@
     @* SELECT COUNTRIES *@
-
 
     @* MOVIE GENRES *@
     @* ------------------------------------------------------------------------------------------------------------ *@
@@ -341,7 +394,7 @@
                 } else {
                     this.classList.remove('is-valid');
                     this.classList.add('is-invalid');
-                    movieTimeLengthError.textContent = 'Please select a time length.'; // Show error message
+                    movieTimeLengthError.textContent = 'Please select Time Length'; // Show error message
                 }
             });
 
@@ -365,7 +418,7 @@
                     movieTimeLength.focus(); // Bring focus to the selector
                     movieTimeLength.classList.remove('is-valid');
                     movieTimeLength.classList.add('is-invalid');
-                    movieTimeLengthError.textContent = 'Please select a time length.'; // Show error message
+                    movieTimeLengthError.textContent = 'Please select Time Length'; // Show error message
                     event.preventDefault(); // Prevent form submission
                 }
             });
@@ -373,7 +426,7 @@
     </script>
 
     @* MovieTimeLength Update Hidden Field *@
-@*     <script>
+    @*     <script>
         function updateHiddenFieldMovieTimeLength() {
             var movieTimeLengthSelect = document.getElementById('MovieTimeLengthSelect');
             var MovieTimeLengthName = document.getElementById('MovieTimeLengthName');
@@ -478,7 +531,7 @@
             var requiredElements = directorContainer.querySelectorAll('input[required], select[required], textarea[required]');
             var allValid = true;
 
-            // Check each required element
+            // Check each required element (this includes DirectorBiographyTr, DirectorFilmographyTr, etc.)
             requiredElements.forEach(function (element) {
                 if (!element.value.trim()) {
                     allValid = false;
@@ -490,7 +543,7 @@
                 }
             });
 
-            // Validate country selection separately
+            // Validate the country selection separately if it exists
             var directorCountry = document.getElementById('CountrySelectDirector');
             var countryError = document.getElementById('CountryErrorDirector');
             if (directorCountry && directorCountry.value === "") {
@@ -504,7 +557,7 @@
                 countryError.style.display = "none";
             }
 
-            // Ensure container border color updates based on the validity of all required fields
+            // Update container border color based on the validity of all required fields
             if (allValid) {
                 directorContainer.classList.add('border-success');
                 directorContainer.classList.remove('border-danger');
@@ -530,9 +583,25 @@
         });
 
         // Attach the validation function to each required input's input/change event
-        document.querySelectorAll('#director-container input[required], #director-container select[required], #director-container textarea[required]').forEach(function (element) {
-            element.addEventListener('input', validateDirectorInfo);
-            element.addEventListener('change', validateDirectorInfo); // For select elements
+        function attachDirectorValidationEvents() {
+            document.querySelectorAll('#director-container input[required], #director-container select[required], #director-container textarea[required]').forEach(function (element) {
+                element.addEventListener('input', validateDirectorInfo);
+                element.addEventListener('change', validateDirectorInfo); // For select elements
+            });
+        }
+
+        // Call attachDirectorValidationEvents initially to add listeners to the fields
+        attachDirectorValidationEvents();
+
+        // Revalidate dynamically when language changes
+        document.getElementById('btn-tr').addEventListener('click', function () {
+            setLanguage('TR');
+            attachDirectorValidationEvents(); // Reattach validation events to required inputs
+        });
+
+        document.getElementById('btn-en').addEventListener('click', function () {
+            setLanguage('EN');
+            attachDirectorValidationEvents(); // Reattach validation events to required inputs
         });
     </script>
 
@@ -1249,101 +1318,6 @@
     @* ------------------------------------------------------------------------------------------------------------ *@
 
     @* Upload Pdf Border Color Handle Script *@
-    @* <script>
-        function validatePdfFileUpload() {
-            var container = document.getElementById('film-work-operation-container');
-            var uploadedPdfFileInput = document.getElementById('UploadedPdfFile');
-            var pdfFileUploaded = uploadedPdfFileInput.files.length > 0;
-
-            // Update border color of the container based on file upload status
-            if (pdfFileUploaded) {
-                container.classList.add('border-success');
-                container.classList.remove('border-danger');
-            } else {
-                container.classList.add('border-danger');
-                container.classList.remove('border-success');
-            }
-        }
-
-        // Attach the validation function to the file input's change event
-        document.getElementById('UploadedPdfFile').addEventListener('change', validatePdfFileUpload);
-
-        // Optionally, you may want to validate the file input on form submission
-        document.querySelector('form').addEventListener('submit', function (event) {
-            if (document.getElementById('UploadedPdfFile').files.length === 0) {
-                validatePdfFileUpload();
-                event.preventDefault(); // Prevent form submission if no file is uploaded
-                document.getElementById('UploadedPdfFile').focus(); // Add focus to the file input
-            }
-        });
-    </script> *@
-
-    @* Upload Pdf Optional Handle Script *@
-    @*  <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const uploadedPdfFileInput = document.getElementById('UploadedPdfFile');
-            const pdfFileOptionalCheckbox = document.getElementById('PdfFileOptional');
-            const uploadedPdfFileErrorMessages = document.getElementById('UploadedPdfFileErrorMessages');
-
-            const maxPdfSizeInMB = 2; // Set your desired max size for PDF file
-            const maxPdfSizeInBytes = maxPdfSizeInMB * 1024 * 1024;
-
-            function validatePdfFileUpload() {
-                const files = uploadedPdfFileInput.files;
-                let errorMessages = [];
-                let totalSize = 0;
-
-                if (pdfFileOptionalCheckbox.checked) {
-                    // Checkbox is checked, disable file input, clear files, and clear errors
-                    uploadedPdfFileInput.disabled = true;
-                    uploadedPdfFileInput.value = ''; // Clear the file input
-                    uploadedPdfFileErrorMessages.textContent = '';
-                    uploadedPdfFileInput.style.borderColor = 'green'; // Set border color to green
-                    return true;
-                } else {
-                    // Enable file input if checkbox is not checked
-                    uploadedPdfFileInput.disabled = false;
-                }
-
-                // Validate file
-                if (files.length === 0) {
-                    errorMessages.push('A PDF file must be uploaded.');
-                } else if (files.length > 1) {
-                    errorMessages.push('You can upload only one PDF file.');
-                } else {
-                    // Calculate total size of uploaded file
-                    totalSize = files[0].size;
-
-                    if (totalSize > maxPdfSizeInBytes) {
-                        errorMessages.push(`The total size of the uploaded PDF file must be less than ${maxPdfSizeInMB} MB.`);
-                    }
-                }
-
-                // Update border color and error messages
-                if (errorMessages.length > 0) {
-                    uploadedPdfFileErrorMessages.textContent = errorMessages.join(' ');
-                    uploadedPdfFileInput.style.borderColor = 'red'; // Set border color to red on error
-                } else {
-                    uploadedPdfFileErrorMessages.textContent = '';
-                    uploadedPdfFileInput.style.borderColor = 'green'; // Set border color to green if no error
-                }
-            }
-
-            // Attach event listeners
-            pdfFileOptionalCheckbox.addEventListener('change', validatePdfFileUpload);
-            uploadedPdfFileInput.addEventListener('change', validatePdfFileUpload);
-
-            // Validate on form submission
-            document.querySelector('form').addEventListener('submit', function (event) {
-                const files = uploadedPdfFileInput.files;
-                if (!pdfFileOptionalCheckbox.checked && (files.length === 0 || files.length > 1)) {
-                    validatePdfFileUpload();
-                    event.preventDefault(); // Prevent form submission if validation fails
-                    uploadedPdfFileInput.focus(); // Add focus to the file input
-                }
-            });
-        });
-    </script> *@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const uploadedPdfFileInput = document.getElementById('UploadedPdfFile');
@@ -1429,37 +1403,24 @@
 
     @* sinopsis-container border color validation script *@
     <script>
-        function validateSinopsisContainer() {
+        function validateSinopsisInfo() {
             var sinopsisContainer = document.getElementById('sinopsis-container');
-            var requiredInputs = sinopsisContainer.querySelectorAll('input[required], select[required], textarea[required]');
+            var requiredElements = sinopsisContainer.querySelectorAll('input[required], select[required], textarea[required]');
             var allValid = true;
 
-            // Check each required input and select
-            requiredInputs.forEach(function (input) {
-                if (input.type === 'select-one') {
-                    // Check select elements
-                    if (!input.value.trim()) {
-                        allValid = false;
-                        input.classList.add('border-danger');
-                        input.classList.remove('border-success');
-                    } else {
-                        input.classList.add('border-success');
-                        input.classList.remove('border-danger');
-                    }
+            // Check each required element
+            requiredElements.forEach(function (element) {
+                if (!element.value.trim()) {
+                    allValid = false;
+                    element.classList.add('border-danger');
+                    element.classList.remove('border-success');
                 } else {
-                    // Check input elements
-                    if (!input.value.trim()) {
-                        allValid = false;
-                        input.classList.add('border-danger');
-                        input.classList.remove('border-success');
-                    } else {
-                        input.classList.add('border-success');
-                        input.classList.remove('border-danger');
-                    }
+                    element.classList.add('border-success');
+                    element.classList.remove('border-danger');
                 }
             });
 
-            // Update container border color based on the validity of inputs
+            // Update container border color based on the validity of all required fields
             if (allValid) {
                 sinopsisContainer.classList.add('border-success');
                 sinopsisContainer.classList.remove('border-danger');
@@ -1473,16 +1434,21 @@
 
         // Attach the validation function to the form submit event
         document.querySelector('form').addEventListener('submit', function (event) {
-            if (!validateSinopsisContainer()) {
+            if (!validateSinopsisInfo()) {
                 event.preventDefault(); // Prevent form submission if there are errors
             }
         });
 
         // Attach the validation function to each required input's input/change event
-        document.querySelectorAll('#sinopsis-container input[required], #sinopsis-container select[required], #sinopsis-container textarea[required]').forEach(function (input) {
-            input.addEventListener('input', validateSinopsisContainer);
-            input.addEventListener('change', validateSinopsisContainer); // for select elements
-        });
+        function attachSinopsisValidationEvents() {
+            document.querySelectorAll('#sinopsis-container input[required], #sinopsis-container select[required], #sinopsis-container textarea[required]').forEach(function (element) {
+                element.addEventListener('input', validateSinopsisInfo);
+                element.addEventListener('change', validateSinopsisInfo); // For select elements
+            });
+        }
+
+        // Initialize validation events
+        attachSinopsisValidationEvents();
     </script>
 
     @* ------------------------------------------------------------------------------------------------------------ *@
@@ -1553,51 +1519,124 @@
 
     @* MEDIA *@
     @* ------------------------------------------------------------------------------------------------------------ *@
-
     @* Container Border Color Script *@
-    <!-- Container Border Color Script for Media -->
-    @*  <script>
-        function validateMediaContainer() {
-            var mediaContainer = document.getElementById('media-container');
-            var requiredInputs = mediaContainer.querySelectorAll('input[required]');
-            var allValid = true;
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            function validateMediaContainer() {
+                var mediaContainer = document.getElementById('media-container');
+                var requiredInputs = mediaContainer.querySelectorAll('input[required]');
+                var allValid = true;
 
-            // Check each required input
-            requiredInputs.forEach(function (input) {
-                if (!input.value.trim()) {
-                    allValid = false;
-                    input.classList.add('border-danger');
-                    input.classList.remove('border-success');
+                // Helper function to check if a file input is valid
+                function isFileInputValid(input) {
+                    return input.files && input.files.length > 0;
+                }
+
+                // Helper function to check text input validity
+                function isTextInputValid(input) {
+                    return input.value.trim() !== "";
+                }
+
+                // Helper function to handle optional checkboxes
+                function shouldValidateInput(input, checkboxId) {
+                    var checkbox = document.getElementById(checkboxId);
+                    return !checkbox || !checkbox.checked;
+                }
+
+                // Validate required inputs
+                requiredInputs.forEach(function (input) {
+                    if (input.type === 'file') {
+                        if (!isFileInputValid(input)) {
+                            allValid = false;
+                            input.classList.add('border-danger');
+                            input.classList.remove('border-success');
+                        } else {
+                            input.classList.add('border-success');
+                            input.classList.remove('border-danger');
+                        }
+                    } else {
+                        if (!isTextInputValid(input)) {
+                            allValid = false;
+                            input.classList.add('border-danger');
+                            input.classList.remove('border-success');
+                        } else {
+                            input.classList.add('border-success');
+                            input.classList.remove('border-danger');
+                        }
+                    }
+                });
+
+                // Manually validate fields without the "required" attribute but with optional checkboxes
+                var optionalFields = [
+                    {
+                        inputFile: document.getElementById('UploadedBestActorPhoto'),
+                        inputText: document.getElementById('UploadedBestActorPhotoName'),
+                        checkbox: document.getElementById('UploadedBestActorPhotoOptional')
+                    },
+                    {
+                        inputFile: document.getElementById('UploadedBestActressPhoto'),
+                        inputText: document.getElementById('UploadedBestActressPhotoName'),
+                        checkbox: document.getElementById('UploadedBestActressPhotoOptional')
+                    }
+                ];
+
+                optionalFields.forEach(function (field) {
+                    if (shouldValidateInput(field.inputFile, field.checkbox.id)) {
+                        // Validate file input
+                        if (!isFileInputValid(field.inputFile)) {
+                            allValid = false;
+                            field.inputFile.classList.add('border-danger');
+                            field.inputFile.classList.remove('border-success');
+                        } else {
+                            field.inputFile.classList.add('border-success');
+                            field.inputFile.classList.remove('border-danger');
+                        }
+
+                        // Validate text input
+                        if (!isTextInputValid(field.inputText)) {
+                            allValid = false;
+                            field.inputText.classList.add('border-danger');
+                            field.inputText.classList.remove('border-success');
+                        } else {
+                            field.inputText.classList.add('border-success');
+                            field.inputText.classList.remove('border-danger');
+                        }
+                    } else {
+                        // Reset borders if optional checkbox is checked
+                        field.inputFile.classList.remove('border-danger', 'border-success');
+                        field.inputText.classList.remove('border-danger', 'border-success');
+                    }
+                });
+
+                // Update container border color based on the validity of inputs
+                if (allValid) {
+                    mediaContainer.classList.add('border-success');
+                    mediaContainer.classList.remove('border-danger');
                 } else {
-                    input.classList.add('border-success');
-                    input.classList.remove('border-danger');
+                    mediaContainer.classList.add('border-danger');
+                    mediaContainer.classList.remove('border-success');
+                }
+
+                return allValid; // Return whether the media is valid
+            }
+
+            // Attach the validation function to the form submit event
+            document.querySelector('form').addEventListener('submit', function (event) {
+                if (!validateMediaContainer()) {
+                    event.preventDefault(); // Prevent form submission if there are errors
+                    console.log("Form submission prevented due to container validation errors.");
                 }
             });
 
-            // Update container border color based on the validity of inputs
-            if (allValid) {
-                mediaContainer.classList.add('border-success');
-                mediaContainer.classList.remove('border-danger');
-            } else {
-                mediaContainer.classList.add('border-danger');
-                mediaContainer.classList.remove('border-success');
-            }
+            // Attach the validation function to each required input's input event
+            document.querySelectorAll('#media-container input').forEach(function (input) {
+                input.addEventListener('input', validateMediaContainer);
+            });
 
-            return allValid; // Return whether the media is valid
-        }
-
-        // Attach the validation function to the form submit event
-        document.querySelector('form').addEventListener('submit', function (event) {
-            if (!validateMediaContainer()) {
-                event.preventDefault(); // Prevent form submission if there are errors
-            }
+            // Initial validation on page load
+            validateMediaContainer();
         });
-
-        // Attach the validation function to each required input's input event
-        document.querySelectorAll('#media-container input[required]').forEach(function (input) {
-            input.addEventListener('input', validateMediaContainer);
-        });
-    </script> *@
+    </script>
 
     @* UploadedMoviePictures Upload Check Script *@
     <script>
@@ -1875,18 +1914,20 @@
         document.addEventListener('DOMContentLoaded', function () {
             const UploadedBestActressPhotoInput = document.getElementById('UploadedBestActressPhoto');
             const bestActressNameInput = document.getElementById('UploadedBestActressPhotoName');
-            const optCbUploadedBestActressPhoto = document.getElementById('optCbUploadedBestActressPhoto');
+            const uploadedBestActressPhotoOptional = document.getElementById('UploadedBestActressPhotoOptional');
             const UploadedBestActressPhotoMessages = document.getElementById('UploadedBestActressPhotoMessages');
+            const container = document.getElementById('media-container');
 
             const maxSizeInMB = 3;
             const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
+            const maxFiles = 1;
 
             function validateUploadedBestActressPhoto() {
                 const files = UploadedBestActressPhotoInput.files;
                 let errorMessages = [];
                 let totalSize = 0;
 
-                if (optCbUploadedBestActressPhoto.checked) {
+                if (uploadedBestActressPhotoOptional.checked) {
                     // Checkbox is checked, disable inputs, clear files, clear name, and clear errors
                     UploadedBestActressPhotoInput.disabled = true;
                     bestActressNameInput.disabled = true;
@@ -1903,15 +1944,15 @@
                 }
 
                 // Validate file input
-                if (files.length === 0) {
+                if (files.length === 0 && !uploadedBestActressPhotoOptional.checked) {
                     UploadedBestActressPhotoInput.style.borderColor = 'red';
                     errorMessages.push('Best Actress photo must be uploaded.');
-                } else if (files.length > 1) {
+                } else if (files.length > maxFiles && !uploadedBestActressPhotoOptional.checked) {
                     UploadedBestActressPhotoInput.style.borderColor = 'red';
-                    errorMessages.push('You can upload only 1 photo.');
+                    errorMessages.push('You can upload only ${maxFiles} photo.');
                 } else {
                     totalSize = files[0].size;
-                    if (totalSize > maxSizeInBytes) {
+                    if (totalSize > maxSizeInBytes && !uploadedBestActressPhotoOptional.checked) {
                         UploadedBestActressPhotoInput.style.borderColor = 'red';
                         errorMessages.push(`The photo size must be less than ${maxSizeInMB} MB.`);
                     } else {
@@ -1919,11 +1960,22 @@
                     }
                 }
 
+                // Update border color and error messages
+                if (errorMessages.length > 0 && !uploadedBestActressPhotoOptional.checked) {
+                    UploadedBestActressPhotoMessages.textContent = errorMessages.join(' ');
+                    UploadedBestActressPhotoInput.style.borderColor = 'red'; // Set border color to red on error
+                    bestActressNameInput.style.borderColor = 'red';
+                } else {
+                    UploadedBestActressPhotoMessages.textContent = '';
+                    UploadedBestActressPhotoInput.style.borderColor = 'green'; // Set border color to green if no error
+                    bestActressNameInput.style.borderColor = 'green';
+                }
+
                 // Validate name input
-                if (bestActressNameInput.value.trim() === '') {
+                if (bestActressNameInput.value.trim() === '' && !uploadedBestActressPhotoOptional.checked) {
                     bestActressNameInput.style.borderColor = 'red';
                     errorMessages.push('Actress name must be provided.');
-                } else if (bestActressNameInput.value.length > 100) {
+                } else if (bestActressNameInput.value.length > 100 && !uploadedBestActressPhotoOptional.checked) {
                     bestActressNameInput.style.borderColor = 'red';
                     errorMessages.push('Actress name cannot exceed 100 characters.');
                 } else {
@@ -1948,14 +2000,14 @@
             }
 
             // Attach event listeners
-            optCbUploadedBestActressPhoto.addEventListener('change', validateUploadedBestActressPhoto);
+            uploadedBestActressPhotoOptional.addEventListener('change', validateUploadedBestActressPhoto);
             UploadedBestActressPhotoInput.addEventListener('change', validateUploadedBestActressPhoto);
             bestActressNameInput.addEventListener('input', validateUploadedBestActressPhoto);
 
             // Validate on form submission
             document.querySelector('form').addEventListener('submit', function (event) {
                 const files = UploadedBestActressPhotoInput.files;
-                if (!optCbUploadedBestActressPhoto.checked && (files.length === 0 || files.length > 1 || bestActressNameInput.value.trim() === '' || bestActressNameInput.value.length > 100)) {
+                if (!uploadedBestActressPhotoOptional.checked && (files.length === 0 || files.length > 1 || bestActressNameInput.value.trim() === '' || bestActressNameInput.value.length > 100)) {
                     validateUploadedBestActressPhoto();
                     event.preventDefault(); // Prevent form submission if validation fails
                     if (UploadedBestActressPhotoInput.style.borderColor === 'red') {
@@ -1969,28 +2021,29 @@
     </script>
 
     @* UploadedBestActorPhoto Upload Check Script *@
+    @* UploadedBestActorPhoto Upload Check Script *@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const UploadedBestActorPhotoInput = document.getElementById('UploadedBestActorPhoto');
             const bestActorNameInput = document.getElementById('UploadedBestActorPhotoName');
-            const optCbUploadedBestActorPhoto = document.getElementById('optCbUploadedBestActorPhoto');
-            const UploadedBestActorPhotoErrorMessages = document.getElementById('UploadedBestActorPhotoErrorMessages');
-
+            const uploadedBestActorPhotoOptional = document.getElementById('UploadedBestActorPhotoOptional');
+            const UploadedBestActorPhotoMessages = document.getElementById('UploadedBestActorPhotoErrorMessages');
             const maxSizeInMB = 3;
             const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
+            const maxFiles = 1;
 
             function validateUploadedBestActorPhoto() {
                 const files = UploadedBestActorPhotoInput.files;
                 let errorMessages = [];
                 let totalSize = 0;
 
-                if (optCbUploadedBestActorPhoto.checked) {
+                if (uploadedBestActorPhotoOptional.checked) {
                     // Checkbox is checked, disable inputs, clear files, clear name, and clear errors
                     UploadedBestActorPhotoInput.disabled = true;
                     bestActorNameInput.disabled = true;
                     UploadedBestActorPhotoInput.value = '';
                     bestActorNameInput.value = '';
-                    UploadedBestActorPhotoErrorMessages.textContent = '';
+                    UploadedBestActorPhotoMessages.textContent = '';
                     UploadedBestActorPhotoInput.style.borderColor = 'green';
                     bestActorNameInput.style.borderColor = 'green';
                     return true;
@@ -2001,15 +2054,15 @@
                 }
 
                 // Validate file input
-                if (files.length === 0) {
+                if (files.length === 0 && !uploadedBestActorPhotoOptional.checked) {
                     UploadedBestActorPhotoInput.style.borderColor = 'red';
                     errorMessages.push('Best Actor photo must be uploaded.');
-                } else if (files.length > 1) {
+                } else if (files.length > maxFiles && !uploadedBestActorPhotoOptional.checked) {
                     UploadedBestActorPhotoInput.style.borderColor = 'red';
-                    errorMessages.push('You can upload only 1 photo.');
+                    errorMessages.push(`You can upload only ${maxFiles} photo.`);
                 } else {
                     totalSize = files[0].size;
-                    if (totalSize > maxSizeInBytes) {
+                    if (totalSize > maxSizeInBytes && !uploadedBestActorPhotoOptional.checked) {
                         UploadedBestActorPhotoInput.style.borderColor = 'red';
                         errorMessages.push(`The photo size must be less than ${maxSizeInMB} MB.`);
                     } else {
@@ -2017,19 +2070,33 @@
                     }
                 }
 
+                // Update border color and error messages
+                if (errorMessages.length > 0 && !uploadedBestActorPhotoOptional.checked) {
+                    UploadedBestActorPhotoMessages.textContent = errorMessages.join(' ');
+                    UploadedBestActorPhotoInput.style.borderColor = 'red';
+                    bestActorNameInput.style.borderColor = 'red';
+                } else {
+                    UploadedBestActorPhotoMessages.textContent = '';
+                    UploadedBestActorPhotoInput.style.borderColor = 'green';
+                    bestActorNameInput.style.borderColor = 'green';
+                }
+
                 // Validate name input
-                if (bestActorNameInput.value.trim() === '') {
+                if (bestActorNameInput.value.trim() === '' && !uploadedBestActorPhotoOptional.checked) {
                     bestActorNameInput.style.borderColor = 'red';
                     errorMessages.push('Actor name must be provided.');
+                } else if (bestActorNameInput.value.length > 100 && !uploadedBestActorPhotoOptional.checked) {
+                    bestActorNameInput.style.borderColor = 'red';
+                    errorMessages.push('Actor name cannot exceed 100 characters.');
                 } else {
                     bestActorNameInput.style.borderColor = 'green';
                 }
 
                 // Update error messages
                 if (errorMessages.length > 0) {
-                    UploadedBestActorPhotoErrorMessages.textContent = errorMessages.join(' ');
+                    UploadedBestActorPhotoMessages.textContent = errorMessages.join(' ');
                 } else {
-                    UploadedBestActorPhotoErrorMessages.textContent = '';
+                    UploadedBestActorPhotoMessages.textContent = '';
                 }
 
                 // Focus on the first invalid field
@@ -2043,20 +2110,20 @@
             }
 
             // Attach event listeners
-            optCbUploadedBestActorPhoto.addEventListener('change', validateUploadedBestActorPhoto);
+            uploadedBestActorPhotoOptional.addEventListener('change', validateUploadedBestActorPhoto);
             UploadedBestActorPhotoInput.addEventListener('change', validateUploadedBestActorPhoto);
             bestActorNameInput.addEventListener('input', validateUploadedBestActorPhoto);
 
             // Validate on form submission
             document.querySelector('form').addEventListener('submit', function (event) {
                 const files = UploadedBestActorPhotoInput.files;
-                if (!optCbUploadedBestActorPhoto.checked && (files.length === 0 || files.length > 1 || bestActorNameInput.value.trim() === '')) {
+                if (!uploadedBestActorPhotoOptional.checked && (files.length === 0 || files.length > 1 || bestActorNameInput.value.trim() === '' || bestActorNameInput.value.length > 100)) {
                     validateUploadedBestActorPhoto();
                     event.preventDefault(); // Prevent form submission if validation fails
                     if (UploadedBestActorPhotoInput.style.borderColor === 'red') {
-                        UploadedBestActorPhotoInput.focus(); // Focus on file input
+                        UploadedBestActorPhotoInput.focus();
                     } else if (bestActorNameInput.style.borderColor === 'red') {
-                        bestActorNameInput.focus(); // Focus on name input
+                        bestActorNameInput.focus();
                     }
                 }
             });
@@ -2068,6 +2135,60 @@
 
     @* <-- DOWNLOADABLE SCREENING COPY OF THE FILM --> *@
     @* ------------------------------------------------------------------------------------------------------------ *@
+    @* Container Border Color Handle Script *@
+    <script>
+        $(document).ready(function () {
+            // Function to update the container border color
+            function updateDownloadableScreeningCopyContainerBorder() {
+                var allInputsValid = true;
+
+                // Check each input in the downloadable screening copy container
+                $('#downloadable-screeningcopy-container input[type="text"]').each(function () {
+                    if (!$(this).hasClass('is-valid')) {
+                        allInputsValid = false;
+                    }
+                });
+
+                // Get the checkbox state
+                var isCheckboxChecked = $('#DownloadableCopyCheck').is(':checked');
+                var container = $('#downloadable-screeningcopy-container');
+
+                // Change the container border color based on input validation and checkbox status
+                if (allInputsValid && isCheckboxChecked) {
+                    container.addClass('border-success').removeClass('border-danger');
+                } else {
+                    container.addClass('border-danger').removeClass('border-success');
+
+                    // Show the checkbox error message if inputs are valid but checkbox is not checked
+                    if (allInputsValid && !isCheckboxChecked) {
+                        $('#DownloadableCopyCheckError').removeClass('d-none');
+                    } else {
+                        $('#DownloadableCopyCheckError').addClass('d-none');
+                    }
+                }
+            }
+
+            // Attach the container border color update to the existing input validation event
+            $('#downloadable-screeningcopy-container input[type="text"]').on('input', function () {
+                updateDownloadableScreeningCopyContainerBorder();
+            });
+
+            // Handle checkbox change event to update border color and error message visibility
+            $('#DownloadableCopyCheck').on('change', function () {
+                updateDownloadableScreeningCopyContainerBorder();
+            });
+
+            // Also check and update the container border color on form submit
+            $('form').on('submit', function () {
+                updateDownloadableScreeningCopyContainerBorder();
+            });
+
+            // Run the container border update function on page load to ensure initial state is reflected
+            updateDownloadableScreeningCopyContainerBorder();
+        });
+    </script>
+
+    @* DownloadableCopyCheck Checkbox Handle Script *@
     <script>
         $(document).ready(function () {
             // Function to validate all text inputs in the downloadable screening copy section
@@ -2416,30 +2537,42 @@
     @* ------------------------------------------------------------------------------------------------------------ *@
     @* APPLICANT *@
 
-    @* I HAVE READ AND APPROVE *@
+    @* I HAVE READ THE IMPORTANT NOTE AND APPROVE *@
     @* ------------------------------------------------------------------------------------------------------------ *@
     <script>
-        document.querySelector('.btn.btn-primary').addEventListener('click', function (event) {
-            var form = event.target.closest('form'); // Get the form element
-            var isValid = form.checkValidity(); // Check if the form is valid without submitting
+        document.addEventListener('DOMContentLoaded', (event) => {
+            // Regulations Elements
+            const IHaveReadAndApproveCheckbox = document.getElementById('IHaveReadAndApproveCheckbox');
+            const IHaveReadAndApproveError = document.getElementById('IHaveReadAndApproveError');
 
-            if (isValid) {
-                var approveCheckbox = document.getElementById('approveCheckbox');
-                var approveError = document.getElementById('approveError');
+            // Submit Button Logic
+            document.querySelector('button[type="submit"]').addEventListener('click', function (event) {
+                const form = event.target.closest('form'); // Get the form element
+                const isFormValid = form.checkValidity(); // Check if the form is valid without submitting
 
-                if (!approveCheckbox.checked) {
-                    // Prevent the form from submitting
-                    event.preventDefault();
-                    // Show the error message
-                    approveError.style.display = 'block';
-                    // Set focus on the checkbox
-                    approveCheckbox.focus();
-                } else {
-                    // Hide the error message
-                    approveError.style.display = 'none';
+                if (isFormValid) {
+                    let isValid = true;
+
+                    if (!IHaveReadAndApproveCheckbox.checked) {
+                        IHaveReadAndApproveError.style.display = 'block';
+                        isValid = false;
+                    } else {
+                        IHaveReadAndApproveError.style.display = 'none';
+                    }
+
+                    if (!isValid) {
+                        event.preventDefault(); // Prevent form submission if validation fails
+                        IHaveReadAndApproveCheckbox.focus(); // Set focus on the checkbox after validation
+                    }
                 }
-            }
-            // Note: Other scripts related to the submit button should still execute normally
+            });
+
+            // Add an event listener to hide the error message immediately after the checkbox is checked
+            IHaveReadAndApproveCheckbox.addEventListener('change', function () {
+                if (IHaveReadAndApproveCheckbox.checked) {
+                    IHaveReadAndApproveError.style.display = 'none';
+                }
+            });
         });
     </script>
     @* ------------------------------------------------------------------------------------------------------------ *@
@@ -2447,43 +2580,64 @@
 
     @* GENERAL RULES *@
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Form submit button logic for General Rules
-            document.querySelector('.btn.btn-primary').addEventListener('click', function (event) {
-                var form = event.target.closest('form'); // Get the form element
-                var isValid = form.checkValidity(); // Check if the form is valid without submitting
+        document.addEventListener('DOMContentLoaded', (event) => {
+            // Regulations Elements
+            const generalRulesCheckbox = document.getElementById('generalRulesCheckbox');
+            const generalRulesPopup = document.getElementById('generalRulesPopup');
+            const generalRulesPopupClose = document.getElementById('generalRulesPopupClose');
+            const generalRulesError = document.getElementById('generalRulesError');
 
-                if (isValid) {
-                    var generalRulesCheckbox = document.getElementById('generalRulesCheckbox');
-                    var generalRulesError = document.getElementById('generalRulesError');
+            // Function to show popups
+            function showPopup(popup) {
+                popup.style.display = 'flex';
+            }
+
+            // Function to hide popups
+            function hidePopup(popup) {
+                popup.style.display = 'none';
+            }
+
+            // Open Regulations Popup by clicking the text within the label
+            document.getElementById('generalRulesLink').addEventListener('click', () => {
+                showPopup(generalRulesPopup);
+            });
+
+            // Close Regulations Popup
+            generalRulesPopupClose.addEventListener('click', () => {
+                hidePopup(generalRulesPopup);
+            });
+
+            // Submit Button Logic
+            document.querySelector('button[type="submit"]').addEventListener('click', function (event) {
+                const form = event.target.closest('form'); // Get the form element
+                const isFormValid = form.checkValidity(); // Check if the form is valid without submitting
+
+                if (isFormValid) {
+                    let isValid = true;
 
                     if (!generalRulesCheckbox.checked) {
-                        // Prevent the form from submitting
-                        event.preventDefault();
-                        // Show the error message
                         generalRulesError.style.display = 'block';
-                        // Set focus on the checkbox
-                        generalRulesCheckbox.focus();
+                        isValid = false;
                     } else {
-                        // Hide the error message
                         generalRulesError.style.display = 'none';
+                    }
+
+                    if (!isValid) {
+                        event.preventDefault(); // Prevent form submission if validation fails
+                        generalRulesCheckbox.focus(); // Set focus on the checkbox after validation
                     }
                 }
             });
 
-            // General Rules Popup
-            document.getElementById('generalRulesLink').addEventListener('click', function (event) {
-                event.preventDefault(); // Prevent the default link behavior
-                var generalRulesCheckbox = document.getElementById('generalRulesCheckbox');
-                generalRulesCheckbox.checked = true; // Check the checkbox
-                document.getElementById('generalRulesPopup').style.display = 'flex'; // Show the popup
-            });
-
-            document.getElementById('popupClose').addEventListener('click', function () {
-                document.getElementById('generalRulesPopup').style.display = 'none'; // Hide the popup
+            // Add an event listener to hide the error message immediately after the checkbox is checked
+            generalRulesCheckbox.addEventListener('change', function () {
+                if (generalRulesCheckbox.checked) {
+                    generalRulesError.style.display = 'none';
+                }
             });
         });
     </script>
+
     @* GENERAL RULES *@
 
     @* REGULATIONS *@
@@ -2536,6 +2690,13 @@
                     }
                 }
             });
+
+            // Add an event listener to hide the error message immediately after the checkbox is checked
+            regulationsCheckbox.addEventListener('change', function () {
+                if (regulationsCheckbox.checked) {
+                    regulationsError.style.display = 'none';
+                }
+            });
         });
     </script>
     @* REGULATIONS *@
@@ -2567,26 +2728,29 @@
 
         <b2 class="col-md-10 offset-md-1"><strong>CHOOSE COMPETITION CATEGORY</strong></b2>
 
-        <div id="movie-category-container" class="row mb-3">
+        <div class="row mb-3">
             <div class="col-md-10 offset-md-1">
-                <div class="form-check form-check-inline">
-                    <input type="radio" asp-for="CompetitionCategory" value="Option1" class="form-check-input" id="option1" />
-                    <label class="form-check-label" for="option1">SARI ŞEMSİYE ULUSAL UZUN METRAJ FİLM YARIŞMASI</label>
-                </div>
+                <div id="movie-category-container" tabindex="0" class="border border-secondary rounded p-3">
+                    <div class="col-md-12">
+                        <div class="form-check mb-2">
+                            <input type="radio" asp-for="CompetitionCategory" value="Option1" class="form-check-input" id="option1" />
+                            <label class="form-check-label" for="option1">SARI ŞEMSİYE ULUSAL UZUN METRAJ FİLM YARIŞMASI</label>
+                        </div>
 
-                <div class="form-check form-check-inline mx-3">
-                    <input type="radio" asp-for="CompetitionCategory" value="Option2" class="form-check-input" id="option2" />
-                    <label class="form-check-label" for="option2">SARI ŞEMSİYE ULUSAL KISA METRAJ FİLM YARIŞMASI</label>
-                </div>
+                        <div class="form-check mb-2">
+                            <input type="radio" asp-for="CompetitionCategory" value="Option2" class="form-check-input" id="option2" />
+                            <label class="form-check-label" for="option2">SARI ŞEMSİYE ULUSAL KISA METRAJ FİLM YARIŞMASI</label>
+                        </div>
 
-                <div class="form-check form-check-inline">
-                    <input type="radio" asp-for="CompetitionCategory" value="Option3" class="form-check-input" id="option3" />
-                    <label class="form-check-label" for="option3">DARIO MORENO</label>
+                        <div class="form-check mb-2">
+                            <input type="radio" asp-for="CompetitionCategory" value="Option3" class="form-check-input" id="option3" />
+                            <label class="form-check-label" for="option3">DARIO MORENO</label>
+                        </div>
+                    </div>
                 </div>
-
                 @* Display validation errors for the specific field *@
-                @* Errors comes from model *@
-                <div class="text-danger mb-3">
+                @* Errors come from the model *@
+                <div class="text-danger mb-3"> @* Makes the error message red *@
                     <span asp-validation-for="CompetitionCategory"></span>
                 </div>
             </div>
@@ -2596,13 +2760,14 @@
 
         <b2 class="col-md-10 offset-md-1"><strong>GENERAL INFORMATION</strong></b2>
 
-        <div id="general-info-container" class="row mb-3 col-md-10 offset-md-1 border border-secondary rounded p-3">
+        <div id="general-info-container" tabindex="1" class="row mb-3 col-md-10 offset-md-1 border border-secondary rounded p-3">
             <div class="row mb-3 col-md-12">
                 <div class="col-md-6">
                     <label for="OriginalMovieName" class="form-label" asp-for="OriginalMovieName">Original Movie Name</label>
                     <input class="form-control" asp-for="OriginalMovieName"
                            id="OriginalMovieName" name="OriginalMovieName"
-                           maxlength="100" required placeholder="Max 100 characters">
+                           maxlength="100" required placeholder="Max 100 characters"
+                           data-val-required="Original Movie Name is required">
                     <div class="form-text"></div>
                     <span class="text-danger" asp-validation-for="OriginalMovieName"></span>
                 </div>
@@ -2611,7 +2776,8 @@
                     <label for="EnglishMovieName" class="form-label" asp-for="EnglishMovieName">English Movie Name</label>
                     <input class="form-control" asp-for="EnglishMovieName"
                            id="EnglishMovieName" name="EnglishMovieName"
-                           maxlength="100" required placeholder="Max 100 characters">
+                           maxlength="100" required placeholder="Max 100 characters"
+                           data-val-required="English Movie Name is required">
                     <span class="text-danger" asp-validation-for="EnglishMovieName"></span>
                 </div>
             </div>
@@ -2694,7 +2860,8 @@
         <div id="movie-features-container" class="row mb-3 col-md-10 offset-md-1 border border-secondary rounded p-3">
             <div class="col-md-4">
                 <label for="ProductionYear" class="form-label" asp-for="ProductionYear">Production Year</label>
-                <select class="form-control" id="ProductionYear" asp-for="ProductionYear" name="ProductionYear" required>
+                <select class="form-control" id="ProductionYear" asp-for="ProductionYear" name="ProductionYear" required
+                        data-val-required="Please select Production Year">
                     <option value="">Select Production Year</option>
                     <option value="2022">2022</option>
                     <option value="2023">2023</option>
@@ -2719,7 +2886,7 @@
                     <!-- Populate countries here -->
                 </select>
                 <input type="hidden" id="MovieLanguageName" name="MovieLanguageName" />
-                <span id="LanguageErrorMovie" class="text-danger" style="display: none;">Please select a language.</span>
+                <span id="LanguageErrorMovie" class="text-danger" style="display: none;">Please select Movie Language</span>
             </div>
         </div>
 
@@ -2732,7 +2899,8 @@
                     <label for="DirectorName" class="form-label" asp-for="DirectorName">Director Name</label>
                     <input class="form-control" asp-for="DirectorName"
                            id="DirectorName" name="DirectorName"
-                           maxlength="100" required placeholder="Max 100 characters">
+                           maxlength="100" placeholder="Max 100 characters" required
+                           data-val-required="Director Name is required">
                     <div class="form-text"></div>
                     <span class="text-danger" asp-validation-for="DirectorName"></span>
                 </div>
@@ -2742,14 +2910,16 @@
                     <label for="DirectorCompany" class="form-label" asp-for="DirectorCompany">Director Company</label>
                     <input class="form-control" asp-for="DirectorCompany"
                            id="DirectorCompany" name="DirectorCompany"
-                           maxlength="100" required placeholder="Max 100 characters">
+                           maxlength="100" placeholder="Max 100 characters" required
+                           data-val-required="Director Company is required">
                     <span class="text-danger" asp-validation-for="DirectorCompany"></span>
                 </div>
                 <div class="col-md-6">
                     <label for="DirectorEmail" class="form-label" asp-for="DirectorEmail">Director Email Address</label>
                     <input class="form-control" asp-for="DirectorEmail"
                            id="DirectorEmail" name="DirectorEmail"
-                           maxlength="100" required placeholder="Max 100 characters">
+                           maxlength="100" placeholder="Max 100 characters" required
+                           data-val-required="Director Email is required">
                     <div class="form-text"></div>
                     <span class="text-danger" asp-validation-for="DirectorEmail"></span>
                 </div>
@@ -2763,7 +2933,8 @@
                         @* type="tel" attribute makes it possible to enter only numbers *@
                         <input id="director-phone" type="tel" asp-for="DirectorPhone" class="form-control"
                                name="DirectorPhone"
-                               maxlength="25" required>
+                               maxlength="25" required
+                               data-val-required="Director Phone is required">
                     </div>
                     <span class="text-danger" asp-validation-for="DirectorPhone"></span>
                 </div>
@@ -2774,41 +2945,53 @@
                         <!-- Populate countries here -->
                     </select>
                     <input type="hidden" id="DirectorCountryName" name="DirectorCountryName" />
-                    <span id="CountryErrorDirector" class="text-danger" style="display: none;">Please select a country.</span>
+                    <span id="CountryErrorDirector" class="text-danger" style="display: none;">Please select Director Country</span>
                 </div>
             </div>
 
             <div class="row mb-3 col-md-12">
-                <!-- Director Biography TR -->
+                <!-- Director Filmography EN -->
                 <div class="col-md-6">
-                    <label for="DirectorBiographyTr" class="form-label" asp-for="DirectorBiographyTr">Director Biography TR</label>
-                    <textarea class="form-control" asp-for="DirectorBiographyTr" id="DirectorBiographyTr" rows="10" maxlength="1000" required style="resize: none;"></textarea>
-                    <div class="form-text"><span id="charCountDirectorBiographyTr">1000</span> characters remaining</div>
-                    <span class="text-danger" asp-validation-for="DirectorBiographyTr"></span>
+                    <label for="DirectorFilmographyEn" class="form-label" asp-for="DirectorFilmographyEn">Director Filmography En</label>
+                    <textarea class="form-control" asp-for="DirectorFilmographyEn" id="DirectorFilmographyEn"
+                              rows="10" maxlength="1000" style="resize: none;" required
+                              data-val-required="Director Filmography En is required"></textarea>
+                    <div class="form-text"><span id="charCountDirectorFilmographyEn">1000</span> characters remaining</div>
+                    <span class="text-danger" asp-validation-for="DirectorFilmographyEn"></span>
                 </div>
 
                 <!-- Director Biography EN -->
                 <div class="col-md-6">
                     <label for="DirectorBiographyEn" class="form-label" asp-for="DirectorBiographyEn">Director Biography EN</label>
-                    <textarea class="form-control" asp-for="DirectorBiographyEn" id="DirectorBiographyEn" rows="10" maxlength="1000" required style="resize: none;"></textarea>
+                    <textarea class="form-control" asp-for="DirectorBiographyEn" id="DirectorBiographyEn"
+                              rows="10" maxlength="1000" style="resize: none;" required
+                              data-val-required="Director Biography En is required"></textarea>
                     <div class="form-text"><span id="charCountDirectorBiographyEn">1000</span> characters remaining</div>
                     <span class="text-danger" asp-validation-for="DirectorBiographyEn"></span>
                 </div>
             </div>
 
             <div class="row mb-3 col-md-12">
+                <!-- Director Biography TR -->
                 <div class="col-md-6">
-                    <label for="DirectorFilmographyTr" class="form-label" asp-for="DirectorFilmographyTr">Filmography TR</label>
-                    <textarea class="form-control" asp-for="DirectorFilmographyTr" id="DirectorFilmographyTr" rows="10" maxlength="1000" required style="resize: none;"></textarea>
-                    <div class="form-text"><span id="charCountDirectorFilmographyTr">1000</span> characters remaining</div>
-                    <span class="text-danger" asp-validation-for="DirectorFilmographyTr"></span>
+                    <label for="DirectorBiographyTr" class="form-label" asp-for="DirectorBiographyTr" id="label-DirectorBiographyTr">Director Biography TR</label>
+                    <textarea class="form-control" asp-for="DirectorBiographyTr" id="DirectorBiographyTr"
+                              rows="10" maxlength="1000" style="resize: none;"
+                              data-val="true"
+                              data-val-required="Lütfen Director Biography TR alanını doldurunuz"></textarea>
+                    <div class="form-text"><span id="charCountDirectorBiographyTr">1000</span> characters remaining</div>
+                    <span class="text-danger" id="message-DirectorBiographyTr" data-valmsg-for="DirectorBiographyTr"></span>
                 </div>
 
+                <!-- Director Filmography TR -->
                 <div class="col-md-6">
-                    <label for="DirectorFilmographyEn" class="form-label" asp-for="DirectorFilmographyEn">Director Filmography En</label>
-                    <textarea class="form-control" asp-for="DirectorFilmographyEn" id="DirectorFilmographyEn" rows="10" maxlength="1000" required style="resize: none;"></textarea>
-                    <div class="form-text"><span id="charCountDirectorFilmographyEn">1000</span> characters remaining</div>
-                    <span class="text-danger" asp-validation-for="DirectorFilmographyEn"></span>
+                    <label for="DirectorFilmographyTr" class="form-label" asp-for="DirectorFilmographyTr" id="label-DirectorFilmographyTr">Director Filmography TR</label>
+                    <textarea class="form-control" asp-for="DirectorFilmographyTr" id="DirectorFilmographyTr"
+                              rows="10" maxlength="1000" style="resize: none;"
+                              data-val="true"
+                              data-val-required="Lütfen Director Filmography TR alanını doldurunuz"></textarea>
+                    <div class="form-text"><span id="charCountDirectorFilmographyTr">1000</span> characters remaining</div>
+                    <span class="text-danger" id="message-DirectorFilmographyTr" data-valmsg-for="DirectorFilmographyTr"></span>
                 </div>
             </div>
 
@@ -2823,11 +3006,12 @@
         <div id="movie-tag-container" class="row mb-3 col-md-10 offset-md-1 border border-secondary rounded p-3">
             <div class="row mb-3 col-md-12">
                 <div class="col-md-12">
-                    <label for="ScreenWriter1" class="form-label">First Screen Writer</label>
-                    <input type="text" class="form-control" id="ScreenWriter1" name="ScreenWriter1" maxlength="100"
-                           required placeholder="Max 100 characters"
+                    <label for="ScreenWriter1" class="form-label" asp-for="ScreenWriter1">First Screen Writer</label>
+                    <input class="form-control" asp-for="ScreenWriter1"
+                           id="ScreenWriter1" name="ScreenWriter1"
+                           maxlength="100" required placeholder="Max 100 characters"
                            data-val="true"
-                           data-val-required="First Screen Writer is required." />
+                           data-val-required="First Screen Writer is required" />
                     <span class="text-danger" asp-validation-for="ScreenWriter1"></span>
                 </div>
                 <div class="col-md-12 mt-3">
@@ -2849,18 +3033,19 @@
                     <label for="Cinematographer" class="form-label" asp-for="Cinematographer">Cinematographer</label>
                     <input class="form-control" asp-for="Cinematographer"
                            id="Cinematographer" name="Cinematographer"
-                           maxlength="100" required placeholder="Max 100 characters">
+                           maxlength="100" placeholder="Max 100 characters" required
+                           data-val-required="Cinematographer is required">
                     <div class="form-text"></div>
                     <span class="text-danger" asp-validation-for="Cinematographer"></span>
                 </div>
             </div>
             <div class="row mb-3 col-md-12 ">
                 <div class="col-md-12">
-                    <label for="MovieFiction1" class="form-label">First Movie Fiction</label>
-                    <input type="text" class="form-control" id="MovieFiction1" name="MovieFiction1" maxlength="100"
-                           required placeholder="Max 100 characters"
+                    <label for="MovieFiction1" class="form-label" asp-for="MovieFiction1">First Movie Fiction</label>
+                    <input class="form-control" asp-for="MovieFiction1" id="MovieFiction1" name="MovieFiction1"
+                           maxlength="100" required placeholder="Max 100 characters"
                            data-val="true"
-                           data-val-required="First Movie Fiction is required." />
+                           data-val-required="First Movie Fiction is required" />
                     <span class="text-danger" asp-validation-for="MovieFiction1"></span>
                 </div>
                 <div class="col-md-12 mt-3">
@@ -2899,7 +3084,8 @@
                     <label for="ProducerName" class="form-label" asp-for="ProducerName">Producer Name</label>
                     <input class="form-control" asp-for="ProducerName"
                            id="ProducerName" name="ProducerName"
-                           maxlength="100" required placeholder="Max 100 characters">
+                           maxlength="100" placeholder="Max 100 characters" required
+                           data-val-required="Producer Name is required">
                     <div class="form-text"></div>
                     <span class="text-danger" asp-validation-for="ProducerName"></span>
                 </div>
@@ -2910,14 +3096,16 @@
                     <label for="ProducerCompany" class="form-label" asp-for="ProducerCompany">Producer Company</label>
                     <input class="form-control" asp-for="ProducerCompany"
                            id="ProducerCompany" name="ProducerCompany"
-                           maxlength="100" required placeholder="Max 100 characters">
+                           maxlength="100" placeholder="Max 100 characters" required
+                           data-val-required="Producer Company is required">
                     <span class="text-danger" asp-validation-for="ProducerCompany"></span>
                 </div>
                 <div class="col-md-6">
                     <label for="ProducerEmail" class="form-label" asp-for="ProducerEmail">Producer Email Address</label>
                     <input class="form-control" asp-for="ProducerEmail"
                            id="ProducerEmail" name="ProducerEmail"
-                           maxlength="100" required placeholder="Max 100 characters">
+                           maxlength="100" placeholder="Max 100 characters" required
+                           data-val-required="Producer Email is required">
                     <div class="form-text"></div>
                     <span class="text-danger" asp-validation-for="ProducerEmail"></span>
                 </div>
@@ -2929,7 +3117,8 @@
                     <div class="input-group">
                         <input id="producer-phone" type="tel" asp-for="ProducerPhone" class="form-control"
                                name="ProducerPhone"
-                               maxlength="25" required>
+                               maxlength="25" required
+                               data-val-required="Producer Phone is required">
                     </div>
                     <span class="text-danger" asp-validation-for="ProducerPhone"></span>
                 </div>
@@ -2940,7 +3129,7 @@
                         <!-- Populate countries here -->
                     </select>
                     <input type="hidden" id="ProducerCountryName" name="ProducerCountryName" />
-                    <span id="CountryErrorProducer" class="text-danger" style="display: none;">Please select a country.</span>
+                    <span id="CountryErrorProducer" class="text-danger" style="display: none;">Please select Producer Country</span>
                 </div>
             </div>
         </div>
@@ -2973,27 +3162,32 @@
         <div id="sinopsis-container" class="row mb-3 col-md-10 offset-md-1 border border-secondary rounded p-3">
             <div class="row mb-3 col-md-12">
                 <!-- Sinopsis TR -->
-                <div class="col-md-6">
-                    <label for="SinopsisTr" class="form-label" asp-for="SinopsisTr">Sinopsis TR</label>
-                    <textarea class="form-control" asp-for="SinopsisTr" id="SinopsisTr" rows="10" maxlength="1000" required style="resize: none;"></textarea>
-                    <div class="form-text"><span id="charCountSinopsisTr">1000</span> characters remaining</div>
-                    <span class="text-danger" asp-validation-for="SinopsisTr"></span>
-                </div>
+                <label for="SinopsisTr" class="form-label" asp-for="SinopsisTr" id="label-SinopsisTr">Sinopsis TR</label>
+                <textarea class="form-control" asp-for="SinopsisTr" id="SinopsisTr"
+                          rows="10" maxlength="1000" style="resize: none;"
+                          data-val="true"
+                          data-val-required="Lütfen Sinopsis TR alanını doldurunuz"></textarea>
+                <div class="form-text"><span id="charCountSinopsisTr">1000</span> characters remaining</div>
+                <span class="text-danger" id="message-SinopsisTr" data-valmsg-for="SinopsisTr"></span>
+            </div>
 
+            <div class="row mb-3 col-md-12">
                 <!-- Sinopsis EN -->
-                <div class="col-md-6">
-                    <label for="SinopsisEn" class="form-label" asp-for="SinopsisEn">Sinopsis EN</label>
-                    <textarea class="form-control" asp-for="SinopsisEn" id="SinopsisEn" rows="10" maxlength="1000" required style="resize: none;"></textarea>
-                    <div class="form-text"><span id="charCountSinopsisEn">1000</span> characters remaining</div>
-                    <span class="text-danger" asp-validation-for="SinopsisEn"></span>
-                </div>
+                <label for="SinopsisEn" class="form-label" asp-for="SinopsisEn">Sinopsis EN</label>
+                <textarea class="form-control" asp-for="SinopsisEn" id="SinopsisEn" rows="10"
+                          maxlength="1000" style="resize: none;" required
+                          data-val-required="Sinopsis En is required"></textarea>
+                <div class="form-text"><span id="charCountSinopsisEn">1000</span> characters remaining</div>
+                <span class="text-danger" asp-validation-for="SinopsisEn"></span>
             </div>
 
             <div class="row mb-3 col-md-12">
                 <!-- Festivals Attended -->
                 <div class="col-md-6">
                     <label for="FestivalsAttended" class="form-label" asp-for="FestivalsAttended">Festivals Attended</label>
-                    <textarea class="form-control" asp-for="FestivalsAttended" id="FestivalsAttended" rows="10" maxlength="1000" required style="resize: none;"></textarea>
+                    <textarea class="form-control" asp-for="FestivalsAttended" id="FestivalsAttended"
+                              rows="10" maxlength="1000" style="resize: none;" required
+                              data-val-required="Festivals Attended is required"></textarea>
                     <div class="form-text"><span id="charCountFestivalsAttended">1000</span> characters remaining</div>
                     <span class="text-danger" asp-validation-for="FestivalsAttended"></span>
                 </div>
@@ -3001,7 +3195,9 @@
                 <!-- Awards Received -->
                 <div class="col-md-6">
                     <label for="AwardsReceived" class="form-label" asp-for="AwardsReceived">Awards Received</label>
-                    <textarea class="form-control" asp-for="AwardsReceived" id="AwardsReceived" rows="10" maxlength="1000" required style="resize: none;"></textarea>
+                    <textarea class="form-control" asp-for="AwardsReceived" id="AwardsReceived"
+                              rows="10" maxlength="1000" style="resize: none;" required
+                              data-val-required="Awards Received is required"></textarea>
                     <div class="form-text"><span id="charCountAwardsReceived">1000</span> characters remaining</div>
                     <span class="text-danger" asp-validation-for="AwardsReceived"></span>
                 </div>
@@ -3011,7 +3207,8 @@
                 <!-- Premier Status -->
                 <div class="col-md-6">
                     <label for="PremierStatus" class="form-label" asp-for="PremierStatus">Premier Status</label>
-                    <select class="form-control" id="PremierStatus" name="PremierStatus" required>
+                    <select class="form-control" id="PremierStatus" asp-for="PremierStatus" name="PremierStatus" required
+                            data-val-required="Please select Premier Status">
                         <option value="">Select Premier Status</option>
                         <option value="World">World</option>
                         <option value="Europe">Europe</option>
@@ -3025,7 +3222,8 @@
                 <!-- First Screening -->
                 <div class="col-md-6">
                     <label for="FirstScreening" class="form-label" asp-for="FirstScreening">First Screening</label>
-                    <select class="form-control" id="FirstScreening" name="FirstScreening" required>
+                    <select class="form-control" id="FirstScreening" asp-for="FirstScreening" name="FirstScreening" required
+                            data-val-required="Please select First Screening">
                         <option value="">Select First Screening</option>
                         <option value="Yes">Yes</option>
                         <option value="No">No</option>
@@ -3046,7 +3244,8 @@
                 <!-- MovieTechInfoColor -->
                 <div class="col-md-4">
                     <label for="MovieTechInfoColor" class="form-label" asp-for="MovieTechInfoColor">Movie Color</label>
-                    <select class="form-control" id="MovieTechInfoColor" name="MovieTechInfoColor" required>
+                    <select class="form-control" id="MovieTechInfoColor" asp-for="MovieTechInfoColor" name="MovieTechInfoColor" required
+                            data-val-required="Please select Movie Color">
                         <option value="">Select Movie Color</option>
                         <option value="Black and White">Black and White</option>
                         <option value="Colored">Colored</option>
@@ -3058,7 +3257,8 @@
                 <!-- Screen Size -->
                 <div class="col-md-4">
                     <label for="ScreenSize" class="form-label" asp-for="ScreenSize">Screen Size</label>
-                    <select class="form-control" id="ScreenSize" name="ScreenSize" required>
+                    <select class="form-control" id="ScreenSize" name="ScreenSize" asp-for="ScreenSize" required
+                            data-val-required="Please select Screen Size">
                         <option value="">Select Screen Size</option>
                         <option value="4:3">4:3</option>
                         <option value="16:9">16:9</option>
@@ -3070,7 +3270,8 @@
                 <!-- MovieTechInfoAudio -->
                 <div class="col-md-4">
                     <label for="MovieTechInfoAudio" class="form-label" asp-for="MovieTechInfoAudio">Movie Audio</label>
-                    <select class="form-control" id="MovieTechInfoAudio" name="MovieTechInfoAudio" required>
+                    <select class="form-control" id="MovieTechInfoAudio" name="MovieTechInfoAudio" asp-for="MovieTechInfoAudio" required
+                            data-val-required="Please select Movie Audio">
                         <option value="">Select Audio</option>
                         <option value="No Audio">No Audio</option>
                         <option value="With Audio">With Audio</option>
@@ -3133,11 +3334,11 @@
             <!-- Best Actress Photo -->
             <div class="col-md-6">
                 <label for="UploadedBestActressPhoto" class="form-label">Best Actress Photo (MAX: 1 - TOTAL SIZE MAX 3 MB)</label>
-                <input type="file" class="form-control mb-2" id="UploadedBestActressPhoto" name="UploadedBestActressPhoto" accept="image/*" required>
-                <input type="text" class="form-control mb-2" id="UploadedBestActressPhotoName" name="UploadedBestActressPhotoName" placeholder="Enter actress name" maxlength="100" required>
+                <input type="file" class="form-control mb-2" id="UploadedBestActressPhoto" name="UploadedBestActressPhoto" accept="image/*">
+                <input type="text" class="form-control mb-2" id="UploadedBestActressPhotoName" name="UploadedBestActressPhotoName" placeholder="Enter actress name" maxlength="100">
                 <div class="form-check mb-2">
-                    <input type="checkbox" class="form-check-input" id="optCbUploadedBestActressPhoto">
-                    <label class="form-check-label" for="optCbUploadedBestActressPhoto">Optional - No need to upload photo or enter name</label>
+                    <input type="checkbox" class="form-check-input" id="UploadedBestActressPhotoOptional" name="UploadedBestActressPhotoOptional">
+                    <label class="form-check-label" for="UploadedBestActressPhotoOptional">Optional - No need to upload photo or enter name</label>
                 </div>
                 <div id="UploadedBestActressPhotoMessages" class="text-danger mt-2"></div>
             </div>
@@ -3145,11 +3346,11 @@
             <!-- Best Actor Photo -->
             <div class="col-md-6">
                 <label for="UploadedBestActorPhoto" class="form-label">Best Actor Photo (MAX: 1 - TOTAL SIZE MAX 3 MB)</label>
-                <input type="file" class="form-control mb-2" id="UploadedBestActorPhoto" name="UploadedBestActorPhoto" accept="image/*" required>
-                <input type="text" class="form-control mb-2" id="UploadedBestActorPhotoName" name="UploadedBestActorPhotoName" placeholder="Enter actor name" maxlength="100" required>
+                <input type="file" class="form-control mb-2" id="UploadedBestActorPhoto" name="UploadedBestActorPhoto" accept="image/*">
+                <input type="text" class="form-control mb-2" id="UploadedBestActorPhotoName" name="UploadedBestActorPhotoName" placeholder="Enter actor name" maxlength="100">
                 <div class="form-check mb-2">
-                    <input type="checkbox" class="form-check-input" id="optCbUploadedBestActorPhoto">
-                    <label class="form-check-label" for="optCbUploadedBestActorPhoto">Optional - No need to upload photo or enter name</label>
+                    <input type="checkbox" class="form-check-input" id="UploadedBestActorPhotoOptional" name="UploadedBestActorPhotoOptional">
+                    <label class="form-check-label" for="UploadedBestActorPhotoOptional">Optional - No need to upload photo or enter name</label>
                 </div>
                 <div id="UploadedBestActorPhotoErrorMessages" class="text-danger mt-2"></div>
             </div>
@@ -3168,7 +3369,7 @@
                     <input class="form-control" asp-for="MovieLink"
                            id="MovieLink" name="MovieLink"
                            maxlength="200" required placeholder="Max 200 characters"
-                           data-val-required="The Movie Link is required">
+                           data-val-required="Movie Link is required">
                     <div class="form-text"></div>
                     <span class="text-danger" asp-validation-for="MovieLink"></span>
                 </div>
@@ -3178,7 +3379,7 @@
                     <input class="form-control" asp-for="MovieLinkPassword"
                            id="MovieLinkPassword" name="MovieLinkPassword"
                            maxlength="100" required placeholder="Max 100 characters"
-                           data-val-required="The Movie Link Password is required">
+                           data-val-required="Movie Link Password is required">
                     <span class="text-danger" asp-validation-for="MovieLinkPassword"></span>
                 </div>
             </div>
@@ -3189,7 +3390,7 @@
                     <input class="form-control" asp-for="TrailerLink"
                            id="TrailerLink" name="TrailerLink"
                            maxlength="200" required placeholder="Max 200 characters"
-                           data-val-required="The Trailer Link is required">
+                           data-val-required="Trailer Link is required">
                     <div class="form-text"></div>
                     <span class="text-danger" asp-validation-for="TrailerLink"></span>
                 </div>
@@ -3199,7 +3400,7 @@
                     <input class="form-control" asp-for="TrailerLinkPassword"
                            id="TrailerLinkPassword" name="TrailerLinkPassword"
                            maxlength="100" required placeholder="Max 100 characters"
-                           data-val-required="The Trailer Link Password is required">
+                           data-val-required="Trailer Link Password is required">
                     <span class="text-danger" asp-validation-for="TrailerLinkPassword"></span>
                 </div>
             </div>
@@ -3254,7 +3455,7 @@
                     <input class="form-control" asp-for="ApplicantName"
                            id="ApplicantName" name="ApplicantName"
                            maxlength="100" required placeholder="Max 100 characters"
-                           data-val-required="Application Name is required!">
+                           data-val-required="Application Name is required">
                     <div class="form-text"></div>
                     <span class="text-danger" asp-validation-for="ApplicantName"></span>
                 </div>
@@ -3265,14 +3466,16 @@
                     <label for="ApplicantCompany" class="form-label" asp-for="ApplicantCompany">Applicant Company</label>
                     <input class="form-control" asp-for="ApplicantCompany"
                            id="ApplicantCompany" name="ApplicantCompany"
-                           maxlength="100" required placeholder="Max 100 characters">
+                           maxlength="100" placeholder="Max 100 characters" required
+                           data-val-required="Applicant Company is required">
                     <span class="text-danger" asp-validation-for="ApplicantCompany"></span>
                 </div>
                 <div class="col-md-6">
                     <label for="ApplicantEmail" class="form-label" asp-for="ApplicantEmail">Applicant Email Address</label>
                     <input class="form-control" asp-for="ApplicantEmail"
                            id="ApplicantEmail" name="ApplicantEmail"
-                           maxlength="100" required placeholder="Max 100 characters">
+                           maxlength="100" required placeholder="Max 100 characters"
+                           data-val-required="Applicant Email is required">
                     <div class="form-text"></div>
                     <span class="text-danger" asp-validation-for="ApplicantEmail"></span>
                 </div>
@@ -3284,7 +3487,8 @@
                     <div class="input-group">
                         <input id="applicant-phone" type="tel" asp-for="ApplicantPhone" class="form-control"
                                name="ApplicantPhone"
-                               maxlength="25" required>
+                               maxlength="25" required
+                               data-val-required="Applicant Phone is required">
                     </div>
                     <span class="text-danger" asp-validation-for="ApplicantPhone"></span>
                 </div>
@@ -3296,7 +3500,7 @@
                     </select>
                     <input type="hidden" id="ApplicantCountryName" name="ApplicantCountryName"
                            data-val-required="Application Country is required" />
-                    <span id="CountryErrorApplicant" class="text-danger" style="display: none;">Please select a country.</span>
+                    <span id="CountryErrorApplicant" class="text-danger" style="display: none;">Please select Applicant Country</span>
                 </div>
             </div>
         </div>
@@ -3326,14 +3530,14 @@
         </div>
         @* <-- --> *@
 
-        @* I HAVE READ AND APPROVE *@
+        @* I HAVE READ THE IMPORTANT NOTE AND APPROVE *@
         <div class="row mb-3 col-md-10 offset-md-1">
             <div class="form-check">
-                <input type="checkbox" id="approveCheckbox" class="form-check-input">
-                <label for="approveCheckbox" class="form-check-label">I HAVE READ AND APPROVE</label>
+                <input type="checkbox" id="IHaveReadAndApproveCheckbox" class="form-check-input">
+                <label for="IHaveReadAndApproveCheckbox" class="form-check-label">I HAVE READ THE IMPORTANT NOTE AND APPROVE</label>
             </div>
-            <div id="approveError" class="text-danger" style="display: none;">
-                You must approve the terms before submitting.
+            <div id="IHaveReadAndApproveError" class="text-danger" style="display: none;">
+                You must approve the Important Note terms before submitting.
             </div>
         </div>
         @* <-- --> *@
@@ -3354,7 +3558,7 @@
         <!-- General Rules Popup -->
         <div id="generalRulesPopup" class="popup-overlay" style="display: none;">
             <div class="popup-content">
-                <span id="popupClose" class="popup-close">CLOSE</span>
+                <span id="generalRulesPopupClose" class="popup-close">CLOSE</span>
                 <h2>GENERAL RULES</h2>
                 <p>
                     Feature Length Film Competition<br><br>

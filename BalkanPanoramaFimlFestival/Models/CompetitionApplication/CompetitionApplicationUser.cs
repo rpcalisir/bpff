@@ -21,9 +21,9 @@ namespace BalkanPanoramaFilmFestival.Models.CompetitionApplication
         public required string DirectorCountry { get; set; }
         public required string DirectorPhone { get; set; }
         public required string DirectorEmail { get; set; }
-        public required string DirectorBiographyTr { get; set; }
+        public string? DirectorBiographyTr { get; set; }
         public required string DirectorBiographyEn { get; set; }
-        public required string DirectorFilmographyTr { get; set; }
+        public string? DirectorFilmographyTr { get; set; }
         public required string DirectorFilmographyEn { get; set; }
 
         // Movie Tag
@@ -43,7 +43,7 @@ namespace BalkanPanoramaFilmFestival.Models.CompetitionApplication
         public string? UploadedPdfFilePath { get; set; }
 
         // Sinopsis
-        public required string SinopsisTr { get; set; }
+        public string? SinopsisTr { get; set; }
         public required string SinopsisEn { get; set; }
         public required string FestivalsAttended { get; set; }
         public required string AwardsReceived { get; set; }

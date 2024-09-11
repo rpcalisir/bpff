@@ -645,6 +645,8 @@ namespace BalkanPanoramaFilmFestival.Controllers
             //model.ProducerCountry = Request.Form["ProducerCountryName"]!;
             //model.ApplicantCountry = Request.Form["ApplicantCountryName"]!;
 
+            model.ScreenWriter1 = Request.Form["ScreenWriter1"]!;
+            model.MovieFiction1 = Request.Form["MovieFiction1"]!;
 
             // Add a model error if necessary
             ModelState.AddModelError(string.Empty, "One of the inputs is not correct!");
