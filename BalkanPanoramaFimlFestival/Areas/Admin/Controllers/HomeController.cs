@@ -103,6 +103,7 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
             var competitionApplicationUserViewModelList = applicationsList.Select(x => new CompetitionApplicationUserViewModel()
             {
                 Id = x.Id,
+                CompetitionApplicationDate = x.CompetitionApplicationDate,
                 CompetitionCategory = x.CompetitionCategory,
                 OriginalMovieName = x.OriginalMovieName,
                 EnglishMovieName = x.EnglishMovieName,

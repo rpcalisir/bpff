@@ -4,6 +4,7 @@ namespace BalkanPanoramaFilmFestival.Models.CompetitionApplication
     public class CompetitionApplicationUser
     {
         public int Id { get; set; } // Primary key
+        public DateTime CompetitionApplicationDate { get; set; } = DateTime.UtcNow;
         public required string CompetitionCategory { get; set; }
         public required string OriginalMovieName { get; set; }
         public required string EnglishMovieName { get; set; }

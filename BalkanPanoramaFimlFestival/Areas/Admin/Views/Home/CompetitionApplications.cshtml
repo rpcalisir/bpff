@@ -3,6 +3,7 @@
         <thead>
             <tr>
                 <th>ORDER</th>
+                <th>APPLICATION DATE</th>
                 <th style="min-width: 200px;">CATEGORY</th>
                 <th>PRODUCTION YEAR</th>
                 <th>APPLICANT NAME</th>
@@ -37,6 +38,7 @@
 
                 <tr>
                     <td>@item.Id</td>
+                    <td>@item.CompetitionApplicationDate</td>
                     <td style="@categoryStyle !important">@item.CompetitionCategory</td>
                     <td>@item.ProductionYear</td>
                     <td>@item.ApplicantName</td>
