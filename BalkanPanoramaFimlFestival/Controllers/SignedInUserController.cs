@@ -19,6 +19,7 @@ namespace BalkanPanoramaFilmFestival.Controllers
         private readonly UserManager<RegisteredUser> _userManager;
         private readonly ApplicationDbContext _context;
         private readonly ICompetitionApplicationFormService _competitionApplicationFormService;
+        private readonly TimeZoneInfo _turkeyTimeZone;
 
         public SignedInUserController(SignInManager<RegisteredUser> signInManager,
             UserManager<RegisteredUser> userManager,
@@ -29,6 +30,8 @@ namespace BalkanPanoramaFilmFestival.Controllers
             _userManager = userManager;
             _context = context;
             _competitionApplicationFormService = countryService;
+
+            _turkeyTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Turkey Standard Time");
         }
 
         public IActionResult CompetitionApplication()
@@ -433,6 +436,7 @@ namespace BalkanPanoramaFilmFestival.Controllers
                 var user = new CompetitionApplicationUser
                 {
                     CompetitionCategory = model.CompetitionCategoryDescription, // Comes from the page form
+                    CompetitionApplicationDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, _turkeyTimeZone),
                     OriginalMovieName = model.OriginalMovieName, // Comes from the page form
                     EnglishMovieName = model.EnglishMovieName, // Comes from the page form
                     MovieWebsite = model.MovieWebsite, // Comes from the page form
