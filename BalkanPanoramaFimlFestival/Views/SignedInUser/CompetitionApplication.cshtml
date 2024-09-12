@@ -1554,10 +1554,7 @@
                     if (input.files && input.files.length > 0) {
                         var file = input.files[0];
                         var fileExtension = file.name.split('.').pop().toLowerCase();
-                        if (!validExtensions.includes(fileExtension)) {
-                            return false; // Invalid file type
-                        }
-                        return true; // Valid file type
+                        return validExtensions.includes(fileExtension); // Return true if valid extension, otherwise false
                     }
                     return false; // No file selected
                 }
@@ -1601,9 +1598,9 @@
                 if (uploadedMoviePicturesInput) {
                     var files = uploadedMoviePicturesInput.files;
                     if (files.length > 5) {
+                        allValid = false;
                         mediaContainer.classList.add('border-danger');
                         mediaContainer.classList.remove('border-success');
-                        return false; // Invalid state
                     }
                 }
 
@@ -1618,18 +1615,13 @@
                         inputFile: document.getElementById('UploadedBestActressPhoto'),
                         inputText: document.getElementById('UploadedBestActressPhotoName'),
                         checkbox: document.getElementById('UploadedBestActressPhotoOptional')
-                    },
-                    {
-                        inputFile: document.getElementById('UploadedMovieSubtitle'),
-                        checkbox: document.getElementById('MovieSubtitleOptional'),
-                        validExtensions: subtitleExtensions
                     }
                 ];
 
                 optionalFields.forEach(function (field) {
                     if (shouldValidateInput(field.inputFile, field.checkbox.id)) {
                         // Validate file input
-                        if (!isFileInputValid(field.inputFile, field.validExtensions)) {
+                        if (!isFileInputValid(field.inputFile, allowedExtensions)) {
                             allValid = false;
                             field.inputFile.classList.add('border-danger');
                             field.inputFile.classList.remove('border-success');
@@ -1637,9 +1629,20 @@
                             field.inputFile.classList.add('border-success');
                             field.inputFile.classList.remove('border-danger');
                         }
+
+                        // Validate text input
+                        if (!isTextInputValid(field.inputText)) {
+                            allValid = false;
+                            field.inputText.classList.add('border-danger');
+                            field.inputText.classList.remove('border-success');
+                        } else {
+                            field.inputText.classList.add('border-success');
+                            field.inputText.classList.remove('border-danger');
+                        }
                     } else {
                         // Reset borders if optional checkbox is checked
                         field.inputFile.classList.remove('border-danger', 'border-success');
+                        field.inputText.classList.remove('border-danger', 'border-success');
                     }
                 });
 
@@ -1692,6 +1695,7 @@
             validateMediaContainer();
         });
     </script>
+
 
     @* UploadedMoviePictures Upload Check Script *@
     <script>
