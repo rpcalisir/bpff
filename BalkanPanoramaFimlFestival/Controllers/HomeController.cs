@@ -2,10 +2,8 @@
 using BalkanPanoramaFilmFestival.Models.Account;
 using BalkanPanoramaFilmFestival.ViewModels.Account;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
 using BalkanPanoramaFilmFestival.Extensions;
 using BalkanPanoramaFilmFestival.Services;
-using System.Text.Encodings.Web;
 
 namespace BalkanPanoramaFilmFestival.Controllers
 {
@@ -262,7 +260,6 @@ namespace BalkanPanoramaFilmFestival.Controllers
             return View();
         }
 
-
         #region Private Implementation
         private async Task SendConfirmationEmailAsync(RegisteredUser user, string email, string actionName)
         {
@@ -276,11 +273,137 @@ namespace BalkanPanoramaFilmFestival.Controllers
                 new { userId = user.Id, code },
                 protocol: HttpContext.Request.Scheme);
 
+            // Prepare email content with HTML styling
+            var message = $@"
+                            <html>
+                            <head>
+                                <style>
+                                    body {{
+                                        font-family: Arial, sans-serif;
+                                        color: #333;
+                                        line-height: 1.6;
+                                        margin: 0;
+                                        padding: 0;
+                                    }}
+                                    .email-container {{
+                                        margin: 0 auto;
+                                        padding: 20px;
+                                        max-width: 600px;
+                                        background-color: #f9f9f9;
+                                        border: 1px solid #ddd;
+                                        border-radius: 10px;
+                                        position: relative;
+                                    }}
+                                    .header {{
+                                        font-size: 24px;
+                                        font-weight: bold;
+                                        text-align: center;
+                                        color: #0056b3;
+                                    }}
+                                    .email-details {{
+                                        margin-top: 20px;
+                                        padding: 10px;
+                                        background-color: #ff9800;
+                                        color: white;
+                                        border-radius: 5px;
+                                        font-size: 16px;
+                                        text-align: center;
+                                    }}
+                                    .email-body {{
+                                        margin-top: 20px;
+                                        padding: 15px;
+                                        background-color: #2196f3;
+                                        color: white; /* Ensure text color is white */
+                                        border-radius: 5px;
+                                    }}
+                                    .button-container {{
+                                        margin-top: 20px;
+                                        text-align: center;
+                                    }}
+                                    .confirm-button {{
+                                        background-color: #28a745;
+                                        color: white !important; /* Ensure text color is white */
+                                        padding: 10px 20px;
+                                        text-decoration: none;
+                                        border-radius: 5px;
+                                        font-weight: bold;
+                                        display: inline-block;
+                                        text-align: center;
+                                        margin: 0 auto; /* Center horizontally */
+                                        display: block; /* Ensure it takes the full width of its container */
+                                    }}
+                                    .translate-button {{
+                                        background-color: #007bff;
+                                        color: white !important; /* Ensure text color is white */
+                                        padding: 8px 15px;
+                                        text-decoration: none;
+                                        border-radius: 5px;
+                                        font-weight: bold;
+                                        position: absolute;
+                                        top: 10px;
+                                        left: 10px;
+                                    }}
+                                    .footer {{
+                                        margin-top: 30px;
+                                        font-size: 12px;
+                                        color: #777;
+                                        text-align: center;
+                                    }}
+                                    a {{
+                                        color: #0056b3;
+                                        text-decoration: underline;
+                                    }}
+                                </style>
+                            </head>
+                            <body>
+                                <div class='email-container'>
+                                    <div class='header'>
+                                        #BPFF2024<br/>
+                                        <a href='https://www.bpff.com.tr'>www.bpff.com.tr</a>
+                                    </div>
+
+                                    <div class='email-details'>
+                                        Email Details
+                                    </div>
+
+                                    <!-- English Content -->
+                                    <div class='email-body'>
+                                        Dear {user.FirstName} {user.LastName},<br/><br/>
+                                        Welcome to the Balkan Panorama Film Festival. We have sent you this email so that you can verify your membership.<br/><br/>
+                                        Click on the link below to confirm your membership:<br/><br/>
+                                        <div class='button-container'>
+                                            <a href='{callbackUrl}' class='confirm-button'>Confirm Your Membership</a>
+                                        </div>
+                                        <br/><br/>
+                                        Best regards,<br/>
+                                        Balkan Panorama Film Festival Office
+                                    </div>
+
+                                    <!-- Turkish Content -->
+                                    <div class='email-body'>
+                                        Sayın {user.FirstName} {user.LastName},<br/><br/>
+                                        Balkan Panorama Film Festivali'ne hoş geldiniz. Üyeliğinizi doğrulamanız için bu e-postayı gönderdik.<br/><br/>
+                                        Üyeliğinizi doğrulamak için aşağıdaki bağlantıya tıklayın:<br/><br/>
+                                        <div class='button-container'>
+                                            <a href='{callbackUrl}' class='confirm-button'>Üyeliğinizi Onaylayın</a>
+                                        </div>
+                                        <br/><br/>
+                                        Saygılarımızla,<br/>
+                                        Balkan Panorama Film Festivali Ofisi
+                                    </div>
+
+                                    <div class='footer'>
+                                        Note: This e-mail was automatically generated by <a href='https://www.bpff.com.tr'>www.bpff.com.tr</a>.
+                                    </div>
+                                </div>
+                            </body>
+                            </html>
+                            ";
+
             // Send the confirmation email
-            var message = $"Please confirm your account by clicking <a href='{callbackUrl}'>here</a>.";
             await _emailService.SendEmailAsync(email, "Confirm your email", message);
         }
-
+        
         #endregion
     }
 }

@@ -2598,7 +2598,8 @@
             }
 
             // Open Regulations Popup by clicking the text within the label
-            document.getElementById('generalRulesLink').addEventListener('click', () => {
+            document.getElementById('generalRulesLink').addEventListener('click', (event) => {
+                event.preventDefault(); // Prevent the default action (scrolling)
                 showPopup(generalRulesPopup);
             });
 
@@ -3547,7 +3548,7 @@
             <div class="form-check">
                 <input type="checkbox" id="generalRulesCheckbox" class="form-check-input">
                 <label for="generalRulesCheckbox" class="form-check-label">
-                    I HAVE READ THE <a href="#" id="generalRulesLink" style="color: yellow;">GENERAL RULES</a> AND APPROVE THEM
+                    I HAVE READ THE <span id="generalRulesLink" style="color: darkblue; cursor: pointer;">GENERAL RULES</span> AND APPROVE THEM
                 </label>
             </div>
             <div id="generalRulesError" class="text-danger" style="display: none;">
@@ -3627,7 +3628,7 @@
             <div class="form-check">
                 <input type="checkbox" id="regulationsCheckbox" class="form-check-input">
                 <label for="regulationsCheckbox" class="form-check-label">
-                    I HAVE READ THE <span id="regulationsLink" class="popup-link">REGULATIONS</span> AND APPROVE THEM
+                    I HAVE READ THE <span id="regulationsLink" style="color: darkblue" class="popup-link">REGULATIONS</span> AND APPROVE THEM
                 </label>
             </div>
             <div id="regulationsError" class="text-danger" style="display: none;">
