@@ -193,11 +193,11 @@
 
             // Validate genres
             if (selectedMovieGenres.length === 0) {
-                validationMessageGenre.textContent = "Please select at least one movie genre!";
+                validationMessageGenre.textContent = "Please select at least one film genre!";
                 hasError = true;
                 firstInvalidElement = document.querySelector('input[name="SelectedMovieGenres"]');
             } else if (selectedMovieGenres.length > 3) {
-                validationMessageGenre.textContent = "Max 3 movie genres can be selected!";
+                validationMessageGenre.textContent = "Max 3 film genres can be selected!";
                 hasError = true;
                 firstInvalidElement = document.querySelector('input[name="SelectedMovieGenres"]');
             } else {
@@ -365,7 +365,7 @@
                 movieTimeLength.append(new Option("Select Time Length", "")); // Add placeholder option
 
                 let options = [];
-                if (categoryValue === 'Option1' || categoryValue === 'Option3') {
+                if (categoryValue === 'Option1' || categoryValue === 'Option3' || categoryValue === 'Option4') {
                     options = generateOptions(60, 240);
                 } else if (categoryValue === 'Option2') {
                     options = generateOptions(5, 25);
@@ -394,7 +394,7 @@
                 } else {
                     this.classList.remove('is-valid');
                     this.classList.add('is-invalid');
-                    movieTimeLengthError.textContent = 'Please select Time Length'; // Show error message
+                    movieTimeLengthError.textContent = 'Please select Duration'; // Show error message
                 }
             });
 
@@ -418,7 +418,7 @@
                     movieTimeLength.focus(); // Bring focus to the selector
                     movieTimeLength.classList.remove('is-valid');
                     movieTimeLength.classList.add('is-invalid');
-                    movieTimeLengthError.textContent = 'Please select Time Length'; // Show error message
+                    movieTimeLengthError.textContent = 'Please select Duration'; // Show error message
                     event.preventDefault(); // Prevent form submission
                 }
             });
@@ -461,11 +461,14 @@
                         }
                     });
 
+                    // Convert the Set to an array and sort it alphabetically
+                    const sortedLanguages = Array.from(languages).sort((a, b) => a.localeCompare(b));
+
                     // Get the language selector element
                     const languageSelector = document.getElementById('LanguageSelectMovie');
 
-                    // Populate the language selector with options
-                    languages.forEach(language => {
+                    // Populate the language selector with sorted options
+                    sortedLanguages.forEach(language => {
                         const option = document.createElement('option');
                         option.value = language;
                         option.textContent = language;
@@ -509,6 +512,7 @@
             });
         });
     </script>
+
     @* ------------------------------------------------------------------------------------------------------------ *@
     @* MOVIE FEATURES *@
 
@@ -627,6 +631,9 @@
             fetch('https://restcountries.com/v3.1/all')
                 .then(response => response.json())
                 .then(data => {
+                    // Sort the countries alphabetically by their common name
+                    data.sort((a, b) => a.name.common.localeCompare(b.name.common));
+
                     data.forEach(country => {
                         if (country.name && country.cca2) {
                             var optionDirector = document.createElement('option');
@@ -727,6 +734,7 @@
             });
         });
     </script>
+
 
     @* Phone Number "Generate Numbers" Script *@
     <script>
@@ -1318,7 +1326,7 @@
     @* ------------------------------------------------------------------------------------------------------------ *@
 
     @* Upload Pdf Border Color Handle Script *@
-    <script>
+    @* <script>
         document.addEventListener('DOMContentLoaded', function () {
             const uploadedPdfFileInput = document.getElementById('UploadedPdfFile');
             const pdfFileOptionalCheckbox = document.getElementById('PdfFileOptional');
@@ -1403,7 +1411,7 @@
                 }
             });
         });
-    </script>
+    </script> *@
     @* ------------------------------------------------------------------------------------------------------------ *@
     @* FILM WORK OPERATION CERTIFICATE *@
 
@@ -2831,17 +2839,22 @@
                     <div class="col-md-12">
                         <div class="form-check mb-2">
                             <input type="radio" asp-for="CompetitionCategory" value="Option1" class="form-check-input" id="option1" />
-                            <label class="form-check-label" for="option1">SARI ŞEMSİYE ULUSAL UZUN METRAJ FİLM YARIŞMASI</label>
+                            <label class="form-check-label" for="option1">INTERNATIONAL FEATURE FILM COMPETITION </label>
                         </div>
 
                         <div class="form-check mb-2">
                             <input type="radio" asp-for="CompetitionCategory" value="Option2" class="form-check-input" id="option2" />
-                            <label class="form-check-label" for="option2">SARI ŞEMSİYE ULUSAL KISA METRAJ FİLM YARIŞMASI</label>
+                            <label class="form-check-label" for="option2">INTERNATIONAL SHORT FILM COMPETITION</label>
                         </div>
 
                         <div class="form-check mb-2">
                             <input type="radio" asp-for="CompetitionCategory" value="Option3" class="form-check-input" id="option3" />
                             <label class="form-check-label" for="option3">DARIO MORENO</label>
+                        </div>
+
+                        <div class="form-check mb-2">
+                            <input type="radio" asp-for="CompetitionCategory" value="Option4" class="form-check-input" id="option4" />
+                            <label class="form-check-label" for="option4">OUT OF COMPETITION</label>
                         </div>
                     </div>
                 </div>
@@ -2855,26 +2868,26 @@
 
         @* <-- GENERAL INFORMATION --> *@
 
-        <b2 class="col-md-10 offset-md-1"><strong>GENERAL INFORMATION</strong></b2>
+        <b2 class="col-md-10 offset-md-1"><strong>FILM INFORMATION</strong></b2>
 
         <div id="general-info-container" tabindex="1" class="row mb-3 col-md-10 offset-md-1 border border-secondary rounded p-3">
             <div class="row mb-3 col-md-12">
                 <div class="col-md-6">
-                    <label for="OriginalMovieName" class="form-label" asp-for="OriginalMovieName">Original Movie Name</label>
+                    <label for="OriginalMovieName" class="form-label" asp-for="OriginalMovieName">Original Title</label>
                     <input class="form-control" asp-for="OriginalMovieName"
                            id="OriginalMovieName" name="OriginalMovieName"
                            maxlength="100" required placeholder="Max 100 characters"
-                           data-val-required="Original Movie Name is required">
+                           data-val-required="Original Title is required">
                     <div class="form-text"></div>
                     <span class="text-danger" asp-validation-for="OriginalMovieName"></span>
                 </div>
 
                 <div class="col-md-6">
-                    <label for="EnglishMovieName" class="form-label" asp-for="EnglishMovieName">English Movie Name</label>
+                    <label for="EnglishMovieName" class="form-label" asp-for="EnglishMovieName">English Title</label>
                     <input class="form-control" asp-for="EnglishMovieName"
                            id="EnglishMovieName" name="EnglishMovieName"
                            maxlength="100" required placeholder="Max 100 characters"
-                           data-val-required="English Movie Name is required">
+                           data-val-required="English Title is required">
                     <span class="text-danger" asp-validation-for="EnglishMovieName"></span>
                 </div>
             </div>
@@ -2892,7 +2905,7 @@
 
         @* <-- COUNTRIES --> *@
 
-        <b2 class="col-md-10 offset-md-1"><strong>SELECT COUNTRIES(MAX 5)</strong></b2>
+        <b2 class="col-md-10 offset-md-1"><strong>PRODUCTION COUNTRY (MAX 5)</strong></b2>
 
         <div class="row mb-3">
             <div class="col-md-10 offset-md-1">
@@ -2922,7 +2935,7 @@
 
         @* <-- GENRES --> *@
 
-        <b2 class="col-md-10 offset-md-1"><strong>MOVIE GENRES(MAX 3)</strong></b2>
+        <b2 class="col-md-10 offset-md-1"><strong>FILM GENRE (MAX 3)</strong></b2>
 
         <div class="row mb-3">
             <div class="col-md-10 offset-md-1">
@@ -2952,7 +2965,7 @@
 
         @* <-- MOVIE FEATURES --> *@
 
-        <b2 class="col-md-10 offset-md-1"><strong>MOVIE FEATURES</strong></b2>
+        <b2 class="col-md-10 offset-md-1"><strong>FILM FEATURES</strong></b2>
 
         <div id="movie-features-container" class="row mb-3 col-md-10 offset-md-1 border border-secondary rounded p-3">
             <div class="col-md-4">
@@ -2968,7 +2981,7 @@
                 <span class="text-danger" id="ProductionYearError" asp-validation-for="ProductionYear"></span>
             </div>
             <div class="col-md-4">
-                <label for="MovieTimeLength" class="form-label" asp-for="MovieTimeLength">Time Length(Select Category First)</label>
+                <label for="MovieTimeLength" class="form-label" asp-for="MovieTimeLength">Duration(Select Category First)</label>
                 <select class="form-control" id="MovieTimeLength" asp-for="MovieTimeLength" name="MovieTimeLength" required>
                     <!-- Options will be populated by JavaScript -->
                 </select>
@@ -2977,18 +2990,18 @@
                 <div class="text-danger" id="MovieTimeLengthError"></div> <!-- To show validation message -->
             </div>
             <div class="col-md-4">
-                <label for="LanguageSelectMovie" class="form-label" asp-for="MovieLanguage">Movie Language</label>
+                <label for="LanguageSelectMovie" class="form-label" asp-for="MovieLanguage">Language</label>
                 <select class="form-control" id="LanguageSelectMovie" asp-for="MovieLanguage" name="MovieLanguage" required>
                     <option value="">Select Movie Language</option>
                     <!-- Populate countries here -->
                 </select>
                 <input type="hidden" id="MovieLanguageName" name="MovieLanguageName" />
-                <span id="LanguageErrorMovie" class="text-danger" style="display: none;">Please select Movie Language</span>
+                <span id="LanguageErrorMovie" class="text-danger" style="display: none;">Please select Language</span>
             </div>
         </div>
 
         @* <-- DIRECTOR --> *@
-        <b2 class="col-md-10 offset-md-1"><strong>DIRECTOR</strong></b2>
+        <b2 class="col-md-10 offset-md-1"><strong>DIRECTOR INFORMATION</strong></b2>
 
         <div id="director-container" class="row mb-3 col-md-10 offset-md-1 border border-secondary rounded p-3">
             <div class="row mb-3 col-md-12">
@@ -3012,11 +3025,11 @@
                     <span class="text-danger" asp-validation-for="DirectorCompany"></span>
                 </div>
                 <div class="col-md-6">
-                    <label for="DirectorEmail" class="form-label" asp-for="DirectorEmail">Director Email Address</label>
+                    <label for="DirectorEmail" class="form-label" asp-for="DirectorEmail">Director E-mail</label>
                     <input class="form-control" asp-for="DirectorEmail"
                            id="DirectorEmail" name="DirectorEmail"
                            maxlength="100" placeholder="Max 100 characters" required
-                           data-val-required="Director Email is required">
+                           data-val-required="Director E-mail is required">
                     <div class="form-text"></div>
                     <span class="text-danger" asp-validation-for="DirectorEmail"></span>
                 </div>
@@ -3161,7 +3174,7 @@
 
         @* <-- PRODUCER --> *@
         <b2 class="col-md-10 offset-md-1">
-            <strong>PRODUCER</strong>
+            <strong>PRODUCTION COMPANY</strong>
             <input type="checkbox" id="producerSameAsDirector" class="form-check-input ms-2">
             <label for="producerSameAsDirector" class="form-check-label">Same as Director</label>
             <!-- Aligning the error message div with the other form elements -->
@@ -3198,11 +3211,11 @@
                     <span class="text-danger" asp-validation-for="ProducerCompany"></span>
                 </div>
                 <div class="col-md-6">
-                    <label for="ProducerEmail" class="form-label" asp-for="ProducerEmail">Producer Email Address</label>
+                    <label for="ProducerEmail" class="form-label" asp-for="ProducerEmail">Producer E-mail</label>
                     <input class="form-control" asp-for="ProducerEmail"
                            id="ProducerEmail" name="ProducerEmail"
                            maxlength="100" placeholder="Max 100 characters" required
-                           data-val-required="Producer Email is required">
+                           data-val-required="Producer E-mail is required">
                     <div class="form-text"></div>
                     <span class="text-danger" asp-validation-for="ProducerEmail"></span>
                 </div>
@@ -3233,7 +3246,7 @@
         @* <-- --> *@
 
         @* <-- FILM WORK OPERATION CERTIFICATE --> *@
-        <b2 class="col-md-10 offset-md-1"><strong>FILM WORK OPERATION CERTIFICATE</strong></b2>
+        @* <b2 class="col-md-10 offset-md-1"><strong>FILM WORK OPERATION CERTIFICATE</strong></b2>
 
         <div id="film-work-operation-container" class="row mb-3 col-md-10 offset-md-1 border border-secondary rounded p-3">
             <div class="col-md-12">
@@ -3249,7 +3262,7 @@
                     </label>
                 </div>
             </div>
-        </div>
+        </div> *@
 
         @* <-- --> *@
 
@@ -3568,11 +3581,11 @@
                     <span class="text-danger" asp-validation-for="ApplicantCompany"></span>
                 </div>
                 <div class="col-md-6">
-                    <label for="ApplicantEmail" class="form-label" asp-for="ApplicantEmail">Applicant Email Address</label>
+                    <label for="ApplicantEmail" class="form-label" asp-for="ApplicantEmail">Applicant E-mail</label>
                     <input class="form-control" asp-for="ApplicantEmail"
                            id="ApplicantEmail" name="ApplicantEmail"
                            maxlength="100" required placeholder="Max 100 characters"
-                           data-val-required="Applicant Email is required">
+                           data-val-required="Applicant E-mail is required">
                     <div class="form-text"></div>
                     <span class="text-danger" asp-validation-for="ApplicantEmail"></span>
                 </div>

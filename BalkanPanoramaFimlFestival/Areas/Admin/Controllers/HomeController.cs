@@ -138,7 +138,7 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
                 ProducerEmail = x.ProducerEmail,
 
                 // FILM WORK OPERATION CERTIFICATE
-                UploadedPdfFilePath = x.UploadedPdfFilePath, // Ensure this is included
+                //UploadedPdfFilePath = x.UploadedPdfFilePath, // Ensure this is included
 
                 // Sinopsis
                 SinopsisTr = x.SinopsisTr,
@@ -180,49 +180,49 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
             return View(competitionApplicationUserViewModelList);
         }
 
-        [HttpGet]
-        public IActionResult DownloadPdf(string uploadedPdfFilePath, string applicantEmail)
-        {
-            if (string.IsNullOrEmpty(uploadedPdfFilePath))
-            {
-                return BadRequest("Uploaded Pdf File Path is required.");
-            }
+        //[HttpGet]
+        //public IActionResult DownloadPdf(string uploadedPdfFilePath, string applicantEmail)
+        //{
+        //    if (string.IsNullOrEmpty(uploadedPdfFilePath))
+        //    {
+        //        return BadRequest("Uploaded Pdf File Path is required.");
+        //    }
 
-            if (string.IsNullOrEmpty(applicantEmail))
-            {
-                return BadRequest("Applicant Email is required.");
-            }
+        //    if (string.IsNullOrEmpty(applicantEmail))
+        //    {
+        //        return BadRequest("Applicant Email is required.");
+        //    }
 
-            // Sanitize applicant email for safe use in the file path
-            var sanitizedEmail = applicantEmail.Replace('@', '_').Replace('.', '_');
+        //    // Sanitize applicant email for safe use in the file path
+        //    var sanitizedEmail = applicantEmail.Replace('@', '_').Replace('.', '_');
 
-            // Define the path to the folder where the pdf file is stored
-            var uploadsFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
+        //    // Define the path to the folder where the pdf file is stored
+        //    var uploadsFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
 
-            // Remove any leading slashes or unwanted characters from the file path
-            var cleanedFilePath = uploadedPdfFilePath.Trim('\"').TrimStart('/');
+        //    // Remove any leading slashes or unwanted characters from the file path
+        //    var cleanedFilePath = uploadedPdfFilePath.Trim('\"').TrimStart('/');
 
-            // Ensure the file path does not contain extra directories and get the file name
-            var fileName = Path.GetFileName(cleanedFilePath);
+        //    // Ensure the file path does not contain extra directories and get the file name
+        //    var fileName = Path.GetFileName(cleanedFilePath);
 
-            // Create a search pattern based on the sanitized email
-            var searchPattern = $"FilmCertificatePdf_{sanitizedEmail}_*{Path.GetExtension(fileName)}";
+        //    // Create a search pattern based on the sanitized email
+        //    var searchPattern = $"FilmCertificatePdf_{sanitizedEmail}_*{Path.GetExtension(fileName)}";
 
-            // Find the file that matches the search pattern
-            var filePath = Directory.GetFiles(uploadsFolderPath, searchPattern).FirstOrDefault();
+        //    // Find the file that matches the search pattern
+        //    var filePath = Directory.GetFiles(uploadsFolderPath, searchPattern).FirstOrDefault();
 
-            // Check if the file exists
-            if (string.IsNullOrEmpty(filePath) || !System.IO.File.Exists(filePath))
-            {
-                return BadRequest("Pdf file could not be found.");
-            }
+        //    // Check if the file exists
+        //    if (string.IsNullOrEmpty(filePath) || !System.IO.File.Exists(filePath))
+        //    {
+        //        return BadRequest("Pdf file could not be found.");
+        //    }
 
-            // Read the file bytes from the correct full file path
-            var fileBytes = System.IO.File.ReadAllBytes(filePath);
+        //    // Read the file bytes from the correct full file path
+        //    var fileBytes = System.IO.File.ReadAllBytes(filePath);
 
-            // Return the file as a download with the correct file name
-            return File(fileBytes, "application/pdf", fileName);
-        }
+        //    // Return the file as a download with the correct file name
+        //    return File(fileBytes, "application/pdf", fileName);
+        //}
 
         [HttpGet]
         public IActionResult DownloadMoviePictures(string applicantEmail, string uploadedMoviePicturesFilePaths)
@@ -492,7 +492,7 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
 
         [HttpGet]
         public IActionResult DownloadAllFiles(string applicantEmail,
-                                        string uploadedPdfFilePath,
+                                        //string uploadedPdfFilePath,
                                         string uploadedMoviePicturesFilePaths,
                                         string uploadedMoviePosterFilePath,
                                         string uploadedMovieSubtitleFilePath,
@@ -509,8 +509,8 @@ namespace BalkanPanoramaFilmFestival.Areas.Admin.Controllers
             var filePaths = new List<string>();
 
             // Add each file path to the list if it's not null or empty
-            if (!string.IsNullOrEmpty(uploadedPdfFilePath))
-                filePaths.Add(uploadedPdfFilePath.Trim('\"'));
+            //if (!string.IsNullOrEmpty(uploadedPdfFilePath))
+            //    filePaths.Add(uploadedPdfFilePath.Trim('\"'));
 
             if (!string.IsNullOrEmpty(uploadedMoviePicturesFilePaths))
             {

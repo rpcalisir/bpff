@@ -170,49 +170,49 @@ namespace BalkanPanoramaFilmFestival.Controllers
 
                 #region UploadedPdfFile
                 // Handle Pdf File Upload
-                if (model.UploadedPdfFile != null && model.UploadedPdfFile.Length > 0)
-                {
-                    // Validate file type
-                    if (!model.UploadedPdfFile.ContentType.Equals("application/pdf", StringComparison.OrdinalIgnoreCase))
-                    {
-                        ModelState.AddModelError(string.Empty, "The file must be a PDF.");
-                        var updatedModel = PopulateModelAndViewData(model);
-                        return View(updatedModel);
-                    }
+                //if (model.UploadedPdfFile != null && model.UploadedPdfFile.Length > 0)
+                //{
+                //    // Validate file type
+                //    if (!model.UploadedPdfFile.ContentType.Equals("application/pdf", StringComparison.OrdinalIgnoreCase))
+                //    {
+                //        ModelState.AddModelError(string.Empty, "The file must be a PDF.");
+                //        var updatedModel = PopulateModelAndViewData(model);
+                //        return View(updatedModel);
+                //    }
 
-                    // Validate file size (e.g., max 20 MB)
-                    if (model.UploadedPdfFile.Length > 20 * 1024 * 1024)
-                    {
-                        ModelState.AddModelError(string.Empty, "The file size must be less than 20 MB.");
-                        var updatedModel = PopulateModelAndViewData(model);
-                        return View(updatedModel);
-                    }
+                //    // Validate file size (e.g., max 20 MB)
+                //    if (model.UploadedPdfFile.Length > 20 * 1024 * 1024)
+                //    {
+                //        ModelState.AddModelError(string.Empty, "The file size must be less than 20 MB.");
+                //        var updatedModel = PopulateModelAndViewData(model);
+                //        return View(updatedModel);
+                //    }
 
-                    // Define the path to save the file
-                    var uploadsFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
+                //    // Define the path to save the file
+                //    var uploadsFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
 
-                    // Ensure the uploads directory exists
-                    if (!Directory.Exists(uploadsFolderPath))
-                    {
-                        Directory.CreateDirectory(uploadsFolderPath);
-                    }
+                //    // Ensure the uploads directory exists
+                //    if (!Directory.Exists(uploadsFolderPath))
+                //    {
+                //        Directory.CreateDirectory(uploadsFolderPath);
+                //    }
 
-                    // Sanitize the applicant's email for safe file use
-                    var sanitizedEmail = model.ApplicantEmail.Replace('@', '_').Replace('.', '_');
+                //    // Sanitize the applicant's email for safe file use
+                //    var sanitizedEmail = model.ApplicantEmail.Replace('@', '_').Replace('.', '_');
 
-                    // Generate a unique file name to prevent overwriting
-                    var uniqueFileName = $"FilmCertificatePdf_{sanitizedEmail}_{Guid.NewGuid()}.pdf";
-                    var filePath = Path.Combine(uploadsFolderPath, uniqueFileName);
+                //    // Generate a unique file name to prevent overwriting
+                //    var uniqueFileName = $"FilmCertificatePdf_{sanitizedEmail}_{Guid.NewGuid()}.pdf";
+                //    var filePath = Path.Combine(uploadsFolderPath, uniqueFileName);
 
-                    // Save the file to the server
-                    using (var fileStream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await model.UploadedPdfFile.CopyToAsync(fileStream);
-                    }
+                //    // Save the file to the server
+                //    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                //    {
+                //        await model.UploadedPdfFile.CopyToAsync(fileStream);
+                //    }
 
-                    // Store the relative file path in the database
-                    model.UploadedPdfFilePath = "/uploads/" + uniqueFileName;
-                }
+                //    // Store the relative file path in the database
+                //    model.UploadedPdfFilePath = "/uploads/" + uniqueFileName;
+                //}
                 #endregion
 
                 #region UploadedMoviePictures
@@ -471,7 +471,7 @@ namespace BalkanPanoramaFilmFestival.Controllers
                     ProducerEmail = model.ProducerEmail,
 
                     // FILM WORK OPERATION CERTIFICATE
-                    UploadedPdfFilePath = model.UploadedPdfFilePath!,
+                    //UploadedPdfFilePath = model.UploadedPdfFilePath!,
 
                     // Sinopsis
                     SinopsisTr = model.SinopsisTr,

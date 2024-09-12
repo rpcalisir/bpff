@@ -40,7 +40,7 @@
 
 
         // FILM WORK OPERATION CERTIFICATE
-        public string? UploadedPdfFilePath { get; set; }
+        //public string? UploadedPdfFilePath { get; set; }
 
         // Sinopsis
         public string? SinopsisTr { get; set; }

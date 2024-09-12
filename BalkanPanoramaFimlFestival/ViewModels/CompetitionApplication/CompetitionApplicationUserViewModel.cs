@@ -12,9 +12,14 @@ namespace BalkanPanoramaFilmFestival.ViewModels.CompetitionApplication
             {
                 return CompetitionCategory switch
                 {
-                    "Option1" => "SARI ŞEMSİYE ULUSAL UZUN METRAJ FİLM YARIŞMASI",
-                    "Option2" => "SARI ŞEMSİYE ULUSAL KISA METRAJ FİLM YARIŞMASI",
+                    //"Option1" => "SARI ŞEMSİYE ULUSAL UZUN METRAJ FİLM YARIŞMASI",
+                    //"Option2" => "SARI ŞEMSİYE ULUSAL KISA METRAJ FİLM YARIŞMASI",
+                    //"Option3" => "DARIO MORENO",
+                    //"Option4" => "YARIŞMA DIŞI PROGRAM",
+                    "Option1" => "INTERNATIONAL FEATURE FILM COMPETITION",
+                    "Option2" => "INTERNATIONAL SHORT FILM COMPETITION",
                     "Option3" => "DARIO MORENO",
+                    "Option4" => "OUT OF COMPETITION",
                     _ => "Unknown"
                 };
             }
@@ -80,8 +85,8 @@ namespace BalkanPanoramaFilmFestival.ViewModels.CompetitionApplication
         public required string ProducerEmail { get; set; }
 
         // FILM WORK OPERATION CERTIFICATE
-        public IFormFile? UploadedPdfFile { get; set; }
-        public string? UploadedPdfFilePath { get; set; }
+        //public IFormFile? UploadedPdfFile { get; set; }
+        //public string? UploadedPdfFilePath { get; set; }
 
         // Sinopsis
         public string? SinopsisTr { get; set; }
