@@ -1325,7 +1325,7 @@
             const uploadedPdfFileErrorMessages = document.getElementById('UploadedPdfFileErrorMessages');
             const container = document.getElementById('film-work-operation-container');
 
-            const maxPdfSizeInMB = 2; // Set your desired max size for PDF file
+            const maxPdfSizeInMB = 5; // Set your desired max size for PDF file
             const maxPdfSizeInBytes = maxPdfSizeInMB * 1024 * 1024;
 
             function validatePdfFileUpload() {
@@ -1356,12 +1356,23 @@
                     errorMessages.push('You can upload only one PDF file.');
                     pdfFileUploaded = false;
                 } else {
-                    // Calculate total size of uploaded file
-                    totalSize = files[0].size;
+                    const file = files[0];
+                    const fileExtension = file.name.split('.').pop().toLowerCase();
 
-                    if (totalSize > maxPdfSizeInBytes) {
-                        errorMessages.push(`The total size of the uploaded PDF file must be less than ${maxPdfSizeInMB} MB.`);
+                    if (fileExtension !== 'pdf') {
+                        errorMessages.push('Only PDF files are allowed.');
                         pdfFileUploaded = false;
+                    } else {
+                        // Calculate total size of uploaded file
+                        totalSize = file.size;
+
+                        if (totalSize > maxPdfSizeInBytes) {
+                            errorMessages.push(`MAX size of uploaded PDF file must be less than ${maxPdfSizeInMB} MB.`);
+                            let totalSizeInMb = totalSize / (1024 * 1024);
+                            totalSizeInMb = totalSizeInMb.toFixed(2);
+                            errorMessages.push(`Uploaded PDF file size is ${totalSizeInMb} MB.`);
+                            pdfFileUploaded = false;
+                        }
                     }
                 }
 
@@ -1393,7 +1404,6 @@
             });
         });
     </script>
-
     @* ------------------------------------------------------------------------------------------------------------ *@
     @* FILM WORK OPERATION CERTIFICATE *@
 
@@ -1527,9 +1537,20 @@
                 var requiredInputs = mediaContainer.querySelectorAll('input[required]');
                 var allValid = true;
 
-                // Helper function to check if a file input is valid
+                // Allowed file extensions for validation
+                var allowedExtensions = ['jpg', 'jpeg', 'png'];
+
+                // Helper function to check if a file input is valid and has the correct file type
                 function isFileInputValid(input) {
-                    return input.files && input.files.length > 0;
+                    if (input.files && input.files.length > 0) {
+                        var file = input.files[0];
+                        var fileExtension = file.name.split('.').pop().toLowerCase();
+                        if (!allowedExtensions.includes(fileExtension)) {
+                            return false; // Invalid file type
+                        }
+                        return true; // Valid file type
+                    }
+                    return false; // No file selected
                 }
 
                 // Helper function to check text input validity
@@ -1566,6 +1587,17 @@
                     }
                 });
 
+                // Check for more than 5 files in the UploadedMoviePictures field
+                var uploadedMoviePicturesInput = document.getElementById('UploadedMoviePictures');
+                if (uploadedMoviePicturesInput) {
+                    var files = uploadedMoviePicturesInput.files;
+                    if (files.length > 5) {
+                        mediaContainer.classList.add('border-danger');
+                        mediaContainer.classList.remove('border-success');
+                        return false; // Invalid state
+                    }
+                }
+
                 // Manually validate fields without the "required" attribute but with optional checkboxes
                 var optionalFields = [
                     {
@@ -1577,6 +1609,10 @@
                         inputFile: document.getElementById('UploadedBestActressPhoto'),
                         inputText: document.getElementById('UploadedBestActressPhotoName'),
                         checkbox: document.getElementById('UploadedBestActressPhotoOptional')
+                    },
+                    {
+                        inputFile: document.getElementById('UploadedMovieSubtitle'),
+                        checkbox: document.getElementById('MovieSubtitleOptional')
                     }
                 ];
 
@@ -1593,18 +1629,20 @@
                         }
 
                         // Validate text input
-                        if (!isTextInputValid(field.inputText)) {
+                        if (field.inputText && !isTextInputValid(field.inputText)) {
                             allValid = false;
                             field.inputText.classList.add('border-danger');
                             field.inputText.classList.remove('border-success');
-                        } else {
+                        } else if (field.inputText) {
                             field.inputText.classList.add('border-success');
                             field.inputText.classList.remove('border-danger');
                         }
                     } else {
                         // Reset borders if optional checkbox is checked
                         field.inputFile.classList.remove('border-danger', 'border-success');
-                        field.inputText.classList.remove('border-danger', 'border-success');
+                        if (field.inputText) {
+                            field.inputText.classList.remove('border-danger', 'border-success');
+                        }
                     }
                 });
 
@@ -1633,6 +1671,9 @@
                 input.addEventListener('input', validateMediaContainer);
             });
 
+            // Attach the validation function to the file input's change event for UploadedMoviePictures
+            document.getElementById('UploadedMoviePictures').addEventListener('change', validateMediaContainer);
+
             // Initial validation on page load
             validateMediaContainer();
         });
@@ -1650,9 +1691,15 @@
             var totalSize = 0;
             var files = uploadedPicturesInput.files;
             var hasFiles = files.length > 0;
+            var allowedExtensions = ['jpg', 'jpeg', 'png'];
+            var invalidFileExtensions = [];
 
-            // Calculate total file size
+            // Check for valid file extensions
             for (var i = 0; i < files.length; i++) {
+                var fileExtension = files[i].name.split('.').pop().toLowerCase();
+                if (!allowedExtensions.includes(fileExtension)) {
+                    invalidFileExtensions.push(files[i].name);
+                }
                 totalSize += files[i].size;
             }
 
@@ -1669,6 +1716,9 @@
             }
             if (exceedsSizeLimit) {
                 messages.push(`The total size of the uploaded pictures must be less than ${maxSizeInMB} MB.`);
+            }
+            if (invalidFileExtensions.length > 0) {
+                messages.push(`Invalid file types: ${invalidFileExtensions.join(', ')}. Only ${allowedExtensions.join(', ')} files are allowed.`);
             }
 
             // Show or clear error messages and set border color based on validation
@@ -1716,6 +1766,9 @@
             const uploadedMoviePosterInput = document.getElementById('UploadedMoviePoster');
             const UploadedMoviePosterErrorMessages = document.getElementById('UploadedMoviePosterErrorMessages');
 
+            // Allowed file extensions for the movie poster
+            const allowedExtensions = ['jpg', 'jpeg', 'png'];
+
             function validateMoviePosterUpload() {
                 const files = uploadedMoviePosterInput.files;
                 const maxFiles = 1;
@@ -1733,7 +1786,16 @@
                 const tooManyFiles = files.length > maxFiles;
                 const exceedsSizeLimit = totalSize > maxSizeInBytes;
 
-                // Determine error messages based on validation
+                // Check file extension for each uploaded file
+                for (let i = 0; i < files.length; i++) {
+                    const fileExtension = files[i].name.split('.').pop().toLowerCase();
+                    if (!allowedExtensions.includes(fileExtension)) {
+                        UploadedMoviePosterErrorMessagesArray.push(`Invalid file type. Only ${allowedExtensions.join(', ')} are allowed.`);
+                        break; // Stop further validation if an invalid file type is found
+                    }
+                }
+
+                // Determine other error messages based on validation
                 if (tooManyFiles) {
                     UploadedMoviePosterErrorMessagesArray.push(`You can upload a maximum of ${maxFiles} picture.`);
                 }
@@ -1774,82 +1836,94 @@
         });
     </script>
 
+
     @* MovieSubtitle Optional Checkbox Handle Script *@
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const uploadedMovieSubtitleInput = document.getElementById('UploadedMovieSubtitle');
-            const movieSubtitleOptionalCheckbox = document.getElementById('MovieSubtitleOptional');
-            const UploadedMovieSubtitleErrorMessages = document.getElementById('UploadedMovieSubtitleErrorMessages');
-            const container = document.getElementById('media-container');
+    document.addEventListener('DOMContentLoaded', function () {
+        const uploadedMovieSubtitleInput = document.getElementById('UploadedMovieSubtitle');
+        const movieSubtitleOptionalCheckbox = document.getElementById('MovieSubtitleOptional');
+        const UploadedMovieSubtitleErrorMessages = document.getElementById('UploadedMovieSubtitleErrorMessages');
 
-            const maxSizeInMB = 2;
-            const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
-            const maxFiles = 1;
+        const maxSizeInMB = 2;
+        const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
+        const maxFiles = 1;
 
-            function validateMovieSubtitleUpload() {
-                const files = uploadedMovieSubtitleInput.files;
-                let errorMessages = [];
-                let totalSize = 0;
+        // Allowed file extensions for movie subtitles
+        const allowedSubtitleExtensions = ['srt', 'sub', 'vtt'];
 
-                if (movieSubtitleOptionalCheckbox.checked) {
-                    // Checkbox is checked, disable file input, clear files, and clear errors
-                    uploadedMovieSubtitleInput.disabled = true;
-                    uploadedMovieSubtitleInput.value = ''; // Clear the file input
-                    UploadedMovieSubtitleErrorMessages.textContent = '';
-                    uploadedMovieSubtitleInput.style.borderColor = 'green'; // Set border color to green
-                    return true;
-                } else {
-                    // Enable file input if checkbox is not checked
-                    uploadedMovieSubtitleInput.disabled = false;
+        function validateMovieSubtitleUpload() {
+            const files = uploadedMovieSubtitleInput.files;
+            let errorMessages = [];
+            let totalSize = 0;
+
+            if (movieSubtitleOptionalCheckbox.checked) {
+                // Checkbox is checked, disable file input, clear files, and clear errors
+                uploadedMovieSubtitleInput.disabled = true;
+                uploadedMovieSubtitleInput.value = ''; // Clear the file input
+                UploadedMovieSubtitleErrorMessages.textContent = '';
+                uploadedMovieSubtitleInput.style.borderColor = 'green'; // Set border color to green
+                return true;
+            } else {
+                // Enable file input if checkbox is not checked
+                uploadedMovieSubtitleInput.disabled = false;
+            }
+
+            // Validate files
+            if (files.length === 0) {
+                errorMessages.push('Movie Subtitle file must be uploaded.');
+            } else if (files.length > maxFiles) {
+                errorMessages.push(`You can upload a maximum of ${maxFiles} subtitle file.`);
+            } else {
+                // Calculate total size of uploaded files and check file extensions
+                for (let i = 0; i < files.length; i++) {
+                    totalSize += files[i].size;
+
+                    const fileExtension = files[i].name.split('.').pop().toLowerCase();
+                    if (!allowedSubtitleExtensions.includes(fileExtension)) {
+                        errorMessages.push(`Invalid file type. Only ${allowedSubtitleExtensions.join(', ')} files are allowed.`);
+                        break; // Stop further validation if an invalid file type is found
+                    }
                 }
 
-                // Validate files
-                if (files.length === 0) {
-                    errorMessages.push('A subtitle file must be uploaded.');
-                } else if (files.length > maxFiles) {
-                    errorMessages.push(`You can upload a maximum of ${maxFiles} subtitle file.`);
-                } else {
-                    // Calculate total size of uploaded files
-                    for (let i = 0; i < files.length; i++) {
-                        totalSize += files[i].size;
-                    }
-
-                    if (totalSize > maxSizeInBytes) {
-                        errorMessages.push(`The total size of the uploaded subtitle file must be less than ${maxSizeInMB} MB.`);
-                    }
-                }
-
-                // Update border color and error messages
-                if (errorMessages.length > 0) {
-                    UploadedMovieSubtitleErrorMessages.textContent = errorMessages.join(' ');
-                    uploadedMovieSubtitleInput.style.borderColor = 'red'; // Set border color to red on error
-                } else {
-                    UploadedMovieSubtitleErrorMessages.textContent = '';
-                    uploadedMovieSubtitleInput.style.borderColor = 'green'; // Set border color to green if no error
+                if (totalSize > maxSizeInBytes) {
+                    errorMessages.push(`The total size of the uploaded subtitle file must be less than ${maxSizeInMB} MB.`);
                 }
             }
 
-            // Attach event listeners
-            movieSubtitleOptionalCheckbox.addEventListener('change', validateMovieSubtitleUpload);
-            uploadedMovieSubtitleInput.addEventListener('change', validateMovieSubtitleUpload);
+            // Update border color and error messages
+            if (errorMessages.length > 0) {
+                UploadedMovieSubtitleErrorMessages.textContent = errorMessages.join(' ');
+                uploadedMovieSubtitleInput.style.borderColor = 'red'; // Set border color to red on error
+            } else {
+                UploadedMovieSubtitleErrorMessages.textContent = '';
+                uploadedMovieSubtitleInput.style.borderColor = 'green'; // Set border color to green if no error
+            }
+        }
 
-            // Validate on form submission
-            document.querySelector('form').addEventListener('submit', function (event) {
-                const files = uploadedMovieSubtitleInput.files;
-                if (!movieSubtitleOptionalCheckbox.checked && (files.length === 0 || files.length > 1)) {
-                    validateMovieSubtitleUpload();
-                    event.preventDefault(); // Prevent form submission if validation fails
-                    uploadedMovieSubtitleInput.focus(); // Add focus to the file input
-                }
-            });
+        // Attach event listeners
+        movieSubtitleOptionalCheckbox.addEventListener('change', validateMovieSubtitleUpload);
+        uploadedMovieSubtitleInput.addEventListener('change', validateMovieSubtitleUpload);
+
+        // Validate on form submission
+        document.querySelector('form').addEventListener('submit', function (event) {
+            const files = uploadedMovieSubtitleInput.files;
+            if (!movieSubtitleOptionalCheckbox.checked && (files.length === 0 || files.length > maxFiles)) {
+                validateMovieSubtitleUpload();
+                event.preventDefault(); // Prevent form submission if validation fails
+                uploadedMovieSubtitleInput.focus(); // Add focus to the file input
+            }
         });
-    </script>
+    });
+</script>
 
     @* UploadedDirectorPhoto Upload Check Script *@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const uploadedDirectorPhotoInput = document.getElementById('UploadedDirectorPhoto');
             const errorMessages = document.getElementById('directorPhotoErrorMessages');
+
+            // Allowed image file extensions
+            const allowedImageExtensions = ['jpg', 'jpeg', 'png'];
 
             function validateDirectorPhotoUpload() {
                 const files = uploadedDirectorPhotoInput.files;
@@ -1860,23 +1934,27 @@
                 let errorMessagesArray = [];
                 let totalSize = 0;
 
-                // Calculate total size of uploaded files
-                for (let i = 0; i < files.length; i++) {
-                    totalSize += files[i].size;
-                }
-
-                const tooManyFiles = files.length > maxFiles;
-                const exceedsSizeLimit = totalSize > maxSizeInBytes;
-
-                // Determine error messages based on validation
-                if (tooManyFiles) {
-                    errorMessagesArray.push(`You can upload a maximum of ${maxFiles} photo.`);
-                }
-                if (exceedsSizeLimit) {
-                    errorMessagesArray.push(`The total size of the uploaded photo must be less than ${maxSizeInMB} MB.`);
-                }
                 if (files.length === 0) {
-                    errorMessagesArray.push('A director photo must be uploaded.');
+                    errorMessagesArray.push('Director photo must be uploaded.');
+                } else {
+                    if (files.length > maxFiles) {
+                        errorMessagesArray.push(`You can upload a maximum of ${maxFiles} photo.`);
+                    }
+
+                    // Calculate total size of uploaded files and check file extensions
+                    for (let i = 0; i < files.length; i++) {
+                        totalSize += files[i].size;
+
+                        const fileExtension = files[i].name.split('.').pop().toLowerCase();
+                        if (!allowedImageExtensions.includes(fileExtension)) {
+                            errorMessagesArray.push(`Invalid file type. Only ${allowedImageExtensions.join(', ')} files are allowed.`);
+                            break; // Stop further validation if an invalid file type is found
+                        }
+                    }
+
+                    if (totalSize > maxSizeInBytes) {
+                        errorMessagesArray.push(`The total size of the uploaded photo must be less than ${maxSizeInMB} MB.`);
+                    }
                 }
 
                 // Update border color and error messages
@@ -1911,54 +1989,62 @@
 
     @* UploadedBestActressPhoto Upload Check Script *@
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const UploadedBestActressPhotoInput = document.getElementById('UploadedBestActressPhoto');
-            const bestActressNameInput = document.getElementById('UploadedBestActressPhotoName');
-            const uploadedBestActressPhotoOptional = document.getElementById('UploadedBestActressPhotoOptional');
-            const UploadedBestActressPhotoMessages = document.getElementById('UploadedBestActressPhotoMessages');
-            const container = document.getElementById('media-container');
+    document.addEventListener('DOMContentLoaded', function () {
+        const UploadedBestActressPhotoInput = document.getElementById('UploadedBestActressPhoto');
+        const bestActressNameInput = document.getElementById('UploadedBestActressPhotoName');
+        const uploadedBestActressPhotoOptional = document.getElementById('UploadedBestActressPhotoOptional');
+        const UploadedBestActressPhotoMessages = document.getElementById('UploadedBestActressPhotoMessages');
 
-            const maxSizeInMB = 3;
-            const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
-            const maxFiles = 1;
+        // Allowed image file extensions
+        const allowedImageExtensions = ['jpg', 'jpeg', 'png'];
 
-            function validateUploadedBestActressPhoto() {
-                const files = UploadedBestActressPhotoInput.files;
-                let errorMessages = [];
-                let totalSize = 0;
+        const maxSizeInMB = 3;
+        const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
+        const maxFiles = 1;
 
-                if (uploadedBestActressPhotoOptional.checked) {
-                    // Checkbox is checked, disable inputs, clear files, clear name, and clear errors
-                    UploadedBestActressPhotoInput.disabled = true;
-                    bestActressNameInput.disabled = true;
-                    UploadedBestActressPhotoInput.value = '';
-                    bestActressNameInput.value = '';
-                    UploadedBestActressPhotoMessages.textContent = '';
+        function validateUploadedBestActressPhoto() {
+            const files = UploadedBestActressPhotoInput.files;
+            let errorMessages = [];
+            let totalSize = 0;
+
+            if (uploadedBestActressPhotoOptional.checked) {
+                // Checkbox is checked, disable inputs, clear files, clear name, and clear errors
+                UploadedBestActressPhotoInput.disabled = true;
+                bestActressNameInput.disabled = true;
+                UploadedBestActressPhotoInput.value = '';
+                bestActressNameInput.value = '';
+                UploadedBestActressPhotoMessages.textContent = '';
+                UploadedBestActressPhotoInput.style.borderColor = 'green';
+                bestActressNameInput.style.borderColor = 'green';
+                return true;
+            } else {
+                // Enable inputs if checkbox is not checked
+                UploadedBestActressPhotoInput.disabled = false;
+                bestActressNameInput.disabled = false;
+            }
+
+            // Validate file input
+            if (files.length === 0) {
+                UploadedBestActressPhotoInput.style.borderColor = 'red';
+                errorMessages.push('Best Actress photo must be uploaded.');
+            } else if (files.length > maxFiles) {
+                UploadedBestActressPhotoInput.style.borderColor = 'red';
+                errorMessages.push(`You can upload only ${maxFiles} photo.`);
+            } else {
+                totalSize = files[0].size;
+
+                // Check file extension
+                const fileExtension = files[0].name.split('.').pop().toLowerCase();
+                if (!allowedImageExtensions.includes(fileExtension)) {
+                    errorMessages.push(`Invalid file type. Only ${allowedImageExtensions.join(', ')} files are allowed.`);
+                    UploadedBestActressPhotoInput.style.borderColor = 'red';
+                } else if (totalSize > maxSizeInBytes) {
+                    UploadedBestActressPhotoInput.style.borderColor = 'red';
+                    errorMessages.push(`The photo size must be less than ${maxSizeInMB} MB.`);
+                } else {
                     UploadedBestActressPhotoInput.style.borderColor = 'green';
-                    bestActressNameInput.style.borderColor = 'green';
-                    return true;
-                } else {
-                    // Enable inputs if checkbox is not checked
-                    UploadedBestActressPhotoInput.disabled = false;
-                    bestActressNameInput.disabled = false;
                 }
-
-                // Validate file input
-                if (files.length === 0 && !uploadedBestActressPhotoOptional.checked) {
-                    UploadedBestActressPhotoInput.style.borderColor = 'red';
-                    errorMessages.push('Best Actress photo must be uploaded.');
-                } else if (files.length > maxFiles && !uploadedBestActressPhotoOptional.checked) {
-                    UploadedBestActressPhotoInput.style.borderColor = 'red';
-                    errorMessages.push('You can upload only ${maxFiles} photo.');
-                } else {
-                    totalSize = files[0].size;
-                    if (totalSize > maxSizeInBytes && !uploadedBestActressPhotoOptional.checked) {
-                        UploadedBestActressPhotoInput.style.borderColor = 'red';
-                        errorMessages.push(`The photo size must be less than ${maxSizeInMB} MB.`);
-                    } else {
-                        UploadedBestActressPhotoInput.style.borderColor = 'green';
-                    }
-                }
+            }
 
                 // Update border color and error messages
                 if (errorMessages.length > 0 && !uploadedBestActressPhotoOptional.checked) {
@@ -1971,56 +2057,55 @@
                     bestActressNameInput.style.borderColor = 'green';
                 }
 
-                // Validate name input
-                if (bestActressNameInput.value.trim() === '' && !uploadedBestActressPhotoOptional.checked) {
-                    bestActressNameInput.style.borderColor = 'red';
-                    errorMessages.push('Actress name must be provided.');
-                } else if (bestActressNameInput.value.length > 100 && !uploadedBestActressPhotoOptional.checked) {
-                    bestActressNameInput.style.borderColor = 'red';
-                    errorMessages.push('Actress name cannot exceed 100 characters.');
-                } else {
-                    bestActressNameInput.style.borderColor = 'green';
-                }
-
-                // Update error messages
-                if (errorMessages.length > 0) {
-                    UploadedBestActressPhotoMessages.textContent = errorMessages.join(' ');
-                } else {
-                    UploadedBestActressPhotoMessages.textContent = '';
-                }
-
-                // Focus on the first invalid field
-                if (errorMessages.length > 0) {
-                    if (UploadedBestActressPhotoInput.style.borderColor === 'red') {
-                        UploadedBestActressPhotoInput.focus();
-                    } else if (bestActressNameInput.style.borderColor === 'red') {
-                        bestActressNameInput.focus();
-                    }
-                }
+            // Validate name input
+            if (bestActressNameInput.value.trim() === '') {
+                bestActressNameInput.style.borderColor = 'red';
+                errorMessages.push('Actress name must be provided.');
+            } else if (bestActressNameInput.value.length > 100) {
+                bestActressNameInput.style.borderColor = 'red';
+                errorMessages.push('Actress name cannot exceed 100 characters.');
+            } else {
+                bestActressNameInput.style.borderColor = 'green';
             }
 
-            // Attach event listeners
-            uploadedBestActressPhotoOptional.addEventListener('change', validateUploadedBestActressPhoto);
-            UploadedBestActressPhotoInput.addEventListener('change', validateUploadedBestActressPhoto);
-            bestActressNameInput.addEventListener('input', validateUploadedBestActressPhoto);
+            // Update error messages
+            if (errorMessages.length > 0) {
+                UploadedBestActressPhotoMessages.textContent = errorMessages.join(' ');
+            } else {
+                UploadedBestActressPhotoMessages.textContent = '';
+            }
 
-            // Validate on form submission
-            document.querySelector('form').addEventListener('submit', function (event) {
-                const files = UploadedBestActressPhotoInput.files;
-                if (!uploadedBestActressPhotoOptional.checked && (files.length === 0 || files.length > 1 || bestActressNameInput.value.trim() === '' || bestActressNameInput.value.length > 100)) {
-                    validateUploadedBestActressPhoto();
-                    event.preventDefault(); // Prevent form submission if validation fails
-                    if (UploadedBestActressPhotoInput.style.borderColor === 'red') {
-                        UploadedBestActressPhotoInput.focus(); // Focus on file input
-                    } else if (bestActressNameInput.style.borderColor === 'red') {
-                        bestActressNameInput.focus(); // Focus on name input
-                    }
+            // Focus on the first invalid field
+            if (errorMessages.length > 0) {
+                if (UploadedBestActressPhotoInput.style.borderColor === 'red') {
+                    UploadedBestActressPhotoInput.focus();
+                } else if (bestActressNameInput.style.borderColor === 'red') {
+                    bestActressNameInput.focus();
                 }
-            });
-        });
-    </script>
+            }
+        }
 
-    @* UploadedBestActorPhoto Upload Check Script *@
+        // Attach event listeners
+        uploadedBestActressPhotoOptional.addEventListener('change', validateUploadedBestActressPhoto);
+        UploadedBestActressPhotoInput.addEventListener('change', validateUploadedBestActressPhoto);
+        bestActressNameInput.addEventListener('input', validateUploadedBestActressPhoto);
+
+        // Validate on form submission
+        document.querySelector('form').addEventListener('submit', function (event) {
+            const files = UploadedBestActressPhotoInput.files;
+            if (!uploadedBestActressPhotoOptional.checked && (files.length === 0 || files.length > 1 || bestActressNameInput.value.trim() === '' || bestActressNameInput.value.length > 100)) {
+                validateUploadedBestActressPhoto();
+                event.preventDefault(); // Prevent form submission if validation fails
+                if (UploadedBestActressPhotoInput.style.borderColor === 'red') {
+                    UploadedBestActressPhotoInput.focus(); // Focus on file input
+                } else if (bestActressNameInput.style.borderColor === 'red') {
+                    bestActressNameInput.focus(); // Focus on name input
+                }
+            }
+        });
+    });
+</script>
+
     @* UploadedBestActorPhoto Upload Check Script *@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -2028,6 +2113,10 @@
             const bestActorNameInput = document.getElementById('UploadedBestActorPhotoName');
             const uploadedBestActorPhotoOptional = document.getElementById('UploadedBestActorPhotoOptional');
             const UploadedBestActorPhotoMessages = document.getElementById('UploadedBestActorPhotoErrorMessages');
+
+            // Allowed image file extensions
+            const allowedImageExtensions = ['jpg', 'jpeg', 'png'];
+
             const maxSizeInMB = 3;
             const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
             const maxFiles = 1;
@@ -2054,15 +2143,21 @@
                 }
 
                 // Validate file input
-                if (files.length === 0 && !uploadedBestActorPhotoOptional.checked) {
+                if (files.length === 0) {
                     UploadedBestActorPhotoInput.style.borderColor = 'red';
                     errorMessages.push('Best Actor photo must be uploaded.');
-                } else if (files.length > maxFiles && !uploadedBestActorPhotoOptional.checked) {
+                } else if (files.length > maxFiles) {
                     UploadedBestActorPhotoInput.style.borderColor = 'red';
                     errorMessages.push(`You can upload only ${maxFiles} photo.`);
                 } else {
                     totalSize = files[0].size;
-                    if (totalSize > maxSizeInBytes && !uploadedBestActorPhotoOptional.checked) {
+
+                    // Check file extension
+                    const fileExtension = files[0].name.split('.').pop().toLowerCase();
+                    if (!allowedImageExtensions.includes(fileExtension)) {
+                        errorMessages.push(`Invalid file type. Only ${allowedImageExtensions.join(', ')} files are allowed.`);
+                        UploadedBestActorPhotoInput.style.borderColor = 'red';
+                    } else if (totalSize > maxSizeInBytes) {
                         UploadedBestActorPhotoInput.style.borderColor = 'red';
                         errorMessages.push(`The photo size must be less than ${maxSizeInMB} MB.`);
                     } else {
@@ -2082,10 +2177,10 @@
                 }
 
                 // Validate name input
-                if (bestActorNameInput.value.trim() === '' && !uploadedBestActorPhotoOptional.checked) {
+                if (bestActorNameInput.value.trim() === '') {
                     bestActorNameInput.style.borderColor = 'red';
                     errorMessages.push('Actor name must be provided.');
-                } else if (bestActorNameInput.value.length > 100 && !uploadedBestActorPhotoOptional.checked) {
+                } else if (bestActorNameInput.value.length > 100) {
                     bestActorNameInput.style.borderColor = 'red';
                     errorMessages.push('Actor name cannot exceed 100 characters.');
                 } else {
@@ -2121,14 +2216,15 @@
                     validateUploadedBestActorPhoto();
                     event.preventDefault(); // Prevent form submission if validation fails
                     if (UploadedBestActorPhotoInput.style.borderColor === 'red') {
-                        UploadedBestActorPhotoInput.focus();
+                        UploadedBestActorPhotoInput.focus(); // Focus on file input
                     } else if (bestActorNameInput.style.borderColor === 'red') {
-                        bestActorNameInput.focus();
+                        bestActorNameInput.focus(); // Focus on name input
                     }
                 }
             });
         });
     </script>
+
 
     @* ------------------------------------------------------------------------------------------------------------ *@
     @* MEDIA *@
@@ -3141,7 +3237,7 @@
 
         <div id="film-work-operation-container" class="row mb-3 col-md-10 offset-md-1 border border-secondary rounded p-3">
             <div class="col-md-12">
-                <label for="UploadedPdfFile" class="form-label">Upload PDF</label>
+                <label for="UploadedPdfFile" class="form-label">Upload PDF (MAX: 1 - TOTAL SIZE MAX 5 MB)</label>
                 <input type="file" class="form-control" id="UploadedPdfFile" name="UploadedPdfFile" accept=".pdf">
                 <span class="text-danger" id="UploadedPdfFileErrorMessages"></span> <!-- Error message container -->
             </div>
@@ -3311,7 +3407,7 @@
                 <!-- UploadedMovieSubtitle and Optional Checkbox -->
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label for="UploadedMovieSubtitle" class="form-label">Movie Subtitle(MIN: 1 MAX: 1 - TOTAL SIZE MAX 2 MB)</label>
+                        <label for="UploadedMovieSubtitle" class="form-label">Movie Subtitle(MAX: 1 - TOTAL SIZE MAX 2 MB)</label>
                         <input type="file" class="form-control" id="UploadedMovieSubtitle" name="UploadedMovieSubtitle"
                                accept=".srt, .ass, .sub, application/x-subrip, application/x-ass, text/x-subrip, text/x-ass">
                         <div id="UploadedMovieSubtitleErrorMessages" class="text-danger mt-2"></div> <!-- Error message container -->
