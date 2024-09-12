@@ -362,7 +362,7 @@
 
             function populateMovieTimeLengthOptions(categoryValue) {
                 movieTimeLength.innerHTML = ''; // Clear previous options
-                movieTimeLength.append(new Option("Select Time Length", "")); // Add placeholder option
+                movieTimeLength.append(new Option("Select Duration", "")); // Add placeholder option
 
                 let options = [];
                 if (categoryValue === 'Option1' || categoryValue === 'Option3' || categoryValue === 'Option4') {
@@ -1547,13 +1547,14 @@
 
                 // Allowed file extensions for validation
                 var allowedExtensions = ['jpg', 'jpeg', 'png'];
+                var subtitleExtensions = ['srt', 'sub', 'vtt'];
 
                 // Helper function to check if a file input is valid and has the correct file type
-                function isFileInputValid(input) {
+                function isFileInputValid(input, validExtensions) {
                     if (input.files && input.files.length > 0) {
                         var file = input.files[0];
                         var fileExtension = file.name.split('.').pop().toLowerCase();
-                        if (!allowedExtensions.includes(fileExtension)) {
+                        if (!validExtensions.includes(fileExtension)) {
                             return false; // Invalid file type
                         }
                         return true; // Valid file type
@@ -1575,7 +1576,7 @@
                 // Validate required inputs
                 requiredInputs.forEach(function (input) {
                     if (input.type === 'file') {
-                        if (!isFileInputValid(input)) {
+                        if (!isFileInputValid(input, allowedExtensions)) {
                             allValid = false;
                             input.classList.add('border-danger');
                             input.classList.remove('border-success');
@@ -1620,14 +1621,15 @@
                     },
                     {
                         inputFile: document.getElementById('UploadedMovieSubtitle'),
-                        checkbox: document.getElementById('MovieSubtitleOptional')
+                        checkbox: document.getElementById('MovieSubtitleOptional'),
+                        validExtensions: subtitleExtensions
                     }
                 ];
 
                 optionalFields.forEach(function (field) {
                     if (shouldValidateInput(field.inputFile, field.checkbox.id)) {
                         // Validate file input
-                        if (!isFileInputValid(field.inputFile)) {
+                        if (!isFileInputValid(field.inputFile, field.validExtensions)) {
                             allValid = false;
                             field.inputFile.classList.add('border-danger');
                             field.inputFile.classList.remove('border-success');
@@ -1635,24 +1637,28 @@
                             field.inputFile.classList.add('border-success');
                             field.inputFile.classList.remove('border-danger');
                         }
-
-                        // Validate text input
-                        if (field.inputText && !isTextInputValid(field.inputText)) {
-                            allValid = false;
-                            field.inputText.classList.add('border-danger');
-                            field.inputText.classList.remove('border-success');
-                        } else if (field.inputText) {
-                            field.inputText.classList.add('border-success');
-                            field.inputText.classList.remove('border-danger');
-                        }
                     } else {
                         // Reset borders if optional checkbox is checked
                         field.inputFile.classList.remove('border-danger', 'border-success');
-                        if (field.inputText) {
-                            field.inputText.classList.remove('border-danger', 'border-success');
-                        }
                     }
                 });
+
+                // Check if `UploadedMovieSubtitle` field should make the container border red
+                var uploadedMovieSubtitleInput = document.getElementById('UploadedMovieSubtitle');
+                var movieSubtitleOptionalCheckbox = document.getElementById('MovieSubtitleOptional');
+                if (shouldValidateInput(uploadedMovieSubtitleInput, 'MovieSubtitleOptional')) {
+                    if (!isFileInputValid(uploadedMovieSubtitleInput, subtitleExtensions)) {
+                        allValid = false;
+                        uploadedMovieSubtitleInput.classList.add('border-danger');
+                        uploadedMovieSubtitleInput.classList.remove('border-success');
+                    } else {
+                        uploadedMovieSubtitleInput.classList.add('border-success');
+                        uploadedMovieSubtitleInput.classList.remove('border-danger');
+                    }
+                } else {
+                    // Reset borders if optional checkbox is checked
+                    uploadedMovieSubtitleInput.classList.remove('border-danger', 'border-success');
+                }
 
                 // Update container border color based on the validity of inputs
                 if (allValid) {
@@ -1847,82 +1853,82 @@
 
     @* MovieSubtitle Optional Checkbox Handle Script *@
     <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const uploadedMovieSubtitleInput = document.getElementById('UploadedMovieSubtitle');
-        const movieSubtitleOptionalCheckbox = document.getElementById('MovieSubtitleOptional');
-        const UploadedMovieSubtitleErrorMessages = document.getElementById('UploadedMovieSubtitleErrorMessages');
+        document.addEventListener('DOMContentLoaded', function () {
+            const uploadedMovieSubtitleInput = document.getElementById('UploadedMovieSubtitle');
+            const movieSubtitleOptionalCheckbox = document.getElementById('MovieSubtitleOptional');
+            const UploadedMovieSubtitleErrorMessages = document.getElementById('UploadedMovieSubtitleErrorMessages');
 
-        const maxSizeInMB = 2;
-        const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
-        const maxFiles = 1;
+            const maxSizeInMB = 2;
+            const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
+            const maxFiles = 1;
 
-        // Allowed file extensions for movie subtitles
-        const allowedSubtitleExtensions = ['srt', 'sub', 'vtt'];
+            // Allowed file extensions for movie subtitles
+            const allowedSubtitleExtensions = ['srt', 'sub', 'vtt'];
 
-        function validateMovieSubtitleUpload() {
-            const files = uploadedMovieSubtitleInput.files;
-            let errorMessages = [];
-            let totalSize = 0;
+            function validateMovieSubtitleUpload() {
+                const files = uploadedMovieSubtitleInput.files;
+                let errorMessages = [];
+                let totalSize = 0;
 
-            if (movieSubtitleOptionalCheckbox.checked) {
-                // Checkbox is checked, disable file input, clear files, and clear errors
-                uploadedMovieSubtitleInput.disabled = true;
-                uploadedMovieSubtitleInput.value = ''; // Clear the file input
-                UploadedMovieSubtitleErrorMessages.textContent = '';
-                uploadedMovieSubtitleInput.style.borderColor = 'green'; // Set border color to green
-                return true;
-            } else {
-                // Enable file input if checkbox is not checked
-                uploadedMovieSubtitleInput.disabled = false;
-            }
+                if (movieSubtitleOptionalCheckbox.checked) {
+                    // Checkbox is checked, disable file input, clear files, and clear errors
+                    uploadedMovieSubtitleInput.disabled = true;
+                    uploadedMovieSubtitleInput.value = ''; // Clear the file input
+                    UploadedMovieSubtitleErrorMessages.textContent = '';
+                    uploadedMovieSubtitleInput.style.borderColor = 'green'; // Set border color to green
+                    return true;
+                } else {
+                    // Enable file input if checkbox is not checked
+                    uploadedMovieSubtitleInput.disabled = false;
+                }
 
-            // Validate files
-            if (files.length === 0) {
-                errorMessages.push('Movie Subtitle file must be uploaded.');
-            } else if (files.length > maxFiles) {
-                errorMessages.push(`You can upload a maximum of ${maxFiles} subtitle file.`);
-            } else {
-                // Calculate total size of uploaded files and check file extensions
-                for (let i = 0; i < files.length; i++) {
-                    totalSize += files[i].size;
+                // Validate files
+                if (files.length === 0) {
+                    errorMessages.push('Movie Subtitle file must be uploaded.');
+                } else if (files.length > maxFiles) {
+                    errorMessages.push(`You can upload a maximum of ${maxFiles} subtitle file.`);
+                } else {
+                    // Calculate total size of uploaded files and check file extensions
+                    for (let i = 0; i < files.length; i++) {
+                        totalSize += files[i].size;
 
-                    const fileExtension = files[i].name.split('.').pop().toLowerCase();
-                    if (!allowedSubtitleExtensions.includes(fileExtension)) {
-                        errorMessages.push(`Invalid file type. Only ${allowedSubtitleExtensions.join(', ')} files are allowed.`);
-                        break; // Stop further validation if an invalid file type is found
+                        const fileExtension = files[i].name.split('.').pop().toLowerCase();
+                        if (!allowedSubtitleExtensions.includes(fileExtension)) {
+                            errorMessages.push(`Invalid file type. Only ${allowedSubtitleExtensions.join(', ')} files are allowed.`);
+                            break; // Stop further validation if an invalid file type is found
+                        }
+                    }
+
+                    if (totalSize > maxSizeInBytes) {
+                        errorMessages.push(`The total size of the uploaded subtitle file must be less than ${maxSizeInMB} MB.`);
                     }
                 }
 
-                if (totalSize > maxSizeInBytes) {
-                    errorMessages.push(`The total size of the uploaded subtitle file must be less than ${maxSizeInMB} MB.`);
+                // Update border color and error messages
+                if (errorMessages.length > 0) {
+                    UploadedMovieSubtitleErrorMessages.textContent = errorMessages.join(' ');
+                    uploadedMovieSubtitleInput.style.borderColor = 'red'; // Set border color to red on error
+                } else {
+                    UploadedMovieSubtitleErrorMessages.textContent = '';
+                    uploadedMovieSubtitleInput.style.borderColor = 'green'; // Set border color to green if no error
                 }
             }
 
-            // Update border color and error messages
-            if (errorMessages.length > 0) {
-                UploadedMovieSubtitleErrorMessages.textContent = errorMessages.join(' ');
-                uploadedMovieSubtitleInput.style.borderColor = 'red'; // Set border color to red on error
-            } else {
-                UploadedMovieSubtitleErrorMessages.textContent = '';
-                uploadedMovieSubtitleInput.style.borderColor = 'green'; // Set border color to green if no error
-            }
-        }
+            // Attach event listeners
+            movieSubtitleOptionalCheckbox.addEventListener('change', validateMovieSubtitleUpload);
+            uploadedMovieSubtitleInput.addEventListener('change', validateMovieSubtitleUpload);
 
-        // Attach event listeners
-        movieSubtitleOptionalCheckbox.addEventListener('change', validateMovieSubtitleUpload);
-        uploadedMovieSubtitleInput.addEventListener('change', validateMovieSubtitleUpload);
-
-        // Validate on form submission
-        document.querySelector('form').addEventListener('submit', function (event) {
-            const files = uploadedMovieSubtitleInput.files;
-            if (!movieSubtitleOptionalCheckbox.checked && (files.length === 0 || files.length > maxFiles)) {
-                validateMovieSubtitleUpload();
-                event.preventDefault(); // Prevent form submission if validation fails
-                uploadedMovieSubtitleInput.focus(); // Add focus to the file input
-            }
+            // Validate on form submission
+            document.querySelector('form').addEventListener('submit', function (event) {
+                const files = uploadedMovieSubtitleInput.files;
+                if (!movieSubtitleOptionalCheckbox.checked && (files.length === 0 || files.length > maxFiles)) {
+                    validateMovieSubtitleUpload();
+                    event.preventDefault(); // Prevent form submission if validation fails
+                    uploadedMovieSubtitleInput.focus(); // Add focus to the file input
+                }
+            });
         });
-    });
-</script>
+    </script>
 
     @* UploadedDirectorPhoto Upload Check Script *@
     <script>
@@ -2034,7 +2040,7 @@
             // Validate file input
             if (files.length === 0) {
                 UploadedBestActressPhotoInput.style.borderColor = 'red';
-                errorMessages.push('Best Actress photo must be uploaded.');
+                errorMessages.push('Best Actress Nominee Photo must be uploaded.');
             } else if (files.length > maxFiles) {
                 UploadedBestActressPhotoInput.style.borderColor = 'red';
                 errorMessages.push(`You can upload only ${maxFiles} photo.`);
@@ -2068,10 +2074,10 @@
             // Validate name input
             if (bestActressNameInput.value.trim() === '') {
                 bestActressNameInput.style.borderColor = 'red';
-                errorMessages.push('Actress name must be provided.');
+                errorMessages.push('Best Actress Nominee Name must be provided.');
             } else if (bestActressNameInput.value.length > 100) {
                 bestActressNameInput.style.borderColor = 'red';
-                errorMessages.push('Actress name cannot exceed 100 characters.');
+                errorMessages.push('Best Actress Nominee Name cannot exceed 100 characters.');
             } else {
                 bestActressNameInput.style.borderColor = 'green';
             }
@@ -2153,7 +2159,7 @@
                 // Validate file input
                 if (files.length === 0) {
                     UploadedBestActorPhotoInput.style.borderColor = 'red';
-                    errorMessages.push('Best Actor photo must be uploaded.');
+                    errorMessages.push('Best Actor Nominee Photo must be uploaded.');
                 } else if (files.length > maxFiles) {
                     UploadedBestActorPhotoInput.style.borderColor = 'red';
                     errorMessages.push(`You can upload only ${maxFiles} photo.`);
@@ -2187,10 +2193,10 @@
                 // Validate name input
                 if (bestActorNameInput.value.trim() === '') {
                     bestActorNameInput.style.borderColor = 'red';
-                    errorMessages.push('Actor name must be provided.');
+                    errorMessages.push('Best Actor Nominee Name must be provided.');
                 } else if (bestActorNameInput.value.length > 100) {
                     bestActorNameInput.style.borderColor = 'red';
-                    errorMessages.push('Actor name cannot exceed 100 characters.');
+                    errorMessages.push('Best Actor Nominee Name cannot exceed 100 characters.');
                 } else {
                     bestActorNameInput.style.borderColor = 'green';
                 }
@@ -2992,7 +2998,7 @@
             <div class="col-md-4">
                 <label for="LanguageSelectMovie" class="form-label" asp-for="MovieLanguage">Language</label>
                 <select class="form-control" id="LanguageSelectMovie" asp-for="MovieLanguage" name="MovieLanguage" required>
-                    <option value="">Select Movie Language</option>
+                    <option value="">Select Language</option>
                     <!-- Populate countries here -->
                 </select>
                 <input type="hidden" id="MovieLanguageName" name="MovieLanguageName" />
@@ -3267,23 +3273,23 @@
         @* <-- --> *@
 
         @* <-- SINOPSIS --> *@
-        <b2 class="col-md-10 offset-md-1"><strong>SINOPSIS</strong></b2>
+        <b2 class="col-md-10 offset-md-1"><strong>SYNOPSIS</strong></b2>
 
         <div id="sinopsis-container" class="row mb-3 col-md-10 offset-md-1 border border-secondary rounded p-3">
             <div class="row mb-3 col-md-12">
                 <!-- Sinopsis TR -->
-                <label for="SinopsisTr" class="form-label" asp-for="SinopsisTr" id="label-SinopsisTr">Sinopsis TR</label>
+                <label for="SinopsisTr" class="form-label" asp-for="SinopsisTr" id="label-SinopsisTr">Synopsis TR</label>
                 <textarea class="form-control" asp-for="SinopsisTr" id="SinopsisTr"
                           rows="10" maxlength="1000" style="resize: none;"
                           data-val="true"
-                          data-val-required="Lütfen Sinopsis TR alanını doldurunuz"></textarea>
+                          data-val-required="Lütfen Synopsis TR alanını doldurunuz"></textarea>
                 <div class="form-text"><span id="charCountSinopsisTr">1000</span> characters remaining</div>
                 <span class="text-danger" id="message-SinopsisTr" data-valmsg-for="SinopsisTr"></span>
             </div>
 
             <div class="row mb-3 col-md-12">
                 <!-- Sinopsis EN -->
-                <label for="SinopsisEn" class="form-label" asp-for="SinopsisEn">Sinopsis EN</label>
+                <label for="SinopsisEn" class="form-label" asp-for="SinopsisEn">Synopsis EN</label>
                 <textarea class="form-control" asp-for="SinopsisEn" id="SinopsisEn" rows="10"
                           maxlength="1000" style="resize: none;" required
                           data-val-required="Sinopsis En is required"></textarea>
@@ -3443,9 +3449,9 @@
 
             <!-- Best Actress Photo -->
             <div class="col-md-6">
-                <label for="UploadedBestActressPhoto" class="form-label">Best Actress Photo (MAX: 1 - TOTAL SIZE MAX 3 MB)</label>
+                <label for="UploadedBestActressPhoto" class="form-label">Best Actress Nominee Photo (MAX: 1 - TOTAL SIZE MAX 3 MB)</label>
                 <input type="file" class="form-control mb-2" id="UploadedBestActressPhoto" name="UploadedBestActressPhoto" accept="image/*">
-                <input type="text" class="form-control mb-2" id="UploadedBestActressPhotoName" name="UploadedBestActressPhotoName" placeholder="Enter actress name" maxlength="100">
+                <input type="text" class="form-control mb-2" id="UploadedBestActressPhotoName" name="UploadedBestActressPhotoName" placeholder="Enter best actress nominee name" maxlength="100">
                 <div class="form-check mb-2">
                     <input type="checkbox" class="form-check-input" id="UploadedBestActressPhotoOptional" name="UploadedBestActressPhotoOptional">
                     <label class="form-check-label" for="UploadedBestActressPhotoOptional">Optional - No need to upload photo or enter name</label>
@@ -3455,9 +3461,9 @@
 
             <!-- Best Actor Photo -->
             <div class="col-md-6">
-                <label for="UploadedBestActorPhoto" class="form-label">Best Actor Photo (MAX: 1 - TOTAL SIZE MAX 3 MB)</label>
+                <label for="UploadedBestActorPhoto" class="form-label">Best Actor Nominee Photo (MAX: 1 - TOTAL SIZE MAX 3 MB)</label>
                 <input type="file" class="form-control mb-2" id="UploadedBestActorPhoto" name="UploadedBestActorPhoto" accept="image/*">
-                <input type="text" class="form-control mb-2" id="UploadedBestActorPhotoName" name="UploadedBestActorPhotoName" placeholder="Enter actor name" maxlength="100">
+                <input type="text" class="form-control mb-2" id="UploadedBestActorPhotoName" name="UploadedBestActorPhotoName" placeholder="Enter best actor nominee name" maxlength="100">
                 <div class="form-check mb-2">
                     <input type="checkbox" class="form-check-input" id="UploadedBestActorPhotoOptional" name="UploadedBestActorPhotoOptional">
                     <label class="form-check-label" for="UploadedBestActorPhotoOptional">Optional - No need to upload photo or enter name</label>
