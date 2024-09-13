@@ -1540,6 +1540,9 @@
     @* Container Border Color Script *@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // Flag to check if the page is being loaded for the first time
+            var isInitialLoad = true;
+
             function validateMediaContainer() {
                 var mediaContainer = document.getElementById('media-container');
                 var requiredInputs = mediaContainer.querySelectorAll('input[required]');
@@ -1670,7 +1673,16 @@
                 } else {
                     mediaContainer.classList.add('border-danger');
                     mediaContainer.classList.remove('border-success');
+
+                    // Focus the container only if there are validation errors and it's not the initial load
+                    if (!isInitialLoad) {
+                        mediaContainer.setAttribute('tabindex', '2'); // Ensure it's focusable
+                        mediaContainer.focus(); // Focus on the container
+                    }
                 }
+
+                // Set the initial load flag to false after the first validation
+                isInitialLoad = false;
 
                 return allValid; // Return whether the media is valid
             }
@@ -2007,62 +2019,62 @@
 
     @* UploadedBestActressPhoto Upload Check Script *@
     <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const UploadedBestActressPhotoInput = document.getElementById('UploadedBestActressPhoto');
-        const bestActressNameInput = document.getElementById('UploadedBestActressPhotoName');
-        const uploadedBestActressPhotoOptional = document.getElementById('UploadedBestActressPhotoOptional');
-        const UploadedBestActressPhotoMessages = document.getElementById('UploadedBestActressPhotoMessages');
+        document.addEventListener('DOMContentLoaded', function () {
+            const UploadedBestActressPhotoInput = document.getElementById('UploadedBestActressPhoto');
+            const bestActressNameInput = document.getElementById('UploadedBestActressPhotoName');
+            const uploadedBestActressPhotoOptional = document.getElementById('UploadedBestActressPhotoOptional');
+            const UploadedBestActressPhotoMessages = document.getElementById('UploadedBestActressPhotoMessages');
 
-        // Allowed image file extensions
-        const allowedImageExtensions = ['jpg', 'jpeg', 'png'];
+            // Allowed image file extensions
+            const allowedImageExtensions = ['jpg', 'jpeg', 'png'];
 
-        const maxSizeInMB = 3;
-        const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
-        const maxFiles = 1;
+            const maxSizeInMB = 3;
+            const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
+            const maxFiles = 1;
 
-        function validateUploadedBestActressPhoto() {
-            const files = UploadedBestActressPhotoInput.files;
-            let errorMessages = [];
-            let totalSize = 0;
+            function validateUploadedBestActressPhoto() {
+                const files = UploadedBestActressPhotoInput.files;
+                let errorMessages = [];
+                let totalSize = 0;
 
-            if (uploadedBestActressPhotoOptional.checked) {
-                // Checkbox is checked, disable inputs, clear files, clear name, and clear errors
-                UploadedBestActressPhotoInput.disabled = true;
-                bestActressNameInput.disabled = true;
-                UploadedBestActressPhotoInput.value = '';
-                bestActressNameInput.value = '';
-                UploadedBestActressPhotoMessages.textContent = '';
-                UploadedBestActressPhotoInput.style.borderColor = 'green';
-                bestActressNameInput.style.borderColor = 'green';
-                return true;
-            } else {
-                // Enable inputs if checkbox is not checked
-                UploadedBestActressPhotoInput.disabled = false;
-                bestActressNameInput.disabled = false;
-            }
-
-            // Validate file input
-            if (files.length === 0) {
-                UploadedBestActressPhotoInput.style.borderColor = 'red';
-                errorMessages.push('Best Actress Nominee Photo must be uploaded.');
-            } else if (files.length > maxFiles) {
-                UploadedBestActressPhotoInput.style.borderColor = 'red';
-                errorMessages.push(`You can upload only ${maxFiles} photo.`);
-            } else {
-                totalSize = files[0].size;
-
-                // Check file extension
-                const fileExtension = files[0].name.split('.').pop().toLowerCase();
-                if (!allowedImageExtensions.includes(fileExtension)) {
-                    errorMessages.push(`Invalid file type. Only ${allowedImageExtensions.join(', ')} files are allowed.`);
-                    UploadedBestActressPhotoInput.style.borderColor = 'red';
-                } else if (totalSize > maxSizeInBytes) {
-                    UploadedBestActressPhotoInput.style.borderColor = 'red';
-                    errorMessages.push(`The photo size must be less than ${maxSizeInMB} MB.`);
-                } else {
+                if (uploadedBestActressPhotoOptional.checked) {
+                    // Checkbox is checked, disable inputs, clear files, clear name, and clear errors
+                    UploadedBestActressPhotoInput.disabled = true;
+                    bestActressNameInput.disabled = true;
+                    UploadedBestActressPhotoInput.value = '';
+                    bestActressNameInput.value = '';
+                    UploadedBestActressPhotoMessages.textContent = '';
                     UploadedBestActressPhotoInput.style.borderColor = 'green';
+                    bestActressNameInput.style.borderColor = 'green';
+                    return true;
+                } else {
+                    // Enable inputs if checkbox is not checked
+                    UploadedBestActressPhotoInput.disabled = false;
+                    bestActressNameInput.disabled = false;
                 }
-            }
+
+                // Validate file input
+                if (files.length === 0) {
+                    UploadedBestActressPhotoInput.style.borderColor = 'red';
+                    errorMessages.push('Best Actress Nominee Photo must be uploaded.');
+                } else if (files.length > maxFiles) {
+                    UploadedBestActressPhotoInput.style.borderColor = 'red';
+                    errorMessages.push(`You can upload only ${maxFiles} photo.`);
+                } else {
+                    totalSize = files[0].size;
+
+                    // Check file extension
+                    const fileExtension = files[0].name.split('.').pop().toLowerCase();
+                    if (!allowedImageExtensions.includes(fileExtension)) {
+                        errorMessages.push(`Invalid file type. Only ${allowedImageExtensions.join(', ')} files are allowed.`);
+                        UploadedBestActressPhotoInput.style.borderColor = 'red';
+                    } else if (totalSize > maxSizeInBytes) {
+                        UploadedBestActressPhotoInput.style.borderColor = 'red';
+                        errorMessages.push(`The photo size must be less than ${maxSizeInMB} MB.`);
+                    } else {
+                        UploadedBestActressPhotoInput.style.borderColor = 'green';
+                    }
+                }
 
                 // Update border color and error messages
                 if (errorMessages.length > 0 && !uploadedBestActressPhotoOptional.checked) {
@@ -2075,54 +2087,54 @@
                     bestActressNameInput.style.borderColor = 'green';
                 }
 
-            // Validate name input
-            if (bestActressNameInput.value.trim() === '') {
-                bestActressNameInput.style.borderColor = 'red';
-                errorMessages.push('Best Actress Nominee Name must be provided.');
-            } else if (bestActressNameInput.value.length > 100) {
-                bestActressNameInput.style.borderColor = 'red';
-                errorMessages.push('Best Actress Nominee Name cannot exceed 100 characters.');
-            } else {
-                bestActressNameInput.style.borderColor = 'green';
-            }
+                // Validate name input
+                if (bestActressNameInput.value.trim() === '') {
+                    bestActressNameInput.style.borderColor = 'red';
+                    errorMessages.push('Best Actress Nominee Name must be provided.');
+                } else if (bestActressNameInput.value.length > 100) {
+                    bestActressNameInput.style.borderColor = 'red';
+                    errorMessages.push('Best Actress Nominee Name cannot exceed 100 characters.');
+                } else {
+                    bestActressNameInput.style.borderColor = 'green';
+                }
 
-            // Update error messages
-            if (errorMessages.length > 0) {
-                UploadedBestActressPhotoMessages.textContent = errorMessages.join(' ');
-            } else {
-                UploadedBestActressPhotoMessages.textContent = '';
-            }
+                // Update error messages
+                if (errorMessages.length > 0) {
+                    UploadedBestActressPhotoMessages.textContent = errorMessages.join(' ');
+                } else {
+                    UploadedBestActressPhotoMessages.textContent = '';
+                }
 
-            // Focus on the first invalid field
-            if (errorMessages.length > 0) {
-                if (UploadedBestActressPhotoInput.style.borderColor === 'red') {
-                    UploadedBestActressPhotoInput.focus();
-                } else if (bestActressNameInput.style.borderColor === 'red') {
-                    bestActressNameInput.focus();
+                // Focus on the first invalid field
+                if (errorMessages.length > 0) {
+                    if (UploadedBestActressPhotoInput.style.borderColor === 'red') {
+                        UploadedBestActressPhotoInput.focus();
+                    } else if (bestActressNameInput.style.borderColor === 'red') {
+                        bestActressNameInput.focus();
+                    }
                 }
             }
-        }
 
-        // Attach event listeners
-        uploadedBestActressPhotoOptional.addEventListener('change', validateUploadedBestActressPhoto);
-        UploadedBestActressPhotoInput.addEventListener('change', validateUploadedBestActressPhoto);
-        bestActressNameInput.addEventListener('input', validateUploadedBestActressPhoto);
+            // Attach event listeners
+            uploadedBestActressPhotoOptional.addEventListener('change', validateUploadedBestActressPhoto);
+            UploadedBestActressPhotoInput.addEventListener('change', validateUploadedBestActressPhoto);
+            bestActressNameInput.addEventListener('input', validateUploadedBestActressPhoto);
 
-        // Validate on form submission
-        document.querySelector('form').addEventListener('submit', function (event) {
-            const files = UploadedBestActressPhotoInput.files;
-            if (!uploadedBestActressPhotoOptional.checked && (files.length === 0 || files.length > 1 || bestActressNameInput.value.trim() === '' || bestActressNameInput.value.length > 100)) {
-                validateUploadedBestActressPhoto();
-                event.preventDefault(); // Prevent form submission if validation fails
-                if (UploadedBestActressPhotoInput.style.borderColor === 'red') {
-                    UploadedBestActressPhotoInput.focus(); // Focus on file input
-                } else if (bestActressNameInput.style.borderColor === 'red') {
-                    bestActressNameInput.focus(); // Focus on name input
+            // Validate on form submission
+            document.querySelector('form').addEventListener('submit', function (event) {
+                const files = UploadedBestActressPhotoInput.files;
+                if (!uploadedBestActressPhotoOptional.checked && (files.length === 0 || files.length > 1 || bestActressNameInput.value.trim() === '' || bestActressNameInput.value.length > 100)) {
+                    validateUploadedBestActressPhoto();
+                    event.preventDefault(); // Prevent form submission if validation fails
+                    if (UploadedBestActressPhotoInput.style.borderColor === 'red') {
+                        UploadedBestActressPhotoInput.focus(); // Focus on file input
+                    } else if (bestActressNameInput.style.borderColor === 'red') {
+                        bestActressNameInput.focus(); // Focus on name input
+                    }
                 }
-            }
+            });
         });
-    });
-</script>
+    </script>
 
     @* UploadedBestActorPhoto Upload Check Script *@
     <script>
@@ -2870,7 +2882,8 @@
                 </div>
                 @* Display validation errors for the specific field *@
                 @* Errors come from the model *@
-                <div class="text-danger mb-3"> @* Makes the error message red *@
+                <div class="text-danger mb-3">
+                    @* Makes the error message red *@
                     <span asp-validation-for="CompetitionCategory"></span>
                 </div>
             </div>
@@ -2904,7 +2917,7 @@
 
             <div class="row mb-3 col-md-12">
                 <div class="col-md-12">
-                    <label for="MovieWebsite" class="form-label" asp-for="MovieWebsite">Movie Website (Optional)</label>
+                    <label for="MovieWebsite" class="form-label" asp-for="MovieWebsite">Movie Website (optional)</label>
                     <input class="form-control" asp-for="MovieWebsite"
                            id="MovieWebsite" name="MovieWebsite"
                            maxlength="100" placeholder="Max 100 characters">
@@ -3126,22 +3139,22 @@
         <div id="movie-tag-container" class="row mb-3 col-md-10 offset-md-1 border border-secondary rounded p-3">
             <div class="row mb-3 col-md-12">
                 <div class="col-md-12">
-                    <label for="ScreenWriter1" class="form-label" asp-for="ScreenWriter1">First Screen Writer</label>
+                    <label for="ScreenWriter1" class="form-label" asp-for="ScreenWriter1">Screenplay</label>
                     <input class="form-control" asp-for="ScreenWriter1"
                            id="ScreenWriter1" name="ScreenWriter1"
                            maxlength="100" required placeholder="Max 100 characters"
                            data-val="true"
-                           data-val-required="First Screen Writer is required" />
+                           data-val-required="Screenplay is required" />
                     <span class="text-danger" asp-validation-for="ScreenWriter1"></span>
                 </div>
                 <div class="col-md-12 mt-3">
-                    <label for="ScreenWriter2" class="form-label">Second Screen Writer</label>
+                    <label for="ScreenWriter2" class="form-label">Screenplay (optional)</label>
                     <input type="text" class="form-control" id="ScreenWriter2" name="ScreenWriter2" maxlength="100"
                            placeholder="Max 100 characters" />
                     <span class="text-danger" asp-validation-for="ScreenWriter2"></span>
                 </div>
                 <div class="col-md-12 mt-3">
-                    <label for="ScreenWriter3" class="form-label">Third Screen Writer</label>
+                    <label for="ScreenWriter3" class="form-label">Screenplay (optional)</label>
                     <input type="text" class="form-control" id="ScreenWriter3" name="ScreenWriter3" maxlength="100"
                            placeholder="Max 100 characters" />
                     <span class="text-danger" asp-validation-for="ScreenWriter3"></span>
@@ -3161,15 +3174,15 @@
             </div>
             <div class="row mb-3 col-md-12 ">
                 <div class="col-md-12">
-                    <label for="MovieFiction1" class="form-label" asp-for="MovieFiction1">First Movie Fiction</label>
+                    <label for="MovieFiction1" class="form-label" asp-for="MovieFiction1">Movie Fiction</label>
                     <input class="form-control" asp-for="MovieFiction1" id="MovieFiction1" name="MovieFiction1"
                            maxlength="100" required placeholder="Max 100 characters"
                            data-val="true"
-                           data-val-required="First Movie Fiction is required" />
+                           data-val-required="Movie Fiction is required" />
                     <span class="text-danger" asp-validation-for="MovieFiction1"></span>
                 </div>
                 <div class="col-md-12 mt-3">
-                    <label for="MovieFiction2" class="form-label">Second Movie Fiction</label>
+                    <label for="MovieFiction2" class="form-label">Movie Fiction (optional)</label>
                     <input type="text" class="form-control" id="MovieFiction2" name="MovieFiction2" maxlength="100"
                            placeholder="Max 100 characters" />
                     <span class="text-danger" asp-validation-for="MovieFiction2"></span>
@@ -3259,19 +3272,19 @@
         @* <b2 class="col-md-10 offset-md-1"><strong>FILM WORK OPERATION CERTIFICATE</strong></b2>
 
         <div id="film-work-operation-container" class="row mb-3 col-md-10 offset-md-1 border border-secondary rounded p-3">
-            <div class="col-md-12">
-                <label for="UploadedPdfFile" class="form-label">Upload PDF (MAX: 1 - TOTAL SIZE MAX 5 MB)</label>
-                <input type="file" class="form-control" id="UploadedPdfFile" name="UploadedPdfFile" accept=".pdf">
-                <span class="text-danger" id="UploadedPdfFileErrorMessages"></span> <!-- Error message container -->
-            </div>
-            <div class="col-md-12">
-                <div class="form-check mt-2">
-                    <input class="form-check-input" type="checkbox" id="PdfFileOptional" name="PdfFileOptional">
-                    <label class="form-check-label" for="PdfFileOptional">
-                        Optional - No need to upload PDF file
-                    </label>
-                </div>
-            </div>
+        <div class="col-md-12">
+        <label for="UploadedPdfFile" class="form-label">Upload PDF (MAX: 1 - TOTAL SIZE MAX 5 MB)</label>
+        <input type="file" class="form-control" id="UploadedPdfFile" name="UploadedPdfFile" accept=".pdf">
+        <span class="text-danger" id="UploadedPdfFileErrorMessages"></span> <!-- Error message container -->
+        </div>
+        <div class="col-md-12">
+        <div class="form-check mt-2">
+        <input class="form-check-input" type="checkbox" id="PdfFileOptional" name="PdfFileOptional">
+        <label class="form-check-label" for="PdfFileOptional">
+        Optional - No need to upload PDF file
+        </label>
+        </div>
+        </div>
         </div> *@
 
         @* <-- --> *@
@@ -3407,7 +3420,7 @@
         @* <-- MEDIA --> *@
         <b2 class="col-md-10 offset-md-1"><strong>MEDIA</strong></b2>
 
-        <div id="media-container" class="row mb-3 col-md-10 offset-md-1 border border-secondary rounded p-3">
+        <div id="media-container" tabindex="2" class="row mb-3 col-md-10 offset-md-1 border border-secondary rounded p-3">
             <div class="row mb-3 col-md-12">
 
                 <!-- UploadedMoviePictures -->
@@ -3458,7 +3471,7 @@
                 <input type="text" class="form-control mb-2" id="UploadedBestActressPhotoName" name="UploadedBestActressPhotoName" placeholder="Enter best actress nominee name" maxlength="100">
                 <div class="form-check mb-2">
                     <input type="checkbox" class="form-check-input" id="UploadedBestActressPhotoOptional" name="UploadedBestActressPhotoOptional">
-                    <label class="form-check-label" for="UploadedBestActressPhotoOptional">Optional - No need to upload photo or enter name</label>
+                    <label class="form-check-label" for="UploadedBestActressPhotoOptional">optional - No need to upload photo or enter name</label>
                 </div>
                 <div id="UploadedBestActressPhotoMessages" class="text-danger mt-2"></div>
             </div>
@@ -3470,7 +3483,7 @@
                 <input type="text" class="form-control mb-2" id="UploadedBestActorPhotoName" name="UploadedBestActorPhotoName" placeholder="Enter best actor nominee name" maxlength="100">
                 <div class="form-check mb-2">
                     <input type="checkbox" class="form-check-input" id="UploadedBestActorPhotoOptional" name="UploadedBestActorPhotoOptional">
-                    <label class="form-check-label" for="UploadedBestActorPhotoOptional">Optional - No need to upload photo or enter name</label>
+                    <label class="form-check-label" for="UploadedBestActorPhotoOptional">optional - No need to upload photo or enter name</label>
                 </div>
                 <div id="UploadedBestActorPhotoErrorMessages" class="text-danger mt-2"></div>
             </div>
