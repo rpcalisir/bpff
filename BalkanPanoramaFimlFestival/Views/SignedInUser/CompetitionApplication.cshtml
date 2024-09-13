@@ -2712,6 +2712,7 @@
             const generalRulesPopup = document.getElementById('generalRulesPopup');
             const generalRulesPopupClose = document.getElementById('generalRulesPopupClose');
             const generalRulesError = document.getElementById('generalRulesError');
+            const popupContent = document.querySelector('.popup-content'); // Select the popup content
 
             // Function to show popups
             function showPopup(popup) {
@@ -2729,9 +2730,22 @@
                 showPopup(generalRulesPopup);
             });
 
-            // Close Regulations Popup
+            // Close Regulations Popup when clicking the close button
             generalRulesPopupClose.addEventListener('click', () => {
                 hidePopup(generalRulesPopup);
+            });
+
+            // Close popup when clicking outside the popup content
+            document.addEventListener('click', (event) => {
+                // Ensure popup is visible and clicked outside popup content
+                if (generalRulesPopup.style.display === 'flex' && !popupContent.contains(event.target) && !event.target.matches('#generalRulesLink')) {
+                    hidePopup(generalRulesPopup);
+                }
+            });
+
+            // Prevent clicks inside the popup content from closing the popup
+            popupContent.addEventListener('click', (event) => {
+                event.stopPropagation();
             });
 
             // Submit Button Logic
@@ -2775,6 +2789,7 @@
             const regulationsPopup = document.getElementById('regulationsPopup');
             const regulationsPopupClose = document.getElementById('regulationsPopupClose');
             const regulationsError = document.getElementById('regulationsError');
+            const popupContent = document.querySelector('.popup-content'); // Select the popup content
 
             // Function to show popups
             function showPopup(popup) {
@@ -2787,13 +2802,27 @@
             }
 
             // Open Regulations Popup by clicking the text within the label
-            document.getElementById('regulationsLink').addEventListener('click', () => {
+            document.getElementById('regulationsLink').addEventListener('click', (event) => {
+                event.preventDefault(); // Prevent default link action
                 showPopup(regulationsPopup);
             });
 
-            // Close Regulations Popup
+            // Close Regulations Popup when clicking the close button
             regulationsPopupClose.addEventListener('click', () => {
                 hidePopup(regulationsPopup);
+            });
+
+            // Close popup when clicking outside the popup content
+            document.addEventListener('click', (event) => {
+                // Ensure popup is visible and clicked outside popup content
+                if (regulationsPopup.style.display === 'flex' && !popupContent.contains(event.target) && !event.target.matches('#regulationsLink')) {
+                    hidePopup(regulationsPopup);
+                }
+            });
+
+            // Prevent clicks inside the popup content from closing the popup
+            popupContent.addEventListener('click', (event) => {
+                event.stopPropagation();
             });
 
             // Submit Button Logic
@@ -3680,7 +3709,7 @@
             <div class="form-check">
                 <input type="checkbox" id="generalRulesCheckbox" class="form-check-input">
                 <label for="generalRulesCheckbox" class="form-check-label">
-                    I HAVE READ THE <span id="generalRulesLink" style="color: darkblue; cursor: pointer;">GENERAL RULES</span> AND APPROVE THEM
+                    I HAVE READ THE <span id="generalRulesLink" style="color: darkblue;" class="popup-link">GENERAL RULES</span> AND APPROVE THEM
                 </label>
             </div>
             <div id="generalRulesError" class="text-danger" style="display: none;">
@@ -3693,8 +3722,7 @@
             <div class="popup-content">
                 <span id="generalRulesPopupClose" class="popup-close">CLOSE</span>
                 <h2>GENERAL RULES</h2>
-                <p>
-                    Feature Length Film Competition<br><br>
+                    International Feature Film Competition<br><br>
 
                     1. The length of the film must be at least 60 minutes.<br>
                     2. Fiction, animation, and documentary films can apply.<br>
@@ -3702,7 +3730,7 @@
                     4. Films produced in January 2022 and later can apply.<br>
                     5. Films that apply must not have been screened in Izmir.<br><br>
 
-                    Short Length Film Competition<br><br>
+                    International Short Film Competition <br><br>
 
                     1. The length of the film, including the credits, must be at least 5 minutes and at most 25 minutes.<br>
                     2. Fiction, animation, and documentary films can apply.<br>
@@ -3710,7 +3738,7 @@
                     4. Films produced in January 2022 and later can apply.<br>
                     5. Films that apply must not have been screened in Izmir.<br><br>
 
-                    Feature Lenght Film Screening<br><br>
+                    International Feature Film Screening<br><br>
 
                     1. The length of the film must be at least 60 minutes.<br>
                     2. Fiction, animation, and documentary films can apply.<br>
@@ -3718,7 +3746,7 @@
                     4. Films produced in January 2022 and later can apply.<br>
                     5. The films that apply must not have been shown in Izmir.<br><br>
 
-                    Short Length Film Screening<br><br>
+                International Short Film Screening<br><br>
 
                     1. The length of the film, including the credits, must be at least 5 minutes and at most 25 minutes.<br>
                     2. Fiction, animation, and documentary films can apply.<br>
@@ -3750,7 +3778,6 @@
                     IMPORTANT: The download link and password of the movie, if any, are valid for at least 30 (thirty) days from the date of sending.<br><br>
 
                     If you have any questions, we will be happy to help you. Please contact us at info@bpff.com.tr.
-                </p>
             </div>
         </div>
         @* <-- --> *@
@@ -3773,11 +3800,92 @@
             <div class="popup-content">
                 <span id="regulationsPopupClose" class="popup-close">CLOSE</span>
                 <h2>REGULATIONS</h2>
-                <p>
-                    A) PURPOSE
+                 <strong>BALKAN PANORAMA FILM FESTIVAL</strong><br>
+                Sarı Şemsiye Competition Regulations<br><br>
+                <strong>A) PURPOSE</strong><br>
+                The Balkan Panorama Film Festival aims to promote and support important and innovative works of Turkish and Balkan cinema and to make İzmir a meeting point for filmmakers and audiences. It seeks to encourage cooperation among filmmakers from Balkan countries, support their collaboration, and establish a joint fund.
+                <br><br><strong>B) FESTIVAL ORGANIZATION</strong><br>
+                The Balkan Panorama Film Festival is a registered trademark. It is organized by the Rumeli Culture, Art, and Education Association.
+                <br><br><strong>C) FESTIVAL DATE</strong><br>
+                The Balkan Panorama Film Festival will be held from October 25 to October 31, 2024.
 
-                    To promote, support and establish a joint fund for collaboration among filmmakers in the Balkan countries within the scope of the Balkan Panorama Film Festival, which aims to promote and support important and innovative works of Turkish and Balkan cinema and to make Izmir a meeting point between filmmakers and audiences.
-                </p>
+                <br><br><strong>D) PARTICIPATION CONDITIONS</strong><br>
+                The final submission date for the competition is Friday, August 18, 2024.<br>
+                Films completed after January 2022 and possessing an exhibition certificate are eligible to participate.<br>
+                The competition is open to feature films, animations, and documentaries longer than 60 minutes.<br>
+                The Short Film category accepts fiction, animation, and documentary films with a length of at least 5 minutes and no more than 25 minutes.<br>
+                Screening copies of the films must be prepared in mp4 or mkv format and meet the technical specifications outlined in this Regulation.<br>
+                Films accepted into the competition with preview copies that are technically unsuitable or have issues affecting the screening quality (such as damage or degradation) will be assessed by the Festival Management to determine their suitability for the competition or screening section.<br>
+                Directors or producers may submit any number of films to the competition. Participation in other festivals or receiving awards does not disqualify a film from this competition.<br>
+                Films that have been shown on national and international television channels (including digital platforms and pay TV channels) and have DVD/Blu-ray releases for sale will not be accepted. This rule will not apply during pandemics or similar circumstances.<br>
+                Films made for television will not be accepted.<br>
+                Films that have not been released or have had limited releases are eligible to participate.<br>
+                Award-winning films at the festival are required to display their awards, along with the festival logo, in their press releases, newspaper advertisements, and film posters.<br>
+                Subtitles for the film must be sent separately in srt (UTF-8) format.<br>
+                Films deemed suitable by the Pre-Jury will be announced on the festival's official website by September 6, 2024. The Festival Management has the right to use a 3-minute segment of the film for promotional purposes.<br>
+                Films confirmed to participate in the competition can be withdrawn by the filmmakers by submitting a written notice to the festival management no later than September 13, 2024.<br>
+                The final submission date for mp4 or mkv screening copies of films confirmed for the competition is September 15, 2024.<br>
+                Films will be presented to audiences in venues and according to the program deemed appropriate by the Festival Management.<br>
+                The mp4 and mkv files should clearly state the Director’s Name, Surname, Film Title, Duration, and Production Year.
+
+
+                <br><br><strong>E) SPECIAL CONDITIONS</strong><br>
+                All written information provided by the applicant on the application form with their signature is considered accurate by the Festival Management. The applicant is responsible for any legal liabilities arising from misleading information.<br>
+                If films are intended to be broadcast on TV channels after the festival, the Festival Management will assist in establishing connections between the rights holder and the TV channel.<br>
+                Producers, directors, actors, and other artists contributing to films participating in the Balkan Panorama Film Festival are deemed to accept these rules. It is the responsibility of the film producer submitting the application to inform the contributing artists of these regulations.
+                   
+                    
+                <br><br><strong>F) AWARDS AND PAYMENTS</strong><br><br>
+                <strong>NATIONAL FEATURE FILM COMPETITION</strong><br>
+                The awards of the Sarı Şemsiye National Feature Film Competition are determined by the main jury consisting of three (3) members. The award categories are as follows:<br>
+                - Best Feature Film 0.000 ₺ + Sarı Şemsiye Award.<br>
+                - Best Director Award + Sarı Şemsiye Award<br>
+                - Best Actress + Sarı Şemsiye Award<br>
+                - Best Actor + Sarı Şemsiye Award.<br>
+                The Best Film Award is given to the producer of the film. Sarı Şemsiye Awards are given to the artists participating in the festival or the representatives of the film. However, if a monetary award is given, it will be deposited into the account of the natural or legal person.<br>
+                The foreign nationality of the artists involved in the competing films does not prevent them from receiving awards. The award-winning person must be present at the Award Ceremony to receive their award or send a representative. Those who do not attend the Award Ceremony without a valid excuse and do not notify this in writing or do not send a representative will be deprived of their award rights. In this case, the jury will determine a new award winner.<br>
+                Monetary awards to award winners are paid within a maximum of 180 days from the end date of the festival. The amount of the monetary award will be announced on the official festival website at least 2 weeks before the festival starts.<br>
+                If the monetary award and amount are not announced in the festival regulations and on the official website, the award winners will only be awarded the Sarı Şemsiye Award. The festival management reserves the right not to give monetary awards in case of force majeure.
+                   
+                    
+                <br><br><strong>INTERNATIONAL FEATURE FILM COMPETITION</strong><br>
+                The awards of the Sarı Şemsiye International Feature Film Competition are determined by the main jury consisting of three (3) members. The award categories are as follows:<br>
+                - Best Feature Film 0.000 ₺ + Sarı Şemsiye Award.<br>
+                - Best Director Award + Sarı Şemsiye Award.<br>
+                - Best Actress + Sarı Şemsiye Award.<br>
+                - Best Actor + Sarı Şemsiye Award.<br>
+                The Best Film Award is given to the producer of the film. Sarı Şemsiye Awards are given to the artists participating in the festival or the representatives of the film. However, if a monetary award is given, it will be deposited into the account of the natural or legal person.<br>
+                The foreign nationality of the artists involved in the competing films does not prevent them from receiving awards. The award-winning person must be present at the Award Ceremony to receive their award or send a representative. Those who do not attend the Award Ceremony without a valid excuse and do not notify this in writing or do not send a representative will be deprived of their award rights. In this case, the jury will determine a new award winner.<br>
+                Monetary awards to award winners are paid within a maximum of 180 days from the end date of the festival. The amount of the monetary award will be announced on the official festival website at least 2 weeks before the festival starts.<br>
+                If the monetary award and amount are not announced in the festival regulations and on the official website, the award winners will only be awarded the Sarı Şemsiye Award. The festival management reserves the right not to give monetary awards in case of force majeure.
+                   
+                    
+                <br><br><strong>DARIO MORENO FEATURE FILM COMPETITION</strong><br>
+                The awards of the Sarı Şemsiye Dario Moreno International Feature Film Competition are determined by the main jury consisting of three (3) members. The award categories are as follows:<br>
+                - Best Feature Film + Sarı Şemsiye Award is given.<br>
+                The Best Film Award is given to the producer of the film. Sarı Şemsiye Awards are given to the artists participating in the festival or the representatives of the film. The foreign nationality of the artists involved in the competing films does not prevent them from receiving awards. The award-winning person must be present at the Award Ceremony to receive their award or send a representative. Those who do not attend the Award Ceremony without a valid excuse and do not notify this in writing or do not send a representative will be deprived of their award rights. In this case, the jury will determine a new award winner.
+                   
+                    
+                <br><br><strong>SÜSLÜ ŞEMSİYE FEATURE FILM COMPETITION</strong><br>
+                The Süslü Şemsiye Feature Film Competition consists of films competing in the festival's national and international feature film competitions. The award of the Süslü Şemsiye Feature Film Competition is determined by the People's Jury consisting of five (5) members. The awards are as follows:<br>
+                - Best Feature Film + Süslü Şemsiye Award is given.<br>
+                The Best Film Award is given to the producer of the film. Süslü Şemsiye Awards are given to the artists participating in the festival or the representatives of the film. The foreign nationality of the artists involved in the competing films does not prevent them from receiving awards. The award-winning person must be present at the Award Ceremony to receive their award or send a representative. Those who do not attend the Award Ceremony without a valid excuse and do not notify this in writing or do not send a representative will be deprived of their award rights. In this case, the jury will determine a new award winner.
+                   
+                    
+                <br><br><strong>G) SCREENING AND PROMOTIONAL MATERIALS</strong><br>
+                The films will be displayed at the festival venues based on the festival program. Festival Management will not pay any additional fees or expenses related to screening and promotional activities.<br>
+                Screening and promotional materials must be submitted to the festival management on time. Incomplete or late submissions will result in the film being removed from the festival's schedule.
+                   
+                    
+                <br><br><strong>H) FINAL PROVISIONS</strong><br>
+                These regulations are prepared by the Festival Management and are subject to change by the festival's decision. Any changes or updates will be announced on the festival's official website.<br>
+                Participation in the competition implies full acceptance of these regulations.
+                   
+                    
+                <br><br><strong>Contact:</strong><br>
+                Balkan Panorama Film Festival<br>
+                Email: <a href="mailto:info@bpff.com.tr">info@bpff.com.tr</a><br>
+                Website: <a href="http://www.bpff.com.tr" target="_blank">www.bpff.com.tr</a>
             </div>
         </div>
         @* <-- --> *@
@@ -3869,30 +3977,49 @@
 
     .popup-content {
         background: white;
-        padding: 20px;
+        padding: 30px; /* Increased padding for better spacing */
         border-radius: 8px;
-        width: 80%;
-        max-width: 600px;
+        width: 100%; /* Increased width */
+        max-width: 1000px; /* Increased max-width */
         position: relative;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Slightly larger shadow */
         text-align: left; /* Align text to the left */
-        max-height: 80vh; /* Maximum height of the popup */
+        max-height: 85vh; /* Maximum height of the popup */
         overflow-y: auto; /* Scroll if content overflows */
+        font-family: Arial, sans-serif; /* Improved font */
     }
 
     .popup-close {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        font-size: 18px;
-        color: #000;
+        position: fixed; /* Fixed position to ensure it stays in view */
+        top: 20px;
+        right: calc(5% + 15px); /* Adjusted based on popup-content width */
+        font-size: 20px; /* Increased font size */
+        color: #333;
         background: #f0f0f0;
         border: 1px solid #ddd;
         border-radius: 5px;
-        padding: 10px 20px;
+        padding: 10px 15px; /* Adjusted padding */
         cursor: pointer;
         text-align: center;
         font-weight: bold;
+        z-index: 1001; /* Higher z-index to keep it above content */
+    }
+
+    /* Style for the popup title */
+    .popup-content h2 {
+        font-size: 28px; /* Increased font size for the title */
+        margin-top: 0;
+        margin-bottom: 15px; /* Space below the title */
+        font-weight: bold;
+    }
+
+    /* Style for popup text */
+    .popup-content p {
+        font-size: 18px; /* Increased font size */
+        line-height: 1.8; /* Increased line height for readability */
+        margin: 0; /* Remove default margin */
+        padding: 10px 0; /* Padding for better spacing */
+        white-space: pre-wrap; /* Preserve white space and line breaks */
     }
 
     /* Style for clickable text in label */
@@ -3901,4 +4028,13 @@
         cursor: pointer;
         text-decoration: underline;
     }
+
+    /* Error message style */
+    #regulationsError {
+        color: red;
+        display: none;
+        margin-top: 10px;
+    }
 </style>
+
+
