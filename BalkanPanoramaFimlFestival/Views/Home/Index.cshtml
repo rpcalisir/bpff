@@ -1,7 +1,158 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Index";
 }
 
-<h1>WELCOME</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Aspect Ratio Container */
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%; /* 16:9 aspect ratio (height / width * 100%) */
+            overflow: hidden;
+            background-color: #000; /* Optional: background color if the image doesn't fill the container */
+        }
 
+        .carousel-inner {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .carousel-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Ensure image covers the container */
+        }
+
+        /* News section styles */
+        .news-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+            .news-item img {
+                max-width: 100%;
+                height: auto;
+                margin-right: 20px; /* Space between image and text */
+            }
+
+        .news-content {
+            flex: 1;
+        }
+
+            .news-content h5 {
+                margin-top: 0;
+            }
+
+            .news-content p {
+                margin-bottom: 10px;
+            }
+
+            .news-content a {
+                text-decoration: none;
+                color: #007bff; /* Bootstrap primary color */
+            }
+
+        /* Divider styles */
+        .divider {
+            height: 20px; /* Thickness of the line */
+            background-color: #007bff; /* Color of the line */
+            margin: 20px 0; /* Space around the line */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container mt-4">
+        <!-- Slider Container -->
+        <div id="imageCarousel" class="carousel slide">
+            <div class="carousel-container">
+                <div class="carousel-inner">
+                    <!-- First Image -->
+                    <div class="carousel-item active">
+                        <img src="~/staticpagesimages/home-image-1.png" alt="Image 1">
+                    </div>
+                    <!-- Second Image -->
+                    <div class="carousel-item">
+                        <img src="~/staticpagesimages/home-image-2.png" alt="Image 2">
+                    </div>
+                    <!-- Third Image -->
+                    <div class="carousel-item">
+                        <img src="~/staticpagesimages/home-image-3.png" alt="Image 3">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="~/staticpagesimages/home-image-4.png" alt="Image 4">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="~/staticpagesimages/home-image-5.png" alt="Image 5">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="~/staticpagesimages/home-image-6.png" alt="Image 6">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="~/staticpagesimages/home-image-7.png" alt="Image 7">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="~/staticpagesimages/home-image-8.png" alt="Image 8">
+                    </div>
+                    <!-- Add more images as needed -->
+                </div>
+            </div>
+
+            <!-- Carousel Controls -->
+            <button class="carousel-control-prev" type="button" data-bs-target="#imageCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#imageCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+
+        <!-- Divider -->
+        <div class="divider"></div>
+
+        <!-- NEWS Section -->
+        <div class="container mt-4">
+            <h2 class="text-center mb-4">NEWS</h2>
+            <div class="news-item">
+                <img src="~/staticpagesimages/news-image-1.png" alt="News Image 1" class="col-md-4">
+                <div class="news-content col-md-8">
+                    <h5>
+                        COUNTDOWN TO THE 9TH BALKAN PANORAMA FILM FESTIVAL BEGINS
+                    </h5>
+                    <p>Karşıyaka Municipality, which has undertaken various activities to support art and artists and strengthen the bond between society and art, will host the 9th Balkan Panorama Film Festival. The screenings of the films participating in the 9th Balkan Panorama Film Festival, which will be held between January 19-25, will be held at Suat Taşer Culture Center, Çatı Bostanlı, Hikmet Şimşek Art Center, Çarşı Culture and Art Center and İzmir Sanat.</p>
+                    <a href="https://ankahaber.net/haber/detay/9uncu_balkan_panorama_film_festivaline_geri_sayim_basliyor_165695"
+                       class="btn btn-primary" style="color: white;" target="_blank">Read More</a>
+                </div>
+            </div>
+            <div class="news-item">
+                <img src="~/staticpagesimages/news-image-2.png" alt="News Image 2" class="col-md-4">
+                <div class="news-content col-md-8">
+                    <h5>COUNTDOWN TO THE 9TH BALKAN PANORAMA FILM FESTIVAL BEGINS</h5>
+                    <p>Karşıyaka Municipality, which has undertaken various activities to support art and artists and strengthen the bond between society and art, will host the 9th Balkan Panorama Film Festival. The screenings of the films participating in the 9th Balkan Panorama Film Festival, which will be held between January 19-25, will be held at Suat Taşer Culture Center, Çatı Bostanlı, Hikmet Şimşek Art Center, Çarşı Culture and Art Center and İzmir Sanat.</p>
+                    <a href="https://ankahaber.net/haber/detay/9uncu_balkan_panorama_film_festivaline_geri_sayim_basliyor_165695"
+                       class="btn btn-primary" style="color: white;" target="_blank">Read More</a>
+                </div>
+            </div>
+            <!-- Add more news items as needed -->
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

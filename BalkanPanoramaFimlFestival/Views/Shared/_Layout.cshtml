@@ -18,60 +18,208 @@
     @* Country Selector Library *@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 </head>
+
 <body>
-    <header class="position-relative">
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Homepage</a>
+
+    @* Header section for TR/EN buttons and navigation bar *@
+    <header class="position-relative col-md-10 offset-md-1">
+        <div class="container-fluid bg-light py-2" style="height: 20vh;">
+            <div class="container d-flex justify-content-between align-items-center">
+                <div class="d-flex">
+                    <!-- Facebook Icon -->
+                    <a href="https://www.facebook.com/balkanpanff" class="me-3" target="_blank">
+                        <i class="fab fa-facebook-f fa-2x"></i>
+                    </a>
+                    <!-- Instagram Icon -->
+                    <a href="https://www.instagram.com/balkanpanff" class="me-3" target="_blank">
+                        <i class="fab fa-instagram fa-2x"></i>
+                    </a>
+                    <!-- Twitter Icon -->
+                    <a href="https://www.twitter.com/balkanpanff" class="me-3" target="_blank">
+                        <i class="fab fa-twitter fa-2x"></i>
+                    </a>
+                    <!-- Tiktok Icon -->
+                    <a href="https://www.twitter.com/balkanpannff" class="me-3" target="_blank">
+                        <i class="fab fa-tiktok fa-2x"></i>
+                    </a>
+                </div>
+
+                <!-- Right side: Logo -->
+                <div class="d-flex align-items-center">
+                    <img src="~/logos/bpff-logo.png" alt="BPFF Logo" height="160">
+                </div>
+
+                <div class="d-flex align-items-center">
+                    <!-- Language buttons -->
+                    <button id="btn-en" class="btn btn-primary me-2" onclick="setLanguage('EN')">EN</button>
+                    <button id="btn-tr" class="btn btn-outline-secondary me-3" onclick="setLanguage('TR')">TR</button>
+
+                    <!-- Signed In User Partial View -->
+                    <partial name="PartialViews/_NavBarSignedInUser.cshtml" />
+                </div>
+            </div>
+        </div>
+
+        @* Navigation bar integrated with the top bar *@
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3" style="padding: 1rem 2rem;">
+            <div class="container d-flex justify-content-between align-items-center">
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+
+                <div class="collapse navbar-collapse d-flex justify-content-center">
+                    <ul class="navbar-nav mx-auto gap-3">
+                        <!-- mx-auto and gap-3 for centering and spacing -->
+                        <!-- HOME Button -->
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="SignedInUser" asp-action="CompetitionApplication">Competition Application</a>
+                            <a class="nav-link" style="color: #007bff; font-size: 1.25rem;" asp-area="" asp-controller="Home" asp-action="Index">HOME</a>
                         </li>
+
+                        <!-- FESTIVAL Dropdown -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="festivalDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 1.25rem;">
+                                FESTIVAL
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="festivalDropdown" style="font-size: 1rem;">
+                                <li><a class="dropdown-item" asp-controller="StaticPages" asp-action="About">ABOUT</a></li>
+                                <li><a class="dropdown-item" asp-controller="StaticPages" asp-action="AdvisoryBoard">ADVISORY BOARD</a></li>
+                            </ul>
+                        </li>
+
+                        <!-- COMPETITION Dropdown -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="competitionDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 1.25rem;">
+                                COMPETITION
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="competitionDropdown" style="font-size: 1rem;">
+                                <li><a class="dropdown-item" asp-controller="StaticPages" asp-action="YellowUmbrellaRewards">YELLOW UMBRELLA REWARDS</a></li>
+                                <li><a class="dropdown-item" asp-controller="StaticPages" asp-action="NationalFeatureFilmCompetition">NATIONAL FEATURE FILM COMPETITION</a></li>
+                                <li><a class="dropdown-item" asp-controller="StaticPages" asp-action="InternationalFeatureFilmCompetition">INTERNATIONAL FEATURE FILM COMPETITION</a></li>
+                                <li><a class="dropdown-item" asp-controller="StaticPages" asp-action="DarioMorenoFeatureFilmCompetition">DARIO MORENO FEATURE FILM COMPETITION</a></li>
+                                <li><a class="dropdown-item" asp-controller="StaticPages" asp-action="NationalShortFilmCompetition">NATIONAL SHORT FILM FILM COMPETITION</a></li>
+                                <li><a class="dropdown-item" asp-controller="StaticPages" asp-action="InternationalShortFilmCompetition">INTERNATIONAL SHORT FILM FILM COMPETITION</a></li>
+                            </ul>
+                        </li>
+
+                        <!-- APPLICATIONS Dropdown -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="applicationsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 1.25rem;">
+                                APPLICATIONS
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="applicationsDropdown" style="font-size: 1rem;">
+                                <li><a class="dropdown-item" asp-controller="StaticPages" asp-action="GeneralRules">GENERAL RULES</a></li>
+                                <li><a class="dropdown-item" asp-controller="SignedInUser" asp-action="CompetitionApplication">COMPETITION APPLICATION</a></li>
+                                <li><a class="dropdown-item" asp-controller="StaticPages" asp-action="ScreeningApplication">SCREENING APPLICATION</a></li>
+                                <li><a class="dropdown-item" asp-controller="StaticPages" asp-action="Regulations">REGULATIONS</a></li>
+                            </ul>
+                        </li>
+
+                        <!-- PROGRAMME Dropdown -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="programmeDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 1.25rem;">
+                                PROGRAMME
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="programmeDropdown" style="font-size: 1rem;">
+                                <li><a class="dropdown-item" asp-controller="StaticPages" asp-action="OfficialScreeningSelection">OFFICIAL SCREENING SELECTION</a></li>
+                                <li><a class="dropdown-item" asp-controller="StaticPages" asp-action="Guest Country">GUEST COUNTRY</a></li>
+                                <li><a class="dropdown-item" asp-controller="StaticPages" asp-action="GuestCinemaSchool">GUEST CINEMA SCHOOL</a></li>
+                            </ul>
+                        </li>
+
+                        <!-- MEDIA Dropdown -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="mediaDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 1.25rem;">
+                                MEDIA
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="mediaDropdown" style="font-size: 1rem;">
+                                <li><a class="dropdown-item" asp-controller="StaticPages" asp-action="Press">PRESS</a></li>
+                                <li><a class="dropdown-item" asp-controller="StaticPages" asp-action="PhotoGallery">PHOTO GALLERY</a></li>
+                                <li><a class="dropdown-item" asp-controller="StaticPages" asp-action="VideoGallery">VIDEO GALLERY</a></li>
+                            </ul>
+                        </li>
+
+                        <!-- CONTACT Dropdown -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="contactDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 1.25rem;">
+                                CONTACT
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="contactDropdown" style="font-size: 1rem;">
+                                <li><a class="dropdown-item" asp-controller="StaticPages" asp-action="Contact">CONTACT</a></li>
+                            </ul>
+                        </li>
+
                     </ul>
                 </div>
-
-                @* Signed In User Partial View *@
-                <partial name="PartialViews/_NavBarSignedInUser.cshtml" />
-
-                <!-- Language buttons on the right -->
-                <div class="position-absolute top-0 end-0 mt-3 me-3">
-                    <button id="btn-en" class="btn btn-primary me-2" onclick="setLanguage('EN')">EN</button>
-                    <button id="btn-tr" class="btn btn-outline-secondary" onclick="setLanguage('TR')">TR</button>
-                </div>
-
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
 
-    <footer class="border-top footer text-muted">
+    <main role="main" class="pb-3">
         <div class="container">
-            &copy; 2024 - Balkan Panorama Film Festival 
+            @RenderBody()
+        </div>
+    </main>
+
+    @* Footer Section *@
+    <footer class="text-light py-3" style="margin-top: 50px;">
+        <div class="container">
+            <!-- First Row: 3 Logos -->
+            <div class="row mb-3">
+                <div class="col-4 text-center">
+                    <i class="fa-solid fa-location-dot" style="color: #FFD43B; font-size: 50px;"></i>
+                    <div class="mt-2">BALKAN PANORAMA FILM FESTIVAL</div>
+                </div>
+
+                <div class="col-4 text-center">
+                    <i class="fa-brands fa-whatsapp" style="color: #FFD43B; font-size: 50px;"></i>
+                    <div class="mt-2">+90 552 241 06 23</div>
+                </div>
+
+                <div class="col-4 text-center">
+                    <i class="fa-regular fa-envelope" style="color: #FFD43B; font-size: 50px;"></i>
+                    <div class="mt-2">info@bpff.com.tr</div>
+                </div>
+            </div>
+
+            <!-- Second Row: Centered Logo -->
+            <div class="row mb-3">
+                <div class="col-12 text-center">
+                    <img src="~/logos/white-rumeli-logo-transparent.png" alt="rumeli-logo" height="160"> <!-- Increased height -->
+                </div>
+            </div>
+
+
+            <!-- Third Row: Centered Text -->
+            <div class="row mb-3">
+                <div class="col-12 text-center">
+                    <p class="mb-0">℗ + © Sali Saliji | Tüm Hakları Saklıdır.</p>
+                </div>
+            </div>
+
+            <!-- Fourth Row: Left Aligned Copyright -->
+            <div class="row">
+                <div class="col-12 text-start">
+                    <p class="mb-0">&copy; 2024 - Balkan Panorama Film Festival</p>
+                </div>
+            </div>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-
-    @* Phone Number library *@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
-
-    @* Country Selector Script *@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
-    @* Include the script for language selection *@
-    @await Html.PartialAsync("PartialScripts/_SetLanguageScriptsPartial")
-
-    @* In any View Page that is using this Layout, if a script wants to be used, RenderSectionAsync specifies where to put the script into. *@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
+
+<style>
+    footer {
+        background-color: #0A4778; /* Light gray background */
+        margin-top: 50px; /* Adjust this value based on your needs */
+    }
+</style>
